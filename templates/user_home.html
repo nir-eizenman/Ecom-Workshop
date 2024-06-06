@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Home</title>
+    <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Your Home Page</h1>
+        <p>You have successfully signed in, {{ user.name or user.product_name }}.</p>
+        <p>You are signed in as a {{ user_type }}.</p>
+        <button onclick="window.location.href='/'">Go to Main Page</button>
+    </div>
+</body>
+</html>
