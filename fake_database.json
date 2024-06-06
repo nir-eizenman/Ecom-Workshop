@@ -1,0 +1,74 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "name": "Rebecca Lee",
+            "email": "hterry@example.com",
+            "address": "29942 Gomez Hollow Apt. 705\nNorth Robin, MI 94426",
+            "phone_number": "954.742.3377x3451"
+        },
+        {
+            "id": 2,
+            "name": "Joseph Johnson",
+            "email": "alexanderspencer@example.net",
+            "address": "USNS Barnes\nFPO AP 62232",
+            "phone_number": "726-569-4231"
+        },
+        {
+            "id": 3,
+            "name": "Brian Oneal",
+            "email": "wbrooks@example.com",
+            "address": "USS Marshall\nFPO AE 95022",
+            "phone_number": "+1-959-419-3510"
+        },
+        {
+            "id": 4,
+            "name": "Christopher Ruiz",
+            "email": "harristhomas@example.net",
+            "address": "49630 Ellis Prairie Suite 991\nWest Richard, MI 48543",
+            "phone_number": "7248618500"
+        },
+        {
+            "id": 5,
+            "name": "Kimberly Mills",
+            "email": "joneskristine@example.net",
+            "address": "26225 Richard Skyway Suite 022\nTiffanyville, DC 21984",
+            "phone_number": "001-914-418-3666x543"
+        },
+        {
+            "id": 6,
+            "name": "Lisa Johnson",
+            "email": "frederickwilson@example.com",
+            "address": "77049 Jason Dam Apt. 225\nShawnton, RI 27025",
+            "phone_number": "001-511-904-2386"
+        },
+        {
+            "id": 7,
+            "name": "Amanda Garza DVM",
+            "email": "bwolf@example.net",
+            "address": "890 Jennifer Path Apt. 128\nWest Emily, IL 44811",
+            "phone_number": "681.892.3905"
+        },
+        {
+            "id": 8,
+            "name": "Dustin Mendoza",
+            "email": "swilliams@example.org",
+            "address": "96613 Castillo Fields\nPort Carly, MN 87900",
+            "phone_number": "708-687-7263"
+        },
+        {
+            "id": 9,
+            "name": "Cynthia Pham",
+            "email": "wdouglas@example.com",
+            "address": "395 Stephanie Prairie\nNew Tammyfurt, PW 27059",
+            "phone_number": "213.782.5350x713"
+        },
+        {
+            "id": 10,
+            "name": "Lynn Valencia",
+            "email": "kmahoney@example.org",
+            "address": "0004 Cassandra Place\nDavisport, ID 90459",
+            "phone_number": "001-682-779-7869x8365"
+        }
+    ]
+}
