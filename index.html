@@ -3,36 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AD-venture</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Website with Flask Backend</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <div class="container">
         <h1>Welcome to AD-venture!</h1>
-        <div class="signup-options">
-            <button id="option1-btn">Sign up as an INFLUENCER</button>
-            <button id="option2-btn">Sign up as a PRODUCT</button>
+        <div class="auth-options">
+            <button id="signin-btn">Sign In</button>
+            <button id="signup1-btn">Sign Up as an INFLUENCER</button>
+            <button id="signup2-btn">Sign Up as a PRODUCT</button>
         </div>
-        <div id="signup1" class="signup-form">
+        <div id="signin" class="auth-form">
+            <h2>Sign In</h2>
+            <form method="POST" action="/signin">
+                <input type="email" name="email" placeholder="Email" required><br>
+                <input type="password" name="password" placeholder="Password" required><br>
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
+        <div id="signup1" class="auth-form">
             <h2>Sign Up Option 1</h2>
-            <form>
-                <input type="text" placeholder="Username" required><br>
-                <input type="email" placeholder="Email" required><br>
-                <input type="password" placeholder="Password" required><br>
+            <form method="POST" action="/signup1">
+                <input type="text" name="username" placeholder="Username" required><br>
+                <input type="email" name="email" placeholder="Email" required><br>
+                <input type="password" name="password" placeholder="Password" required><br>
                 <button type="submit">Sign Up</button>
             </form>
         </div>
-        <div id="signup2" class="signup-form">
+        <div id="signup2" class="auth-form">
             <h2>Sign Up Option 2</h2>
-            <form>
-                <input type="text" placeholder="Full Name" required><br>
-                <input type="email" placeholder="Email" required><br>
-                <input type="password" placeholder="Password" required><br>
-                <input type="text" placeholder="Phone Number" required><br>
+            <form method="POST" action="/signup2">
+                <input type="text" name="fullname" placeholder="Full Name" required><br>
+                <input type="email" name="email" placeholder="Email" required><br>
+                <input type="password" name="password" placeholder="Password" required><br>
+                <input type="text" name="phone" placeholder="Phone Number" required><br>
                 <button type="submit">Sign Up</button>
             </form>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
