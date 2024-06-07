@@ -37,7 +37,7 @@ def signup_influencer():
     
     data = {'name': name, 'email': email, 'password': password}
 
-    db.insertToUsersDB(data, UserType.Influencer)
+    db.addUser(data, UserType.Influencer)
 
     #users_db['influencers'].append({'name': name, 'email': email, 'password': password})
     return redirect(url_for('home'))
@@ -50,7 +50,7 @@ def signup_product():
     password = request.form['password']
     
     data = {'product_name': product_name, 'company': company, 'email': email, 'password': password}
-    db.insertToUsersDB(data, UserType.Company)
+    db.addUser(data, UserType.Company)
 
     #users_db['products'].append({'product_name': product_name, 'company': company, 'email': email, 'password': password})
     return redirect(url_for('home'))
@@ -59,8 +59,29 @@ def signup_product():
 def signin():
     email = request.form['email']
     password = request.form['password']
-    user_type = request.form['user_type']
+    user_type_str = request.form['user_type'].capitalize()
     
+    # Ensure the user_type is valid
+
+    #need to fix here
+    print(user_type_str)
+    if user_type_str not in UserType.__members__:
+        return 'Invalid user type', 400
+    
+    user_type = UserType[user_type_str]
+
+    user_data = db.getUserByEmail(email, user_type_str)
+
+    if user_data is None:
+        return 'Invalid credentials', 401
+    
+    if user_data and user_data['password'] == password:
+        session['user'] = user
+        session['user_type'] = user_type_str
+        return redirect(url_for('user_home'))
+    
+    return 'Invalid credentials', 401
+
     for user in users_db[user_type + 's']:  # Check the correct list based on user_type
         if user['email'] == email and user['password'] == password:
             session['user'] = user

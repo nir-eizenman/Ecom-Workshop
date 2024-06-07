@@ -15,7 +15,7 @@ class DatabaseLogic:
         self.client = MongoClient(uri, server_api=ServerApi('1'))
 
     #check before that every data is legal and that this user doesn't exist
-    def insertToUsersDB(self, data: dict, userType: UserType) -> bool:
+    def addUser(self, data: dict, userType: UserType) -> bool:
         # Access a database
         db = self.client['Users']
         try:
@@ -27,11 +27,22 @@ class DatabaseLogic:
 
         return True
 
-    def readFromUsersDBByName(self, userName: str, userType: UserType) -> dict:
+    def getUserByUserName(self, userName: str, userType: UserType) -> dict:
         db = self.client['Users']
         try:
             collection = db[userType.name]
             result = collection.find_one({"name": userName})
+            return result
+        except Exception as e:
+            print(e)
+            return None
+        
+    
+    def getUserByEmail(self, email: str, userType: UserType) -> dict:
+        db = self.client['Users']
+        try:
+            collection = db[userType.name]
+            result = collection.find_one({"email": email})
             return result
         except Exception as e:
             print(e)
