@@ -27,6 +27,15 @@ class DatabaseLogic:
 
         return True
 
+    def readFromUsersDBByName(self, userName: str, userType: UserType) -> dict:
+        db = self.client['Users']
+        try:
+            collection = db[userType.name]
+            result = collection.find_one({"name": userName})
+            return result
+        except Exception as e:
+            print(e)
+            return None
 
 
 

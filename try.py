@@ -10,12 +10,11 @@ client = MongoClient(uri, server_api=ServerApi('1'))
 db = client['Users']
 
 # Access a collection
-collection = db['Influencers']
+collection = db['Influencer']
 
 # Send a ping to confirm a successful connection
 try:
-    document = {"name": "Alice", "age": 25}
-    collection.insert_one(document)
+    
 
     # Insert multiple documents
     documents = [
@@ -24,6 +23,9 @@ try:
     ]
     collection.insert_many(documents)
     client.admin.command('ping')
+    result = collection.find_one({"name": "Bob"})
+    print(result)
+    print(type(result))
     print("Pinged your deployment. You successfully connected to MongoDB!")
 except Exception as e:
     print(e)
