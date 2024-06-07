@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+from UserTypeEnum import UserType
+from DatabaseLogic import DatabaseLogic
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Necessary for session management
@@ -8,6 +10,8 @@ users_db = {
     'influencers': [],
     'products': []
 }
+
+db = DatabaseLogic("mongodb+srv://ProjectMainAdmin:SzReRV0ZxjeWm7vN@datastorage1.dlfth1l.mongodb.net/?retryWrites=true&w=majority&appName=DataStorage1")
 
 @app.route('/')
 def home():
@@ -31,7 +35,11 @@ def signup_influencer():
     email = request.form['email']
     password = request.form['password']
     
-    users_db['influencers'].append({'name': name, 'email': email, 'password': password})
+    data = {'name': name, 'email': email, 'password': password}
+
+    db.insertToUsersDB(data, UserType.Influencer)
+
+    #users_db['influencers'].append({'name': name, 'email': email, 'password': password})
     return redirect(url_for('home'))
 
 @app.route('/signup/product', methods=['POST'])
@@ -41,7 +49,10 @@ def signup_product():
     email = request.form['email']
     password = request.form['password']
     
-    users_db['products'].append({'product_name': product_name, 'company': company, 'email': email, 'password': password})
+    data = {'product_name': product_name, 'company': company, 'email': email, 'password': password}
+    db.insertToUsersDB(data, UserType.Company)
+
+    #users_db['products'].append({'product_name': product_name, 'company': company, 'email': email, 'password': password})
     return redirect(url_for('home'))
 
 @app.route('/signin', methods=['POST'])
