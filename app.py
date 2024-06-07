@@ -69,14 +69,16 @@ def signin():
         return 'Invalid user type', 400
     
     user_type = UserType[user_type_str]
-
-    user_data = db.getUserByEmail(email, user_type_str)
-
+    print(user_type)
+    user_data = db.getUserByEmail(email, user_type)
+    print(user_data)
     if user_data is None:
         return 'Invalid credentials', 401
     
+
     if user_data and user_data['password'] == password:
-        session['user'] = user
+        session['user_name'] = user_data['name']
+        session['user_email'] = user_data['email']
         session['user_type'] = user_type_str
         return redirect(url_for('user_home'))
     
