@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, jsonify, render_template, request, redirect, url_for, session
 from UserTypeEnum import UserType
 from DatabaseLogic import DatabaseLogic
 
@@ -50,9 +50,11 @@ def signup_product():
     password = request.form['password']
     
     data = {'product_name': product_name, 'company': company, 'email': email, 'password': password}
-    db.addUser(data, UserType.Company)
+    if not db.addUser(data, UserType.Company):
+        return jsonify({'error': 'Failed to create user'}), 500
 
     #users_db['products'].append({'product_name': product_name, 'company': company, 'email': email, 'password': password})
+    #return jsonify({'message': 'User created successfully'}), 201
     return redirect(url_for('home'))
 
 @app.route('/signin', methods=['POST'])
@@ -99,6 +101,30 @@ def user_home():
         user_type = session['user_type']
         return render_template('user_home.html', user=user, user_type=user_type)
     return redirect(url_for('signin_form'))
+
+@app.route('/home/company')
+def homeCompany():
+    name = session['companyName']
+    companyCampaigns = db.getCompanyCampaigns(name)
+
+    # Convert MongoDB documents to JSON serializable format if necessary
+    campaigns = [{**doc, '_id': str(doc['_id'])} for doc in companyCampaigns]
+    return jsonify(campaigns)
+
+@app.route('/home/company/new_campaign', methods=['POST'])
+def newCampaign():
+    name = request.form['companyName']
+    campaignTitle = request.form['campaignTitle']
+    campaignDescription = request.form['campaignDescription']
+    campaignCreationTime = request.form['campaignCreationTime']
+    
+    data = {'campaignTitle': campaignTitle, 'campaignDescription': campaignDescription, 'campaignCreationTime': campaignCreationTime}
+
+    db.addCampaign(data, name)
+
+    return redirect(url_for('homeCompany'))
+
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)  # Changed port to 5001

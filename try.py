@@ -12,6 +12,10 @@ db = client['Users']
 # Access a collection
 collection = db['Influencer']
 
+db = client['Campaign']
+# Create a new collection with the company name
+collection = db["companyName"]
+
 # Send a ping to confirm a successful connection
 try:
     
