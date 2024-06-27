@@ -7,3 +7,4 @@
 .idea/Ecom-Workshop.iml
 .idea/workspace.xml
 __pycache__
+/node_modules
