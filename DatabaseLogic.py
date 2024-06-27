@@ -37,6 +37,8 @@ class DatabaseLogic:
             if not self.checkIfUnique('Users', userType.name, 'email', data['email']):
                 return False
 
+            if userType is UserType.Company:
+                self.createCollection('Campaign', data['name'])
 
             collection = db[userType.name]
             collection.insert_one(data)
@@ -81,14 +83,14 @@ class DatabaseLogic:
         return recent_documents_list
 
 
-    def createCollection(self, databaseName: str, companyName: str):
+    def createCollection(self, databaseName: str, collectionName: str):
         # Ensure the company name is a valid collection name
-        if not isinstance(companyName, str) or not companyName:
+        if not isinstance(collectionName, str) or not collectionName:
             raise ValueError("Invalid company name. It must be a non-empty string.")
         
         db = self.client[databaseName]
         # Create a new collection with the company name
-        db[companyName]
+        db[collectionName]
         
         # Optionally, you can insert an initial document to ensure the collection is created
         #collection.insert_one({"initialized": True})
@@ -102,7 +104,7 @@ class DatabaseLogic:
             raise ValueError("Invalid collection name. It must be a non-empty string.")
         
         # Ensure x is a valid parameter
-        if not x:
+        if not entityValue:
             raise ValueError("Invalid parameter. It must be a non-empty value.")
         
         db = self.client[databaseName]

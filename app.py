@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, render_template, request, redirect, url_for, session
 from UserTypeEnum import UserType
 from DatabaseLogic import DatabaseLogic
+import datetime
+import EntityName
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Necessary for session management
@@ -21,8 +23,8 @@ def home():
 def signup_influencer_form():
     return render_template('signup_influencer.html')
 
-@app.route('/signup/product')
-def signup_product_form():
+@app.route('/signup/company')
+def signup_company_form():
     return render_template('signup_product.html')
 
 @app.route('/signin')
@@ -31,9 +33,9 @@ def signin_form():
 
 @app.route('/signup/influencer', methods=['POST'])
 def signup_influencer():
-    name = request.form['name']
-    email = request.form['email']
-    password = request.form['password']
+    name = request.json['name']
+    email = request.json['email']
+    password = request.json['password']
     
     data = {'name': name, 'email': email, 'password': password}
 
@@ -42,26 +44,26 @@ def signup_influencer():
     #users_db['influencers'].append({'name': name, 'email': email, 'password': password})
     return redirect(url_for('home'))
 
-@app.route('/signup/product', methods=['POST'])
-def signup_product():
-    product_name = request.form['productName']
-    company = request.form['company']
-    email = request.form['email']
-    password = request.form['password']
+@app.route('/signup/company', methods=['POST'])
+def signup_company():
+    company_name = request.json['companyName']
+    company = request.json['company']
+    email = request.json['email']
+    password = request.json['password']
     
-    data = {'product_name': product_name, 'company': company, 'email': email, 'password': password}
+    data = {'company_name': company_name, 'company': company, 'email': email, 'password': password}
     if not db.addUser(data, UserType.Company):
         return jsonify({'error': 'Failed to create user'}), 500
 
-    #users_db['products'].append({'product_name': product_name, 'company': company, 'email': email, 'password': password})
+    #users_db['companys'].append({'company_name': company_name, 'company': company, 'email': email, 'password': password})
     #return jsonify({'message': 'User created successfully'}), 201
     return redirect(url_for('home'))
 
 @app.route('/signin', methods=['POST'])
 def signin():
-    email = request.form['email']
-    password = request.form['password']
-    user_type_str = request.form['user_type'].capitalize()
+    email = request.json['email']
+    password = request.json['password']
+    user_type_str = request.json['user_type'].capitalize()
     
     # Ensure the user_type is valid
 
@@ -109,20 +111,20 @@ def homeCompany():
 
     # Convert MongoDB documents to JSON serializable format if necessary
     campaigns = [{**doc, '_id': str(doc['_id'])} for doc in companyCampaigns]
-    return jsonify(campaigns)
+    return jsonify(campaigns), 200
 
 @app.route('/home/company/new_campaign', methods=['POST'])
 def newCampaign():
-    name = request.form['companyName']
-    campaignTitle = request.form['campaignTitle']
-    campaignDescription = request.form['campaignDescription']
-    campaignCreationTime = request.form['campaignCreationTime']
+    name = request.json['companyName']
+    campaignTitle = request.json['campaignTitle']
+    campaignDescription = request.json['campaignDescription']
+    campaignCreationTime = datetime.datetime.now()
     
     data = {'campaignTitle': campaignTitle, 'campaignDescription': campaignDescription, 'campaignCreationTime': campaignCreationTime}
 
     db.addCampaign(data, name)
 
-    return redirect(url_for('homeCompany'))
+    return jsonify({'message': 'Campaign created successfully'}), 201
 
 
 
