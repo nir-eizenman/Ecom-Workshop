@@ -46,12 +46,12 @@ def signup_influencer():
 
 @app.route('/signup/company', methods=['POST'])
 def signup_company():
-    company_name = request.json['companyName']
+    company_name = request.json[EntityName.CONST_COMPANY_NAME]
     company = request.json['company']
     email = request.json['email']
     password = request.json['password']
     
-    data = {'company_name': company_name, 'company': company, 'email': email, 'password': password}
+    data = {EntityName.CONST_COMPANY_NAME: company_name, 'company': company, 'email': email, 'password': password}
     if not db.addUser(data, UserType.Company):
         return jsonify({'error': 'Failed to create user'}), 500
 
