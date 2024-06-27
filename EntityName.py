@@ -1,0 +1,1 @@
+CONST_COMPANY_NAME = 'company_name'
