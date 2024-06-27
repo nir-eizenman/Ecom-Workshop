@@ -1,10 +1,12 @@
 from flask import Flask, jsonify, render_template, request, redirect, url_for, session
 from UserTypeEnum import UserType
+from flask_cors import CORS
 from DatabaseLogic import DatabaseLogic
 import datetime
 import EntityName
 
 app = Flask(__name__)
+CORS(app)
 app.secret_key = 'your_secret_key'  # Necessary for session management
 
 # Simulating a database with a dictionary
