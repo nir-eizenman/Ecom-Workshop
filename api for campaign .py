@@ -10,7 +10,7 @@ def upload_campaign():
     campaign_name = request.form.get('campaign_name')
     max_payment = request.form.get('max_payment')
     campaign_category = request.form.get('campaign_category')
-    product_image = request.files.get('product_image')
+    campaign_image = request.files.get('product_image')
     
     # Check if mandatory fields are provided
     if not campaign_name or not max_payment or not campaign_category:
@@ -39,8 +39,8 @@ def upload_campaign():
     return jsonify({'id': str(result.inserted_id), 'campaign_data': campaign_data}), 201
 
 
-@app.route('/apply_for_product', methods=['POST'])
-def apply_for_product():
+@app.route('/apply_for_campaign', methods=['POST'])
+def apply_for_campaign():
     # Get form data
     number_of_stories = request.form.get('number_of_stories')
     number_of_posts = request.form.get('number_of_posts')
