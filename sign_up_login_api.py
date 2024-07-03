@@ -80,6 +80,47 @@ def signup_company():
 
 
 #TODO? add logout?
+@app.route('/login', methods=['POST'])
+def login():
+    email = request.json[EntityName.CONST_EMAIL]
+    password = request.json[EntityName.CONST_PASSWORD]
+    user_type_num = request.json[EntityName.CONST_USER_TYPE]
+    
+    # Ensure the user_type is valid
+
+    #need to fix here?
+    print("user type number is:", user_type_num)
+
+    #Test it
+    if user_type_num == 1:
+        user_type = UserType[1]
+        print("I am influencer hereeeee")
+    elif user_type_num == 2:
+        user_type = UserType[2]
+        print("I am company here")
+    else:
+        return jsonify(
+            {
+            "result": False,
+            "message": "Invalid user type"
+            }), 400
+
+    
+    user_type = UserType[user_type_str]
+    print(user_type)
+    user_data = db.getUserByEmail(email, user_type)
+    print(user_data)
+    #if user_data is None:
+     #   return 'Invalid credentials', 401
+    
+
+    if user_data and user_data['password'] == password:
+        session['user_name'] = user_data['name']
+        session['user_email'] = user_data['email']
+        session['user_type'] = user_type_str
+        return redirect(url_for('user_home'))
+    
+    return 'Invalid credentials', 401
 
 
 if __name__ == '__main__':

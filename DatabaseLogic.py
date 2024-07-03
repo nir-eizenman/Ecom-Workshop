@@ -11,7 +11,7 @@ import EntityName
 class DatabaseLogic:
 
 
-
+    #TODO - add the collections and database names to EntityName and use it instead of plain text
     def __init__(self, uri: str) -> None:
         self.client = MongoClient(uri, server_api=ServerApi('1'))
 
