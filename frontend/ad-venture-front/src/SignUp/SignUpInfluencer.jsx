@@ -17,7 +17,7 @@ const SignUpInfluencerForm = () => {
   const [formData,
     setFormData] = useState({
     email: '',
-    fullName: '',
+    name: '',
     password: '',
     paymentMethod: '',
     socialLinks: '',
@@ -116,9 +116,9 @@ const SignUpInfluencerForm = () => {
                   required
                   fullWidth
                   margin='normal'
-                  name="fullName"
+                  name="name"
                   label="Full Name"
-                  value={formData.fullName}
+                  value={formData.name}
                   onChange={handleChange}/>
               </Grid>
               <Grid item xs={12} sm={6}>

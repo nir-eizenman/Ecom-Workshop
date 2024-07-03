@@ -13,6 +13,7 @@ const App = () => {
     <ThemeProvider theme={AdVentureTheme}>
       <Router>
         <Routes>
+          <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/company/home" element={<CompanyHome />} />
           <Route path="/influencer/home" element={<InfluencerHome />} />

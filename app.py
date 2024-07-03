@@ -15,6 +15,7 @@ users_db = {
     'products': []
 }
 
+
 db = DatabaseLogic("mongodb+srv://ProjectMainAdmin:SzReRV0ZxjeWm7vN@datastorage1.dlfth1l.mongodb.net/?retryWrites=true&w=majority&appName=DataStorage1")
 
 @app.route('/')
