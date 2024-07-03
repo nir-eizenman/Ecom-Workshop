@@ -12,38 +12,55 @@ app.secret_key = 'your_secret_key'  # Necessary for session management
 
 db = DatabaseLogic("mongodb+srv://ProjectMainAdmin:SzReRV0ZxjeWm7vN@datastorage1.dlfth1l.mongodb.net/?retryWrites=true&w=majority&appName=DataStorage1")
 
-
+#TODO there is a to do in this function
 @app.route('/signup/influencer', methods=['POST'])
 def signup_influencer():
-    name = request.json['name']
-    email = request.json['email']
-    password = request.json['password']
+    required_fields = [
+        EntityName.CONST_EMAIL,
+        EntityName.CONST_INFLUENCER_FULL_NAME,
+        EntityName.CONST_PASSWORD,
+        EntityName.CONST_PAYMENT_METHOD,
+        EntityName.CONST_INFLUENCER_SOCIAL_NETWORK_LINKS,
+        EntityName.CONST_INFLUENCER_FOLLOWER_INTEREST_TYPES,
+        EntityName.CONST_INFLUENCER_FOLLOWERS_LOCATION,
+        EntityName.CONST_INFLUENCER_FOLLOWER_AGE,
+        EntityName.CONST_INFLUENCER_FOLLOWER_GENDER,
+        EntityName.CONST_INFLUENCER_EXPOSURE_CONTENT,
+        EntityName.CONST_INFLUENCER_AGE,
+        EntityName.CONST_INFLUENCER_GENDER
+    ]
     
-    data = {'name': name, 'email': email, 'password': password}
+    data = {field: request.json[field] for field in required_fields}
 
-    db.addUser(data, UserType.Influencer)
+    #TODO - maybe use exceptions so I will know what was the problem and describe it in the message
+    #if adding user failed 
+    if not db.addUser(data, UserType.Influencer):
+        return jsonify(
+            {
+            "result": False,
+            "message": "User influencer failed to create"
+            }), 500
 
-    #users_db['influencers'].append({'name': name, 'email': email, 'password': password})
-    return redirect(url_for('home'))
+    #addign user succeded
+    return jsonify(
+            {
+            "result": True,
+            "message": ""
+            }), 200
 
 #TODO there is a to do in this function
 @app.route('/signup/company', methods=['POST'])
 def signup_company():
-    email = request.json[EntityName.CONST_EMAIL]
-    company_name = request.json[EntityName.CONST_COMPANY_NAME]
-    password = request.json[EntityName.CONST_PASSWORD]
-    payment_method = request.json[EntityName.CONST_PAYMENT_METHOD]
-    site_link = request.json[EntityName.CONST_COMPANY_SITE_LINK]
-    about_us = request.json[EntityName.CONST_COMPANY_ABOUT_US]
+    required_fields = [
+        EntityName.CONST_EMAIL,
+        EntityName.CONST_COMPANY_NAME,
+        EntityName.CONST_PASSWORD,
+        EntityName.CONST_PAYMENT_METHOD,
+        EntityName.CONST_COMPANY_SITE_LINK,
+        EntityName.CONST_COMPANY_ABOUT_US
+    ]
     
-    data = {
-        EntityName.CONST_EMAIL: email,
-        EntityName.CONST_COMPANY_NAME: company_name,
-        EntityName.CONST_PASSWORD: password,
-        EntityName.CONST_PAYMENT_METHOD: payment_method,
-        EntityName.CONST_COMPANY_SITE_LINK: site_link,
-        EntityName.CONST_COMPANY_ABOUT_US: about_us,
-    }
+    data = {field: request.json[field] for field in required_fields}
 
     #TODO - maybe use exceptions so I will know what was the problem and describe it in the message
     #if adding user failed 
