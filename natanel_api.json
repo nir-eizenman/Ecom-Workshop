@@ -54,4 +54,18 @@
     "message": "empty string if success, else failure message description"
 }
 
-// Generate session_token - that is GUID
+// Generate session_token - that is random string
+//email
+
+
+//logout - get from front
+{
+
+}
+
+
+//logout - send to front 
+{
+    "result": true,//may be false
+    "message": "empty string if success, else failure message description"
+}

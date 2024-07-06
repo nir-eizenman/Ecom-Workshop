@@ -22,6 +22,7 @@ CONST_PAYMENT_METHOD = 'payment_method'
 CONST_RESULT = 'result'
 CONST_MESSAGE = 'message'
 CONST_USER_TYPE = 'user_type'
+CONST_RANDOM_SESSION_TOKEN = 'random_session_token'
 
 #social networks
 CONST_INSTAGRAM = 'instagram'

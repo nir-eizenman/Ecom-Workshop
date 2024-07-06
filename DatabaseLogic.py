@@ -17,6 +17,39 @@ class DatabaseLogic:
 
 
 
+    def deleteSessionToken(self, sessionToken):
+        db = self.client['Sessions']
+        collection = db['SessionTokens']
+
+        data_to_delete = {
+            EntityName.CONST_RANDOM_SESSION_TOKEN: sessionToken,
+        }
+
+        try:
+            collection.delete_one(data_to_delete)
+        except Exception as e:
+            print(e)
+            return False
+
+        return True
+
+    def addSessionToken(self, sessionToken, email: str):
+        db = self.client['Sessions']
+        collection = db['SessionTokens']
+
+        data = {
+            EntityName.CONST_RANDOM_SESSION_TOKEN: sessionToken,
+            EntityName.CONST_EMAIL: email
+        }
+
+        try:
+            collection.insert_one(data)
+        except Exception as e:
+            print(e)
+            return False
+
+        return True
+
     def addCampaign(self, data: dict, companyName: str):
         db = self.client['Campaign']
         collection = db[companyName]
