@@ -15,13 +15,14 @@ CONST_INFLUENCER_EXPOSURE_CONTENT = 'influencer_exposure_content'
 CONST_INFLUENCER_AGE = 'influencer_age'
 CONST_INFLUENCER_GENDER = 'influencer_gender'
 
-
 #general user
 CONST_EMAIL = 'email'
 CONST_PASSWORD = 'password'
 CONST_PAYMENT_METHOD = 'payment_method'
 CONST_RESULT = 'result'
 CONST_MESSAGE = 'message'
+CONST_USER_TYPE = 'user_type'
+CONST_RANDOM_SESSION_TOKEN = 'random_session_token'
 
 #social networks
 CONST_INSTAGRAM = 'instagram'
