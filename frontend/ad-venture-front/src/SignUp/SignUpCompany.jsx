@@ -1,62 +1,76 @@
 import React, { useState } from 'react';
-import { 
-    TextField, 
-    Button, 
-    Box, 
-    Container, 
-    Paper, 
-    Typography, 
-    Grid
+import {
+  TextField,
+  Button,
+  Box,
+  Container,
+  Paper,
+  Typography,
+  Grid
 } from '@mui/material';
 import { useNavigate } from 'react-router';
 
 const SignUpCompanyForm = () => {
   const [formData, setFormData] = useState({
     email: '',
-    companyName: '',
+    company_name: '',
     password: '',
-    paymentMethod: '',
-    companySiteLink: '',
-    aboutUs: '',
+    payment_method: '',
+    company_site_link: '',
+    company_about_us: ''
   });
 
   const navigate = useNavigate();
-
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log(formData);
 
-    navigate('/login');
+    try {
+      const response = await fetch('http://127.0.0.1:5001/signup/company', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
 
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const result = await response.json();
+      console.log('Success:', result);
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
+
   return (
-    <Container  sx={{ p: 2 }}>
+    <Container sx={{ p: 2 }}>
       <form onSubmit={handleSubmit}>
-      <Box 
+        <Box
           sx={{
             maxWidth: 600,
             mx: 'auto',
-            '& .MuiTextField-root': { m: 1, width: '25ch' },
+            '& .MuiTextField-root': { m: 1, width: '25ch' }
           }}
         >
           <Paper elevation={6} sx={{ p: 3, textAlign: 'center' }} square={false}>
-
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
-            <Typography 
+              <Typography
                 variant="h2"
                 sx={{
-                    background: 'linear-gradient(to right, #f00, #9500ff);',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent'
+                  background: 'linear-gradient(to right, #f00, #9500ff);',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent'
                 }}
-                >
-                    Sign Up Company
+              >
+                Sign Up Company
               </Typography>
             </Box>
             <Grid container spacing={2} justifyContent="center" sx={{ textAlign: 'center' }}>
@@ -76,9 +90,9 @@ const SignUpCompanyForm = () => {
                   required
                   fullWidth
                   margin='normal'
-                  name="companyName"
+                  name="company_name"
                   label="Company Name"
-                  value={formData.companyName}
+                  value={formData.company_name}
                   onChange={handleChange}
                 />
               </Grid>
@@ -99,9 +113,9 @@ const SignUpCompanyForm = () => {
                   required
                   fullWidth
                   margin='normal'
-                  name="paymentMethod"
+                  name="payment_method"
                   label="Payment Method"
-                  value={formData.paymentMethod}
+                  value={formData.payment_method}
                   onChange={handleChange}
                 />
               </Grid>
@@ -109,9 +123,9 @@ const SignUpCompanyForm = () => {
                 <TextField
                   fullWidth
                   margin='normal'
-                  name="companySiteLink"
+                  name="company_site_link"
                   label="Company Site Link"
-                  value={formData.companySiteLink}
+                  value={formData.company_site_link}
                   onChange={handleChange}
                 />
               </Grid>
@@ -119,11 +133,11 @@ const SignUpCompanyForm = () => {
                 <TextField
                   fullWidth
                   margin='normal'
-                  name="aboutUs"
+                  name="company_about_us"
                   label="About Us"
                   multiline
                   rows={4}
-                  value={formData.aboutUs}
+                  value={formData.company_about_us}
                   onChange={handleChange}
                 />
               </Grid>
