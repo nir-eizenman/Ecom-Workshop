@@ -1,8 +1,8 @@
 from enum import Enum
  
 class UserType(Enum):
-    Influencer = 1
-    Company = 2
+    Influencers = 1
+    Companies = 2
 
 """
 print(Season.SPRING)
