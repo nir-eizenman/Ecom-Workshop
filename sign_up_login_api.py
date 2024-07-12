@@ -120,7 +120,7 @@ def login():
 
 
 
-    if user_data and user_data['password'] == password:
+    if user_data and user_data[EntityName.CONST_PASSWORD] == password:
         randSessionToken = id_generator()
         session[EntityName.CONST_RANDOM_SESSION_TOKEN] = randSessionToken
         session[EntityName.CONST_EMAIL] = user_data[EntityName.CONST_EMAIL]
