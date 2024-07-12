@@ -24,22 +24,23 @@ def signup_influencer():
         EntityName.CONST_EMAIL,
         EntityName.CONST_INFLUENCER_FULL_NAME,
         EntityName.CONST_PASSWORD,
-        EntityName.CONST_PAYMENT_METHOD,
-        EntityName.CONST_INFLUENCER_SOCIAL_NETWORK_LINKS,
-        EntityName.CONST_INFLUENCER_FOLLOWER_INTEREST_TYPES,
-        EntityName.CONST_INFLUENCER_FOLLOWERS_LOCATION,
-        EntityName.CONST_INFLUENCER_FOLLOWER_AGE,
-        EntityName.CONST_INFLUENCER_FOLLOWER_GENDER,
-        EntityName.CONST_INFLUENCER_EXPOSURE_CONTENT,
+        #EntityName.CONST_PAYMENT_METHOD,
+        # EntityName.CONST_INFLUENCER_SOCIAL_NETWORK_LINKS,
+        # EntityName.CONST_INFLUENCER_FOLLOWER_INTEREST_TYPES,
+        # EntityName.CONST_INFLUENCER_FOLLOWERS_LOCATION,
+        # EntityName.CONST_INFLUENCER_FOLLOWER_AGE,
+        # EntityName.CONST_INFLUENCER_FOLLOWER_GENDER,
+        # EntityName.CONST_INFLUENCER_EXPOSURE_CONTENT,
         EntityName.CONST_INFLUENCER_AGE,
-        EntityName.CONST_INFLUENCER_GENDER
+        EntityName.CONST_INFLUENCER_GENDER,
+        EntityName.CONST_INSTAGRAM
     ]
     
     data = {field: request.json[field] for field in required_fields}
 
     #TODO - maybe use exceptions so I will know what was the problem and describe it in the message
     #if adding user failed 
-    if not db.addUser(data, UserType.Influencer):
+    if not db.addUser(data, UserType.Influencers):
         return jsonify(
             {
             "result": False,
@@ -60,7 +61,7 @@ def signup_company():
         EntityName.CONST_EMAIL,
         EntityName.CONST_COMPANY_NAME,
         EntityName.CONST_PASSWORD,
-        EntityName.CONST_PAYMENT_METHOD,
+        #EntityName.CONST_PAYMENT_METHOD,
         EntityName.CONST_COMPANY_SITE_LINK,
         EntityName.CONST_COMPANY_ABOUT_US
     ]
@@ -69,7 +70,7 @@ def signup_company():
 
     #TODO - maybe use exceptions so I will know what was the problem and describe it in the message
     #if adding user failed 
-    if not db.addUser(data, UserType.Company):
+    if not db.addUser(data, UserType.Companies):
         return jsonify(
             {
             "result": False,

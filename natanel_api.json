@@ -5,8 +5,8 @@
     "email": "some@mail.com",
     "influencer_full_name": "some_name",
     "password": "password",
-    "payment_method": "for_now_let_say_some_string_with_numbers",
-    "influencer_social_network_links": 
+    //"payment_method": "for_now_let_say_some_string_with_numbers",
+    /*"influencer_social_network_links": 
     {
         "instagram": "currently_only_instagram_link"
     },
@@ -14,7 +14,11 @@
     "influencer_followers_location": ["tag1", "tag2", "tag3"],
     "influencer_followers_age": ["age_range1", "age_range2", "age_range3"],
     "influencer_followers_gender": ["gender1", "gender2", "gender3"],
-    "influencer_exposure_content": 0,
+    "influencer_exposure_content": 0,*/
+    "instagram": 
+    {
+        
+    }
     "influencer_age": 0,
     "influencer_gender": "some_gender"
 
@@ -26,7 +30,7 @@
     "email": "some@mail.com",
     "company_name": "some_name",
     "password": "password",
-    "payment_method": "for_now_let_say_some_string_with_numbers",
+    //"payment_method": "for_now_let_say_some_string_with_numbers",
     "company_site_link": "OPTIONAL: might be empty",
     "company_about_us": "OPTIONAL: might be empty"
 }

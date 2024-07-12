@@ -7,9 +7,11 @@ import EntityName
 # Create a new client and connect to the server
 #client = MongoClient(uri, server_api=ServerApi('1'))
 
+CONST_DATA_BASE = 'Database'
 
 class DatabaseLogic:
 
+    
 
     #TODO - add the collections and database names to EntityName and use it instead of plain text
     def __init__(self, uri: str) -> None:
@@ -66,13 +68,13 @@ class DatabaseLogic:
     #check before that every data is legal and that this user doesn't exist
     def addUser(self, data: dict, userType: UserType) -> bool:
         # Access a database
-        db = self.client['Users']
+        db = self.client[CONST_DATA_BASE]
         try:
-            if not self.checkIfUnique('Users', userType.name, 'email', data[EntityName.CONST_EMAIL]):
+            if not self.checkIfUnique(CONST_DATA_BASE, userType.name, EntityName.CONST_EMAIL, data[EntityName.CONST_EMAIL]):
                 return False
             print("1")
-            if userType is UserType.Company:#TODO - make the createCollection receive a prameter of initilized data so it will insert that and will not hurt when we try to pull from the collection. Myabe there is a better way to save the campaigns??? Ask Maya how she handle that
-                self.createCollection('Campaign', data[EntityName.CONST_COMPANY_NAME])
+            # if userType is UserType.Company:#TODO - make the createCollection receive a prameter of initilized data so it will insert that and will not hurt when we try to pull from the collection. Myabe there is a better way to save the campaigns??? Ask Maya how she handle that
+            #     self.createCollection('Campaign', data[EntityName.CONST_COMPANY_NAME])
             print("2")
             collection = db[userType.name]
             collection.insert_one(data)
@@ -83,22 +85,22 @@ class DatabaseLogic:
 
         return True
 
-    def getUserByUserName(self, userName: str, userType: UserType) -> dict:
-        db = self.client['Users']
-        try:
-            collection = db[userType.name]
-            result = collection.find_one({"name": userName})
-            return result
-        except Exception as e:
-            print(e)
-            return None
+    # def getUserByUserName(self, userName: str, userType: UserType) -> dict:
+    #     db = self.client[CONST_DATA_BASE]
+    #     try:
+    #         collection = db[userType.name]
+    #         result = collection.find_one({"name": userName})
+    #         return result
+    #     except Exception as e:
+    #         print(e)
+    #         return None
         
     
     def getUserByEmail(self, email: str, userType: UserType) -> dict:
-        db = self.client['Users']
+        db = self.client[CONST_DATA_BASE]
         try:
             collection = db[userType.name]
-            result = collection.find_one({"email": email})
+            result = collection.find_one({EntityName.CONST_EMAIL: email})
             return result
         except Exception as e:
             print(e)
