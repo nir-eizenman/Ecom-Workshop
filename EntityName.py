@@ -46,12 +46,13 @@ CONST_TARGET_AGE_35_44 = 'target_age_35_44'
 CONST_TARGET_AGE_45_54 = 'target_age_45_54'
 CONST_TARGET_AGE_55_64 = 'target_age_55_64'
 CONST_TARGET_AGE_65_PLUS = 'target_age_65_plus'
+CONST_CAMPAIGN_GOAL = 'campaign_goal'
+CONST_CAMPAIGN_REELS = 'campign_reels'
+CONST_CAMPAIGN_POSTS = 'campaign_posts'
+CONST_CAMPAIGN_STORIES = 'campaign_stories'
 
 
-#For Apply for Campaign 
-CONST_NUMBER_STORIES = 'number_of_stories'
-CONST_NUMBER_REELS = 'number_of_reels'
-CONST_NUMBER_POSTS = 'number_of_posts'
+#For Apply for Campaign
 CONST_ASKING_PRICE = 'asking_price'
 
 

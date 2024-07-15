@@ -9,36 +9,32 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 CORS(app)
-app.secret_key = 'your_secret_key'  # Necessary for session management
+app.secret_key = 'your_secret_key'
 
 
 db = DatabaseLogic("mongodb+srv://ProjectMainAdmin:SzReRV0ZxjeWm7vN@datastorage1.dlfth1l.mongodb.net/?retryWrites=true&w=majority&appName=DataStorage1")
 
-
-@app.route('/upload_campaign/<company_id>', methods=['POST'])
+@app.route('/api/company/home/create', methods=['POST'])
 def upload_campaign(company_id):
     required_fields = [
-        EntityName.CONST_CAMPAIGN_NAME, EntityName.CONST_BUDGET, EntityName.CONST_CAMPAIGN_CATEGORY,
-        EntityName.CONST_IS_ACTIVE, EntityName.CONST_ABOUT, EntityName.CONST_TARGET_LOCATION,
-        EntityName.CONST_TARGET_GENDER_MALE, EntityName.CONST_TARGET_GENDER_FEMALE, EntityName.CONST_TARGET_GENDER_OTHER,
-        EntityName.CONST_TARGET_AGE_13_17, EntityName.CONST_TARGET_AGE_18_24, EntityName.CONST_TARGET_AGE_25_34,
-        EntityName.CONST_TARGET_AGE_35_44, EntityName.CONST_TARGET_AGE_45_54, EntityName.CONST_TARGET_AGE_55_64,
-        EntityName.CONST_TARGET_AGE_65_PLUS
+        EntityName.CONST_CAMPAIGN_NAME, EntityName.CONST_BUDGET, EntityName.CONST_IS_ACTIVE, EntityName.CONST_ABOUT,
+        EntityName.CONST_TARGET_LOCATION, EntityName.CONST_TARGET_GENDER_MALE, EntityName.CONST_TARGET_GENDER_FEMALE,
+        EntityName.CONST_TARGET_GENDER_OTHER, EntityName.CONST_TARGET_AGE_13_17, EntityName.CONST_TARGET_AGE_18_24,
+        EntityName.CONST_TARGET_AGE_25_34, EntityName.CONST_TARGET_AGE_35_44, EntityName.CONST_TARGET_AGE_45_54,
+        EntityName.CONST_TARGET_AGE_55_64, EntityName.CONST_TARGET_AGE_65_PLUS, EntityName.CONST_CAMPAIGN_GOAL,
+        EntityName.CONST_CAMPAIGN_REELS, EntityName.CONST_CAMPAIGN_POSTS, EntityName.CONST_CAMPAIGN_STORIES
     ]
 
     data = {field: request.json.get(field) for field in required_fields}
 
     # Check if mandatory fields are provided
-    if not data[EntityName.CONST_CAMPAIGN_NAME] or not data[EntityName.CONST_BUDGET] or not data[EntityName.CONST_CAMPAIGN_CATEGORY]:
+    if not data[EntityName.CONST_CAMPAIGN_NAME] or not data[EntityName.CONST_BUDGET] or not data[EntityName.CONST_CAMPAIGN_GOAL]:
         return jsonify({'error': 'Missing required campaign information'}), 400
 
     # Create campaign data
     campaign_data = {
         EntityName.CONST_CAMPAIGN_NAME: data[EntityName.CONST_CAMPAIGN_NAME],
         EntityName.CONST_BUDGET: int(data[EntityName.CONST_BUDGET]),
-        EntityName.CONST_CAMPAIGN_CATEGORY: {
-            'category': data[EntityName.CONST_CAMPAIGN_CATEGORY] == 'true'
-        },
         EntityName.CONST_IS_ACTIVE: data[EntityName.CONST_IS_ACTIVE] == 'true',
         EntityName.CONST_ABOUT: data[EntityName.CONST_ABOUT],
         'target_audience': {
@@ -60,7 +56,14 @@ def upload_campaign(company_id):
                 '65+': int(data[EntityName.CONST_TARGET_AGE_65_PLUS]) if data[EntityName.CONST_TARGET_AGE_65_PLUS] else 0
             }
         },
-        'companyId': ObjectId(company_id)
+        'categories': request.json.get('categories', []),
+        'company_id': session.get(company_id),
+        EntityName.CONST_CAMPAIGN_GOAL: data[EntityName.CONST_CAMPAIGN_GOAL],
+        'campaign_objective': {
+            'reels': int(data[EntityName.CONST_CAMPAIGN_REELS]) if data[EntityName.CONST_CAMPAIGN_REELS] else 0,
+            'posts': int(data[EntityName.CONST_CAMPAIGN_POSTS]) if data[EntityName.CONST_CAMPAIGN_POSTS] else 0,
+            'stories': int(data[EntityName.CONST_CAMPAIGN_STORIES]) if data[EntityName.CONST_CAMPAIGN_STORIES] else 0
+        }
     }
 
     # Save campaign data to MongoDB
@@ -69,29 +72,23 @@ def upload_campaign(company_id):
     # Return the inserted document ID
     return jsonify({'id': str(result.inserted_id), 'campaign_data': campaign_data}), 201
 
-
-@app.route('/apply_for_campaign/<campaign_id>/<influencer_id>', methods=['POST'])
+@app.route('/api/influencer/home/explore/<campaign_id>/apply', methods=['POST'])
 def apply_for_campaign(campaign_id, influencer_id):
     required_fields = [
-        EntityName.CONST_NUMBER_STORIES, EntityName.CONST_NUMBER_REELS, EntityName.CONST_NUMBER_POSTS, EntityName.CONST_ASKING_PRICE
+        EntityName.CONST_ASKING_PRICE
     ]
 
     data = {field: request.json.get(field) for field in required_fields}
 
     # Check if mandatory fields are provided
-    if not data[EntityName.CONST_NUMBER_STORIES] or not data[EntityName.CONST_NUMBER_REELS] or not data[EntityName.CONST_NUMBER_POSTS] or not data[EntityName.CONST_ASKING_PRICE]:
+    if not data[EntityName.CONST_ASKING_PRICE]:
         return jsonify({'error': 'Missing required application information'}), 400
 
     # Create application data
     application_data = {
         'campaignId': ObjectId(campaign_id),
-        'influencerId': ObjectId(influencer_id),
-        'offer': {
-            'stories': int(data[EntityName.CONST_NUMBER_STORIES]),
-            'reels': int(data[EntityName.CONST_NUMBER_REELS]),
-            'posts': int(data[EntityName.CONST_NUMBER_POSTS])
-        },
-        EntityName.CONST_ASKING_PRICE: int(data[EntityName.CONST_ASKING_PRICE])
+        'influencerId': session.get(influencer_id),
+       EntityName.CONST_ASKING_PRICE: int(data[EntityName.CONST_ASKING_PRICE])
     }
 
     # Save application data to MongoDB
