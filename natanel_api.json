@@ -73,3 +73,35 @@
     "result": true,//may be false
     "message": "empty string if success, else failure message description"
 }
+
+
+//upload_campaign
+URL: http://127.0.0.1:5001/upload_campaign/60b8d295fbd2db4d1c8b4567
+
+{
+    "campaign_name": "Summer Sale Campaign",
+    "budget": "5000",
+    "campaign_category": "true",
+    "is_active": "true",
+    "about": "A campaign to promote our summer sale.",
+    "target_location": "1",
+    "target_gender_male": "50",
+    "target_gender_female": "40",
+    "target_gender_other": "10",
+    "target_age_13_17": "5",
+    "target_age_18_24": "20",
+    "target_age_25_34": "30",
+    "target_age_35_44": "25",
+    "target_age_45_54": "10",
+    "target_age_55_64": "5",
+    "target_age_65_plus": "5"
+}
+
+// apply_for_campaign
+URL: http://127.0.0.1:5001/apply_for_campaign/60b8d295fbd2db4d1c8b4568/60b8d295fbd2db4d1c8b4569
+{
+"number_of_stories": "3",
+"number_of_reels": "2",
+"number_of_posts": "5",
+"asking_price": "2000"
+}
