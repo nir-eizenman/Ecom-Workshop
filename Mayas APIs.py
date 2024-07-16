@@ -1,3 +1,5 @@
+# The APIS here: upload_campaign, apply_for_campaign, explore_campaigns
+
 from flask import Flask, jsonify, render_template, request, redirect, url_for, session
 from flask_session import Session
 from flask_cors import CORS
@@ -11,8 +13,9 @@ Session(app)
 CORS(app)
 app.secret_key = 'your_secret_key'
 
+db = DatabaseLogic(
+    "mongodb+srv://ProjectMainAdmin:SzReRV0ZxjeWm7vN@datastorage1.dlfth1l.mongodb.net/?retryWrites=true&w=majority&appName=DataStorage1")
 
-db = DatabaseLogic("mongodb+srv://ProjectMainAdmin:SzReRV0ZxjeWm7vN@datastorage1.dlfth1l.mongodb.net/?retryWrites=true&w=majority&appName=DataStorage1")
 
 @app.route('/api/company/home/create', methods=['POST'])
 def upload_campaign(company_id):
@@ -28,7 +31,8 @@ def upload_campaign(company_id):
     data = {field: request.json.get(field) for field in required_fields}
 
     # Check if mandatory fields are provided
-    if not data[EntityName.CONST_CAMPAIGN_NAME] or not data[EntityName.CONST_BUDGET] or not data[EntityName.CONST_CAMPAIGN_GOAL]:
+    if not data[EntityName.CONST_CAMPAIGN_NAME] or not data[EntityName.CONST_BUDGET] or not data[
+        EntityName.CONST_CAMPAIGN_GOAL]:
         return jsonify({'error': 'Missing required campaign information'}), 400
 
     # Create campaign data
@@ -39,12 +43,16 @@ def upload_campaign(company_id):
         EntityName.CONST_ABOUT: data[EntityName.CONST_ABOUT],
         'target_audience': {
             'location': {
-                'country': int(data[EntityName.CONST_TARGET_LOCATION]) if data[EntityName.CONST_TARGET_LOCATION] else None
+                'country': int(data[EntityName.CONST_TARGET_LOCATION]) if data[
+                    EntityName.CONST_TARGET_LOCATION] else None
             },
             'gender': {
-                'male': int(data[EntityName.CONST_TARGET_GENDER_MALE]) if data[EntityName.CONST_TARGET_GENDER_MALE] else 0,
-                'female': int(data[EntityName.CONST_TARGET_GENDER_FEMALE]) if data[EntityName.CONST_TARGET_GENDER_FEMALE] else 0,
-                'other': int(data[EntityName.CONST_TARGET_GENDER_OTHER]) if data[EntityName.CONST_TARGET_GENDER_OTHER] else 0
+                'male': int(data[EntityName.CONST_TARGET_GENDER_MALE]) if data[
+                    EntityName.CONST_TARGET_GENDER_MALE] else 0,
+                'female': int(data[EntityName.CONST_TARGET_GENDER_FEMALE]) if data[
+                    EntityName.CONST_TARGET_GENDER_FEMALE] else 0,
+                'other': int(data[EntityName.CONST_TARGET_GENDER_OTHER]) if data[
+                    EntityName.CONST_TARGET_GENDER_OTHER] else 0
             },
             'age': {
                 '13-17': int(data[EntityName.CONST_TARGET_AGE_13_17]) if data[EntityName.CONST_TARGET_AGE_13_17] else 0,
@@ -53,7 +61,8 @@ def upload_campaign(company_id):
                 '35-44': int(data[EntityName.CONST_TARGET_AGE_35_44]) if data[EntityName.CONST_TARGET_AGE_35_44] else 0,
                 '45-54': int(data[EntityName.CONST_TARGET_AGE_45_54]) if data[EntityName.CONST_TARGET_AGE_45_54] else 0,
                 '55-64': int(data[EntityName.CONST_TARGET_AGE_55_64]) if data[EntityName.CONST_TARGET_AGE_55_64] else 0,
-                '65+': int(data[EntityName.CONST_TARGET_AGE_65_PLUS]) if data[EntityName.CONST_TARGET_AGE_65_PLUS] else 0
+                '65+': int(data[EntityName.CONST_TARGET_AGE_65_PLUS]) if data[
+                    EntityName.CONST_TARGET_AGE_65_PLUS] else 0
             }
         },
         'categories': request.json.get('categories', []),
@@ -72,6 +81,7 @@ def upload_campaign(company_id):
     # Return the inserted document ID
     return jsonify({'id': str(result.inserted_id), 'campaign_data': campaign_data}), 201
 
+
 @app.route('/api/influencer/home/explore/<campaign_id>/apply', methods=['POST'])
 def apply_for_campaign(campaign_id, influencer_id):
     required_fields = [
@@ -88,7 +98,7 @@ def apply_for_campaign(campaign_id, influencer_id):
     application_data = {
         'campaignId': ObjectId(campaign_id),
         'influencerId': session.get(influencer_id),
-       EntityName.CONST_ASKING_PRICE: int(data[EntityName.CONST_ASKING_PRICE])
+        EntityName.CONST_ASKING_PRICE: int(data[EntityName.CONST_ASKING_PRICE])
     }
 
     # Save application data to MongoDB
@@ -97,5 +107,24 @@ def apply_for_campaign(campaign_id, influencer_id):
     # Return the inserted document ID
     return jsonify({'id': str(result.inserted_id), 'application_data': application_data}), 201
 
+
+# Influencer explore page for active campaigns
+@app.route('/api/influencer/home/explore', methods=['GET'])
+def explore_campaigns():
+    influencer_id = session.get('influencer_id')
+    if not influencer_id:
+        return jsonify({'error': 'Influencer not authenticated'}), 401
+
+    active_campaigns = db.find('campaigns', {EntityName.CONST_IS_ACTIVE: True})
+    applied_campaigns = db.find('applications', {'influencer_id': influencer_id})
+
+    applied_campaign_ids = [app['campaign_id'] for app in applied_campaigns]
+
+    available_campaigns = [campaign for campaign in active_campaigns if campaign['_id'] not in applied_campaign_ids]
+
+    return jsonify({'available_campaigns': available_campaigns}), 200
+
+
 if __name__ == '__main__':
     app.run(debug=True)
+

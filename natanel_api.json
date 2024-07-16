@@ -119,3 +119,9 @@ URL for postman: http://127.0.0.1:5001/api/influencer/home/explore/6684648687d69
 {
 "asking_price": "2000"
 }
+
+// explore active campaigns influencer
+URL for postman: http://127.0.0.1:5001/api/influencer/home/explore
+Content-Type: application/json
+Cookie: session=<session_token>
+// We need to update this according to how the session ID is built, I wasn't sure about it
