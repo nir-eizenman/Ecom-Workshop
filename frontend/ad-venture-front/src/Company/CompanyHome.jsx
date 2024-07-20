@@ -1,32 +1,111 @@
 import React, { useState } from 'react';
-import { Container, Box, Typography, Paper, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, List, ListItem, ListItemText, ListItemSecondaryAction, Divider } from '@mui/material';
+import {
+  Container,
+  Card,
+  Box,
+  Typography,
+  Paper,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+  List,
+  ListItem,
+  ListItemText,
+  ButtonBase,
+  CardContent,
+  CardMedia,
+  Checkbox,
+  FormControlLabel
+} from '@mui/material';
+import GeneralForm from '../GeneralForm'
+
+const scheme = {
+  "campaign_name": {type: 'string', label: 'Campaign Name'},
+  "budget": {type: 'int', label: 'Budget'},
+  "is_active": {type: 'boolean', label: 'Active'},
+  "about": {type: 'string', label: 'About'},
+  "target_audience": {
+    location: { 
+      type: 'multiselectpercent', 
+      options: ['Israel', 'Egypt', 'Jordan', 'Italy', 'France', 'Narnia', 'Wakanda'],
+      label: 'Countries Followers Percentage'
+    
+    },
+    "gender": {
+      type: 'percent', 
+      options: ["male", "female", "other"],
+      label: 'Gender'
+    },
+    "age": { 
+      type: 'percent',
+      label: 'Age',
+      options: ["13-17", "18-24",  "25-34", "35-44", "45-54", "55-64", "65+"]
+    }
+  },
+  "categories": {
+    type: 'multiselect',
+    label: 'Categories',
+    options: ['Sports', 'Fashion', 'Food', 'Travels', 'Books', 'Other']
+  },
+  // "company_id": {type: 'string', label},
+  "campaign_goal": {type: 'string', label: 'Campaign Goal'},
+  "campaign_objective": { 
+    "reels": {type: 'int', label: 'Reels'}, 
+    "posts": {type: 'int', label: 'Posts'}, 
+    "stories": {type: 'int', label: 'Stories'} 
+  }
+}
 
 const CompanyHome = () => {
-  // Mock data for campaigns and bids
   const [campaigns, setCampaigns] = useState([
-    { 
-      id: 1, 
-      name: 'Campaign 1', 
-      description: 'Description of Campaign 1', 
+    {
+      id: 1,
+      name: 'Campaign 1',
+      description: 'Description of Campaign 1',
+      maxPayment: '1500',
+      category: 'Fashion',
+      productImage: 'https://ynet-pic1.yit.co.il/cdn-cgi/image/format=auto/picserver5/crop_images/2024/07/03/BJbZiulXwA/BJbZiulXwA_0_49_1000_563_0_medium.jpg',
       bids: [
         { id: 1, influencer: 'Influencer 1', bid: '1000' },
-        { id: 2, influencer: 'Influencer 2', bid: '1200' },
-      ] 
+        { id: 2, influencer: 'Influencer 2', bid: '1200' }
+      ]
     },
-    { 
-      id: 2, 
-      name: 'Campaign 2', 
-      description: 'Description of Campaign 2', 
+    {
+      id: 2,
+      name: 'Campaign 2',
+      description: 'Description of Campaign 2',
+      maxPayment: '2000',
+      category: 'Tech',
+      productImage: '',
       bids: [
         { id: 3, influencer: 'Influencer 3', bid: '800' },
-        { id: 4, influencer: 'Influencer 4', bid: '950' },
-      ] 
-    },
+        { id: 4, influencer: 'Influencer 4', bid: '950' }
+      ]
+    }
   ]);
 
   const [open, setOpen] = useState(false);
   const [bidOpen, setBidOpen] = useState(false);
-  const [newCampaign, setNewCampaign] = useState({ name: '', description: '' });
+  const [newCampaign, setNewCampaign] = useState({
+    campaign_name: '',
+    budget: '',
+    is_active: false,
+    about: '',
+    target_audience: {
+      
+      location: {},
+      gender: { male: '', female: '', other: '' },
+      age: { '13-17': '', '18-24': '', '25-34': '', '35-44': '', '45-54': '', '55-64': '', '65+': '' },
+    },
+    categories: [],
+    // company_id: '',
+    campaign_goal: '',
+    campaign_objective: { reels: 0, posts: 0, stories: 0 }
+  });
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [selectedBid, setSelectedBid] = useState(null);
 
@@ -44,15 +123,70 @@ const CompanyHome = () => {
   };
 
   const handleChange = (e) => {
-    setNewCampaign({ ...newCampaign, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    const [section, field] = name.split('.');
+    if (section && field) {
+      setNewCampaign((prevCampaign) => ({
+        ...prevCampaign,
+        [section]: {
+          ...prevCampaign[section],
+          [field]: value
+        }
+      }));
+    } else {
+      setNewCampaign({
+        ...newCampaign,
+        [name]: value
+      });
+    }
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setNewCampaign({
+      ...newCampaign,
+      [name]: checked
+    });
   };
 
   const handleAddCampaign = () => {
     setCampaigns([
-      ...campaigns,
-      { id: campaigns.length + 1, name: newCampaign.name, description: newCampaign.description, bids: [] }
+      ...campaigns, {
+        id: campaigns.length + 1,
+        name: newCampaign.campaign_name,
+        description: newCampaign.about,
+        maxPayment: newCampaign.budget,
+        category: newCampaign.categories,
+        productImage: '', // Add a default or input for the image if needed
+        bids: []
+      }
     ]);
-    setNewCampaign({ name: '', description: '' });
+    fetch('http://127.0.0.1:5000/api/company/home/create', {
+      method: 'POST',
+      body: JSON.stringify({...newCampaign, is_active: newCampaign.is_active.toString()}),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    }).then(resp => resp.text())
+      .then(resp => console.log(resp))
+      
+    setNewCampaign({
+      campaign_name: '',
+      budget: '',
+      is_active: false,
+      about: '',
+      target_audience: {
+         
+        location: {},
+        gender: { male: '', female: '', other: '' },
+        age: { '13-17': '', '18-24': '', '25-34': '', '35-44': '', '45-54': '', '55-64': '', '65+': '' },
+      },
+      categories: [],
+      // company_id: '',
+      campaign_goal: '',
+      campaign_objective: { reels: '', posts: '', stories: '' }
+    });
     handleClose();
   };
 
@@ -70,8 +204,15 @@ const CompanyHome = () => {
   return (
     <Container sx={{ p: 2 }}>
       <Box sx={{ textAlign: 'center', mb: 4 }}>
-        <Typography variant="h4" sx={{ mb: 2 }}>
-          Company Home
+        <Typography
+          variant="h2"
+          sx={{
+            background: 'linear-gradient(to right, #f00, #9500ff)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}
+        >
+          Sign Up Influencer
         </Typography>
         <Typography variant="subtitle1" color="textSecondary">
           Welcome to your company dashboard. Manage your campaigns below.
@@ -83,14 +224,43 @@ const CompanyHome = () => {
       </Typography>
       <List>
         {campaigns.map((campaign) => (
-          <Paper elevation={6} sx={{ m: 3 }} key={campaign.id} onClick={() => handleCampaignClick(campaign)}>
-            <ListItem>
-              <ListItemText
-                primary={campaign.name}
-                secondary={campaign.description}
-              />
-            </ListItem>
-          </Paper>
+          <Card
+            elevation={6}
+            sx={{ m: 3 }}
+            key={campaign.id}
+            fullWidth
+          >
+            <ButtonBase
+              onClick={() => handleCampaignClick(campaign)}
+              sx={{ width: '100%' }}
+            >
+              <ListItem fullWidth>
+
+                <CardContent>
+                  <ListItemText
+                    primary={campaign.name}
+                    secondary={campaign.description}
+                    primaryTypographyProps={{ fontSize: '2vw' }}
+                    secondaryTypographyProps={{ fontSize: '1vw' }}
+                  />
+                  <Typography variant="body2" color="textSecondary">
+                    Max Payment: {campaign.maxPayment}
+                  </Typography>
+                  <Typography variant="body2" color="textSecondary">
+                    Category: {campaign.category}
+                  </Typography>
+                  {campaign.productImage && (
+                    <CardMedia
+                      component="img"
+                      sx={{ width: 151 }}
+                      image={campaign.productImage}
+                      alt={campaign.name}
+                    />
+                  )}
+                </CardContent>
+              </ListItem>
+            </ButtonBase>
+          </Card>
         ))}
       </List>
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
@@ -105,25 +275,7 @@ const CompanyHome = () => {
           <DialogContentText>
             Please fill in the details of the new campaign.
           </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            name="name"
-            label="Campaign Name"
-            type="text"
-            fullWidth
-            value={newCampaign.name}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="description"
-            label="Campaign Description"
-            type="text"
-            fullWidth
-            value={newCampaign.description}
-            onChange={handleChange}
-          />
+          <GeneralForm schema={scheme} formData={newCampaign} setFormData={setNewCampaign} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
@@ -142,7 +294,11 @@ const CompanyHome = () => {
             Review and manage bids from influencers for this campaign.
           </DialogContentText>
           {selectedCampaign?.bids.map((bid) => (
-            <Paper elevation={3} sx={{ p: 2, mb: 2 }} key={bid.id}>
+            <Paper
+              elevation={3}
+              sx={{ p: 2, mb: 2 }}
+              key={bid.id}
+            >
               <Typography variant="subtitle1">
                 Influencer: {bid.influencer}
               </Typography>

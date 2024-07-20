@@ -7,6 +7,7 @@ import AdVentureTheme from './themes/AdVentureTheme'
 import { ThemeProvider } from '@mui/material';
 import SignUpCompany from './SignUp/SignUpCompany';
 import CompanyHome from './Company/CompanyHome';
+import InfluencerSearch from './Influencer/InfluencerSearch';
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/company/home" element={<CompanyHome />} />
           <Route path="/influencer/home" element={<InfluencerHome />} />
+          <Route path="/influencer/search" element={<InfluencerSearch />} />
           <Route path="/signup/influencer" element={<SignUpInfluencer />} />
           <Route path="/signup/company" element={<SignUpCompany />} />
         </Routes>
