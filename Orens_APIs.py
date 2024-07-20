@@ -21,7 +21,7 @@ database = db.client['Database']
 
 
 # End campaign - POST - /api/company/home/<campaignId>/end
-@app.route("/company/home/<campaignId>/end", methods=['POST'])
+@app.route("/api/company/home/<campaignId>/end", methods=['POST'])
 def company_home(campaignId):
     # get the campaign by id
     collection = database["Campaigns"]
@@ -36,7 +36,7 @@ def company_home(campaignId):
 
 
 # Campaign results - GET - /api/company/home/<campaignId>/results
-@app.route("/company/home/<campaignId>/results", methods=['GET'])
+@app.route("/api/company/home/<campaignId>/results", methods=['GET'])
 def company_home_results(campaignId):
     # get the campaign by id
     collection = database["Results"]
@@ -53,7 +53,7 @@ def company_home_results(campaignId):
 
 
 # Campaign choose from results - POST - /api/company/home/<campaignId>/results/choose (body will contain the result number chosen)
-@app.route("/company/home/<campaignId>/results/choose", methods=['POST'])
+@app.route("/api/company/home/<campaignId>/results/choose", methods=['POST'])
 def company_home_results_choose(campaignId):
     # get the campaign by id
     collection = database["Results"]

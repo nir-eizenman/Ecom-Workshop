@@ -20,7 +20,7 @@ database = db.client['Database']
 
 
 # Company home - GET - /api/company/home - return value: 5 last campaign (sorted by active first) (then by creation time)
-@app.route("/company/home", methods=['GET'])
+@app.route("/api/company/home", methods=['GET'])
 def company_home():
     # get the last 5 campaigns of the company
     collection = database["Campaigns"]
@@ -36,7 +36,7 @@ def company_home():
 
 
 # Influencer home - GET - /api/influencer/home - return value: 5 last campaign that the influencer was chosen for (sorted by active first) (then by creation time)
-@app.route("/influencer/home", methods=['GET'])
+@app.route("/api/influencer/home", methods=['GET'])
 def influencer_home():
     # get the last 5 campaigns of the influencer
     collection = database["Campaigns"]
