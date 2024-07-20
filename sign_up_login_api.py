@@ -18,49 +18,50 @@ app.secret_key = 'your_secret_key'  # Necessary for session management
 db = DatabaseLogic("mongodb+srv://ProjectMainAdmin:SzReRV0ZxjeWm7vN@datastorage1.dlfth1l.mongodb.net/?retryWrites=true&w=majority&appName=DataStorage1")
 
 #TODO there is a to do in this function
-@app.route('/signup/influencer', methods=['POST'])
+@app.route('/api/signup/influencer', methods=['POST'])
 def signup_influencer():
     required_fields = [
         EntityName.CONST_EMAIL,
         EntityName.CONST_INFLUENCER_FULL_NAME,
         EntityName.CONST_PASSWORD,
-        EntityName.CONST_PAYMENT_METHOD,
-        EntityName.CONST_INFLUENCER_SOCIAL_NETWORK_LINKS,
-        EntityName.CONST_INFLUENCER_FOLLOWER_INTEREST_TYPES,
-        EntityName.CONST_INFLUENCER_FOLLOWERS_LOCATION,
-        EntityName.CONST_INFLUENCER_FOLLOWER_AGE,
-        EntityName.CONST_INFLUENCER_FOLLOWER_GENDER,
-        EntityName.CONST_INFLUENCER_EXPOSURE_CONTENT,
+        #EntityName.CONST_PAYMENT_METHOD,
+        # EntityName.CONST_INFLUENCER_SOCIAL_NETWORK_LINKS,
+        # EntityName.CONST_INFLUENCER_FOLLOWER_INTEREST_TYPES,
+        # EntityName.CONST_INFLUENCER_FOLLOWERS_LOCATION,
+        # EntityName.CONST_INFLUENCER_FOLLOWER_AGE,
+        # EntityName.CONST_INFLUENCER_FOLLOWER_GENDER,
+        # EntityName.CONST_INFLUENCER_EXPOSURE_CONTENT,
         EntityName.CONST_INFLUENCER_AGE,
-        EntityName.CONST_INFLUENCER_GENDER
+        EntityName.CONST_INFLUENCER_GENDER,
+        EntityName.CONST_INSTAGRAM
     ]
     
     data = {field: request.json[field] for field in required_fields}
 
     #TODO - maybe use exceptions so I will know what was the problem and describe it in the message
     #if adding user failed 
-    if not db.addUser(data, UserType.Influencer):
+    if not db.addUser(data, UserType.Influencers):
         return jsonify(
             {
             "result": False,
             "message": "User influencer failed to create"
-            }), 500
+            }), 406
 
     #addign user succeded
     return jsonify(
             {
             "result": True,
             "message": ""
-            }), 200
+            }), 201
 
 #TODO there is a to do in this function
-@app.route('/signup/company', methods=['POST'])
+@app.route('/api/signup/company', methods=['POST'])
 def signup_company():
     required_fields = [
         EntityName.CONST_EMAIL,
         EntityName.CONST_COMPANY_NAME,
         EntityName.CONST_PASSWORD,
-        EntityName.CONST_PAYMENT_METHOD,
+        #EntityName.CONST_PAYMENT_METHOD,
         EntityName.CONST_COMPANY_SITE_LINK,
         EntityName.CONST_COMPANY_ABOUT_US
     ]
@@ -69,23 +70,23 @@ def signup_company():
 
     #TODO - maybe use exceptions so I will know what was the problem and describe it in the message
     #if adding user failed 
-    if not db.addUser(data, UserType.Company):
+    if not db.addUser(data, UserType.Companies):
         return jsonify(
             {
             "result": False,
             "message": "User company failed to create"
-            }), 500
+            }), 406
 
     #addign user succeded
     return jsonify(
             {
             "result": True,
             "message": ""
-            }), 200
+            }), 201
 
 
 #TODO? add logout?
-@app.route('/login', methods=['POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
     email = request.json[EntityName.CONST_EMAIL]
     password = request.json[EntityName.CONST_PASSWORD]
@@ -119,7 +120,7 @@ def login():
 
 
 
-    if user_data and user_data['password'] == password:
+    if user_data and user_data[EntityName.CONST_PASSWORD] == password:
         randSessionToken = id_generator()
         session[EntityName.CONST_RANDOM_SESSION_TOKEN] = randSessionToken
         session[EntityName.CONST_EMAIL] = user_data[EntityName.CONST_EMAIL]
@@ -141,10 +142,10 @@ def login():
             {
             "result": False,
             "message": "Invalid credentials"
-            }), 400
+            }), 401
 
 
-@app.route("/logout")
+@app.route("/api/logout")
 def logout():
     db.deleteSessionToken(session[EntityName.CONST_RANDOM_SESSION_TOKEN])
     session[EntityName.CONST_RANDOM_SESSION_TOKEN] = ""

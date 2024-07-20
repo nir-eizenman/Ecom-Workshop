@@ -28,17 +28,33 @@ CONST_RANDOM_SESSION_TOKEN = 'random_session_token'
 CONST_INSTAGRAM = 'instagram'
 
 
+
 #For Upload Campaign 
 CONST_CAMPAIGN_NAME = 'campaign_name'
-CONST_MAX_PAYMENT = 'max_payment'
+CONST_BUDGET = 'budget'
 CONST_CAMPAIGN_CATEGORY = 'campaign_category'
-CONST_PRODUCT_IMAGE = 'product_image'
+CONST_IS_ACTIVE = 'is_active'
+CONST_ABOUT = 'about'
+CONST_TARGET_LOCATION = 'target_location'
+CONST_TARGET_GENDER_MALE = 'target_gender_male'
+CONST_TARGET_GENDER_FEMALE = 'target_gender_female'
+CONST_TARGET_GENDER_OTHER = 'target_gender_other'
+CONST_TARGET_AGE_13_17 = 'target_age_13_17'
+CONST_TARGET_AGE_18_24 = 'target_age_18_24'
+CONST_TARGET_AGE_25_34 = 'target_age_25_34'
+CONST_TARGET_AGE_35_44 = 'target_age_35_44'
+CONST_TARGET_AGE_45_54 = 'target_age_45_54'
+CONST_TARGET_AGE_55_64 = 'target_age_55_64'
+CONST_TARGET_AGE_65_PLUS = 'target_age_65_plus'
+CONST_CAMPAIGN_GOAL = 'campaign_goal'
+CONST_CAMPAIGN_REELS = 'campign_reels'
+CONST_CAMPAIGN_POSTS = 'campaign_posts'
+CONST_CAMPAIGN_STORIES = 'campaign_stories'
 
-#For Apply for Campaign 
-CONST_NUMBER_STORIES = 'number_of_stories'
-CONST_NUMBER_POSTS = 'number_of_posts'
-CONST_NUMBER_REELS = 'number_of_reels'
-CONST_MIN_PRICE = 'minimum_asking_price'
+
+#For Apply for Campaign
+CONST_ASKING_PRICE = 'asking_price'
+
 
 
 
