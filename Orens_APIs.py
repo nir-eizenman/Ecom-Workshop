@@ -7,7 +7,7 @@ from DatabaseLogic import DatabaseLogic
 import string
 import EntityName
 import random
-from Algorithm import algorithm_prep, calculate_score, knapsack
+from Algorithm import algorithm_prep, knapsack
 
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
