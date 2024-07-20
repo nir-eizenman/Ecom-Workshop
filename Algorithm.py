@@ -68,13 +68,13 @@ def calculate_score(influencer, campaign):
     # and the campaign target audience
     gender_score = 0
     for gender, percentage in influencer['instagram']['gender_stats'].items():
-        gender_score += min(percentage, int(campaign['target_audience']['gender'][gender]))
+        gender_score += min(percentage, int(campaign['target_audience']['gender'].get(gender, 0)))
     age_score = 0
     for age, percentage in influencer['instagram']['age_stats'].items():
-        age_score += min(percentage, int(campaign['target_audience']['age'][age]))
+        age_score += min(percentage, int(campaign['target_audience']['age'].get(age,0)))
     location_score = 0
     for location, percentage in influencer['instagram']['followers_location'].items():
-        location_score += min(percentage, int(campaign['target_audience']['location'][location]))
+        location_score += min(percentage, int(campaign['target_audience']['location'].get(location,0)))
 
     # we'll set the score for the followers categories of interest to be:
     # check how many of the influencer's followers categories of interest are in the campaign categories
