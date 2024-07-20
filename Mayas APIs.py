@@ -20,7 +20,7 @@ db = DatabaseLogic(
 
 
 @app.route('/api/company/home/create', methods=['POST'])
-def upload_campaign(company_id):
+def upload_campaign():
     required_fields = [
         EntityName.CONST_CAMPAIGN_NAME, EntityName.CONST_BUDGET, EntityName.CONST_IS_ACTIVE, EntityName.CONST_ABOUT,
         EntityName.CONST_TARGET_LOCATION, EntityName.CONST_TARGET_GENDER_MALE, EntityName.CONST_TARGET_GENDER_FEMALE,
@@ -68,7 +68,7 @@ def upload_campaign(company_id):
             }
         },
         'categories': request.json.get('categories', []),
-        'company_id': session.get(company_id),
+        'company_id': "6695650dd312588ddbf599fe",
         EntityName.CONST_CAMPAIGN_GOAL: data[EntityName.CONST_CAMPAIGN_GOAL],
         'campaign_objective': {
             'reels': int(data[EntityName.CONST_CAMPAIGN_REELS]) if data[EntityName.CONST_CAMPAIGN_REELS] else 0,
@@ -84,7 +84,7 @@ def upload_campaign(company_id):
     result = campaigns_collection.insert_one(campaign_data)
 
     # Return the inserted document ID
-    return jsonify({'id': str(result.inserted_id), 'campaign_data': campaign_data}), 201
+    return jsonify(""), 201
 
 
 @app.route('/api/influencer/home/explore/<campaign_id>/apply', methods=['POST'])
