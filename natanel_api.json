@@ -82,13 +82,15 @@ URL for postman: http://127.0.0.1:5000/api/company/home/create
 
 }
 {
-"campaign_name": "Summer Sale Campaign",
+"campaign_name": "Best Campaign Ever",
 "budget": "5000",
 "is_active": "true",
 "about": "A campaign to promote our summer sale.",
 "target_audience": {
 "location": {
-"country": "1"
+"Israel": "40",
+"USA": "30",
+"UK": "30"
 },
 "gender": {
 "male": "50",
@@ -105,7 +107,7 @@ URL for postman: http://127.0.0.1:5000/api/company/home/create
 "65+": "5"
 }
 },
-"categories": ["category1", "category2"],
+"categories": ["fashion", "lifestyle"],
 "campaign_goal": "Increase Sales",
 "campaign_objective": {
 "reels": "10",
