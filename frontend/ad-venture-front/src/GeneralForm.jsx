@@ -130,6 +130,14 @@ const GeneralForm = ({ schema, formData, setFormData }) => {
         );
       case 'multiselectpercent':
         const selectedOptions = _.get(formData, fieldKey, []);
+        const handleMultiselectPercentChange = (event) => {
+          const { name, value: inputValue } = event.target;
+          setFormData(prevState => {
+            const newFormData = { ...prevState };
+            _.set(newFormData, name, inputValue);
+            return newFormData;
+          });
+        };
         return (
           <>
             <FormControl fullWidth>
@@ -137,7 +145,14 @@ const GeneralForm = ({ schema, formData, setFormData }) => {
               <Select
                 multiple
                 value={selectedOptions}
-                onChange={handleChange}
+                onChange={(event) => {
+                  const { name, value: selectedValues } = event.target;
+                  setFormData(prevState => {
+                    const newFormData = { ...prevState };
+                    _.set(newFormData, name, selectedValues);
+                    return newFormData;
+                  });
+                }}
                 input={<OutlinedInput label={value.label} />}
                 renderValue={(selected) => (
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
@@ -163,7 +178,7 @@ const GeneralForm = ({ schema, formData, setFormData }) => {
                 type="number"
                 fullWidth
                 value={_.get(formData, `${fieldKey}.${option}`, '')}
-                onChange={handleChange}
+                onChange={handleMultiselectPercentChange}
               />
             ))}
           </>

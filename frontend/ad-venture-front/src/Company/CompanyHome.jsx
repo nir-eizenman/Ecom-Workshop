@@ -17,8 +17,49 @@ import {
   ListItemText,
   ButtonBase,
   CardContent,
-  CardMedia
+  CardMedia,
+  Checkbox,
+  FormControlLabel
 } from '@mui/material';
+import GeneralForm from '../GeneralForm'
+
+const scheme = {
+  "campaign_name": {type: 'string', label: 'Campaign Name'},
+  "budget": {type: 'int', label: 'Budget'},
+  "is_active": {type: 'boolean', label: 'Active'},
+  "about": {type: 'string', label: 'About'},
+  "target_audience": {
+    location: { 
+      countries: {
+        type: 'multiselectpercent', 
+        options: ['Israel', 'Egypt', 'Jordan', 'Italy', 'France', 'Narnia', 'Wakanda'],
+        label: 'Countries Followers Percentage'
+      } 
+    },
+    "gender": {
+      type: 'percent', 
+      options: ["male", "female", "other"],
+      label: 'Gender'
+    },
+    "age": { 
+      type: 'percent',
+      label: 'Age',
+      options: ["13-17", "18-24",  "25-34", "35-44", "45-54", "55-64", "65+"]
+    }
+  },
+  "categories": {
+    type: 'multiselect',
+    label: 'Categories',
+    options: ['Sports', 'Fashion', 'Food', 'Travels', 'Books', 'Other']
+  },
+  // "company_id": {type: 'string', label},
+  "campaign_goal": {type: 'string', label: 'Campaign Goal'},
+  "campaign_objective": { 
+    "reels": {type: 'int', label: 'Reels'}, 
+    "posts": {type: 'int', label: 'Posts'}, 
+    "stories": {type: 'int', label: 'Stories'} 
+  }
+}
 
 const CompanyHome = () => {
   const [campaigns, setCampaigns] = useState([
@@ -50,7 +91,23 @@ const CompanyHome = () => {
 
   const [open, setOpen] = useState(false);
   const [bidOpen, setBidOpen] = useState(false);
-  const [newCampaign, setNewCampaign] = useState({ name: '', description: '', maxPayment: '', category: '', productImage: '' });
+  const [newCampaign, setNewCampaign] = useState({
+    campaign_name: '',
+    budget: '',
+    is_active: '',
+    about: '',
+    target_audience: {
+      location: { 
+        countries: []
+      },
+      gender: { male: '', female: '', other: '' },
+      age: { '13-17': '', '18-24': '', '25-34': '', '35-44': '', '45-54': '', '55-64': '', '65+': '' },
+    },
+    categories: [],
+    company_id: '',
+    campaign_goal: '',
+    campaign_objective: { reels: '', posts: '', stories: '' }
+  });
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [selectedBid, setSelectedBid] = useState(null);
 
@@ -68,9 +125,29 @@ const CompanyHome = () => {
   };
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
+    const [section, field] = name.split('.');
+    if (section && field) {
+      setNewCampaign((prevCampaign) => ({
+        ...prevCampaign,
+        [section]: {
+          ...prevCampaign[section],
+          [field]: value
+        }
+      }));
+    } else {
+      setNewCampaign({
+        ...newCampaign,
+        [name]: value
+      });
+    }
+  };
+
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
     setNewCampaign({
       ...newCampaign,
-      [e.target.name]: e.target.value
+      [name]: checked
     });
   };
 
@@ -78,15 +155,30 @@ const CompanyHome = () => {
     setCampaigns([
       ...campaigns, {
         id: campaigns.length + 1,
-        name: newCampaign.name,
-        description: newCampaign.description,
-        maxPayment: newCampaign.maxPayment,
-        category: newCampaign.category,
-        productImage: newCampaign.productImage,
+        name: newCampaign.campaign_name,
+        description: newCampaign.about,
+        maxPayment: newCampaign.budget,
+        category: newCampaign.categories,
+        productImage: '', // Add a default or input for the image if needed
         bids: []
       }
     ]);
-    setNewCampaign({ name: '', description: '', maxPayment: '', category: '', productImage: '' });
+    // fetch('localhost:5000/api/company/create')
+    setNewCampaign({
+      campaign_name: '',
+      budget: '',
+      is_active: '',
+      about: '',
+      target_audience: {
+        location: { country: '' },
+        gender: { male: '', female: '', other: '' },
+        age: { '13-17': '', '18-24': '', '25-34': '', '35-44': '', '45-54': '', '55-64': '', '65+': '' }
+      },
+      categories: '',
+      company_id: '',
+      campaign_goal: '',
+      campaign_objective: { reels: '', posts: '', stories: '' }
+    });
     handleClose();
   };
 
@@ -175,52 +267,7 @@ const CompanyHome = () => {
           <DialogContentText>
             Please fill in the details of the new campaign.
           </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            name="name"
-            label="Campaign Name"
-            type="text"
-            fullWidth
-            value={newCampaign.name}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="description"
-            label="Campaign Description"
-            type="text"
-            fullWidth
-            value={newCampaign.description}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="maxPayment"
-            label="Max Payment"
-            type="text"
-            fullWidth
-            value={newCampaign.maxPayment}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="category"
-            label="Campaign Category"
-            type="text"
-            fullWidth
-            value={newCampaign.category}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
-            name="productImage"
-            label="Product Image URL"
-            type="text"
-            fullWidth
-            value={newCampaign.productImage}
-            onChange={handleChange}
-          />
+          <GeneralForm schema={scheme} formData={newCampaign} setFormData={setNewCampaign} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
