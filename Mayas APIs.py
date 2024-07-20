@@ -1,5 +1,7 @@
 # The APIS here: upload_campaign, apply_for_campaign, explore_campaigns
+from datetime import datetime
 
+from bson import ObjectId
 from flask import Flask, jsonify, render_template, request, redirect, url_for, session
 from flask_session import Session
 from flask_cors import CORS
@@ -72,10 +74,13 @@ def upload_campaign(company_id):
             'reels': int(data[EntityName.CONST_CAMPAIGN_REELS]) if data[EntityName.CONST_CAMPAIGN_REELS] else 0,
             'posts': int(data[EntityName.CONST_CAMPAIGN_POSTS]) if data[EntityName.CONST_CAMPAIGN_POSTS] else 0,
             'stories': int(data[EntityName.CONST_CAMPAIGN_STORIES]) if data[EntityName.CONST_CAMPAIGN_STORIES] else 0
-        }
+        },
+        'create_time': datetime.now(),
+        'influencers': []
     }
 
     # Save campaign data to MongoDB
+    campaigns_collection = db.client['Database']['Campaigns']
     result = campaigns_collection.insert_one(campaign_data)
 
     # Return the inserted document ID
@@ -102,6 +107,7 @@ def apply_for_campaign(campaign_id, influencer_id):
     }
 
     # Save application data to MongoDB
+    applications_collection = db.client['Database']['Applications']
     result = applications_collection.insert_one(application_data)
 
     # Return the inserted document ID
@@ -127,4 +133,3 @@ def explore_campaigns():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
