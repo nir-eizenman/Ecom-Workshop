@@ -45,14 +45,14 @@ def signup_influencer():
             {
             "result": False,
             "message": "User influencer failed to create"
-            }), 500
+            }), 406
 
     #addign user succeded
     return jsonify(
             {
             "result": True,
             "message": ""
-            }), 200
+            }), 201
 
 #TODO there is a to do in this function
 @app.route('/signup/company', methods=['POST'])
@@ -75,14 +75,14 @@ def signup_company():
             {
             "result": False,
             "message": "User company failed to create"
-            }), 500
+            }), 406
 
     #addign user succeded
     return jsonify(
             {
             "result": True,
             "message": ""
-            }), 200
+            }), 201
 
 
 #TODO? add logout?
@@ -142,7 +142,7 @@ def login():
             {
             "result": False,
             "message": "Invalid credentials"
-            }), 400
+            }), 401
 
 
 @app.route("/logout")
