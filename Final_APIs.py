@@ -22,7 +22,8 @@ db = DatabaseLogic(
 
 database = db.client['Database']
 
-#NATANELS APIs
+
+# NATANELS APIs
 # TODO there is a to do in this function
 @app.route('/api/signup/influencer', methods=['POST'])
 def signup_influencer():
@@ -167,7 +168,8 @@ def logout():
 def id_generator(chars=string.ascii_uppercase + string.digits, size=9):
     return ''.join(random.choice(chars) for _ in range(size))
 
-#MAYAS APIs
+
+# MAYAS APIs
 
 @app.route('/api/company/home/create', methods=['POST'])
 def upload_campaign():
@@ -277,7 +279,8 @@ def explore_campaigns():
 
     return jsonify({'available_campaigns': available_campaigns}), 200
 
-#ORENS APISs
+
+# ORENS APISs
 
 # End campaign - POST - /api/company/home/<campaignId>/end
 @app.route("/api/company/home/<campaignId>/end", methods=['POST'])
@@ -371,7 +374,8 @@ def company_home_results_choose(campaignId):
     # return the campaign no content
     return jsonify("Successfully chosen plan"), 204
 
-#NIRS APIs
+
+# NIRS APIs
 
 # Company home - GET - /api/company/home - return value: 5 last campaign (sorted by active first) (then by creation time)
 @app.route("/api/company/home", methods=['GET'])
@@ -405,6 +409,7 @@ def influencer_home():
         campaign.pop('influencers')
         # return the campaigns
     return jsonify(campaigns), 200
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)  # Changed port to 5001
