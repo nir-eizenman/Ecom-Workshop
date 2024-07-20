@@ -5,8 +5,8 @@
     "email": "some@mail.com",
     "influencer_full_name": "some_name",
     "password": "password",
-    "payment_method": "for_now_let_say_some_string_with_numbers",
-    "influencer_social_network_links": 
+    //"payment_method": "for_now_let_say_some_string_with_numbers",
+    /*"influencer_social_network_links": 
     {
         "instagram": "currently_only_instagram_link"
     },
@@ -14,7 +14,11 @@
     "influencer_followers_location": ["tag1", "tag2", "tag3"],
     "influencer_followers_age": ["age_range1", "age_range2", "age_range3"],
     "influencer_followers_gender": ["gender1", "gender2", "gender3"],
-    "influencer_exposure_content": 0,
+    "influencer_exposure_content": 0,*/
+    "instagram": 
+    {
+        
+    }
     "influencer_age": 0,
     "influencer_gender": "some_gender"
 
@@ -26,7 +30,7 @@
     "email": "some@mail.com",
     "company_name": "some_name",
     "password": "password",
-    "payment_method": "for_now_let_say_some_string_with_numbers",
+    //"payment_method": "for_now_let_say_some_string_with_numbers",
     "company_site_link": "OPTIONAL: might be empty",
     "company_about_us": "OPTIONAL: might be empty"
 }
@@ -69,3 +73,55 @@
     "result": true,//may be false
     "message": "empty string if success, else failure message description"
 }
+
+
+//upload_campaign
+URL for postman: http://127.0.0.1:5000/api/company/home/create
+
+{
+
+}
+{
+"campaign_name": "Summer Sale Campaign",
+"budget": "5000",
+"is_active": "true",
+"about": "A campaign to promote our summer sale.",
+"target_audience": {
+"location": {
+"country": "1"
+},
+"gender": {
+"male": "50",
+"female": "40",
+"other": "10"
+},
+"age": {
+"13-17": "5",
+"18-24": "20",
+"25-34": "30",
+"35-44": "25",
+"45-54": "10",
+"55-64": "5",
+"65+": "5"
+}
+},
+"categories": ["category1", "category2"],
+"campaign_goal": "Increase Sales",
+"campaign_objective": {
+"reels": "10",
+"posts": "20",
+"stories": "5"
+}
+}
+
+// apply_for_campaign
+URL for postman: http://127.0.0.1:5000/api/influencer/home/explore/6684648687d69e08ff8c44fe/apply
+{
+"asking_price": "2000"
+}
+
+// explore active campaigns influencer
+URL for postman: http://127.0.0.1:5000/api/influencer/home/explore
+Content-Type: application/json
+Cookie: session=<session_token>
+// We need to update this according to how the session ID is built, I wasn't sure about it
