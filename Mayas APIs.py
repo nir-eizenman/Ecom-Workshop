@@ -68,7 +68,7 @@ def upload_campaign():
             }
         },
         'categories': request.json.get('categories', []),
-        'company_id': "6695650dd312588ddbf599fe",
+        'company_id': "6695650dd312588ddbf599fe", #change to session.get
         EntityName.CONST_CAMPAIGN_GOAL: data[EntityName.CONST_CAMPAIGN_GOAL],
         'campaign_objective': {
             'reels': int(data[EntityName.CONST_CAMPAIGN_REELS]) if data[EntityName.CONST_CAMPAIGN_REELS] else 0,
@@ -83,12 +83,11 @@ def upload_campaign():
     campaigns_collection = db.client['Database']['Campaigns']
     result = campaigns_collection.insert_one(campaign_data)
 
-    # Return the inserted document ID
     return jsonify(""), 201
 
 
 @app.route('/api/influencer/home/explore/<campaign_id>/apply', methods=['POST'])
-def apply_for_campaign(campaign_id, influencer_id):
+def apply_for_campaign(campaign_id):
     required_fields = [
         EntityName.CONST_ASKING_PRICE
     ]
@@ -101,8 +100,8 @@ def apply_for_campaign(campaign_id, influencer_id):
 
     # Create application data
     application_data = {
-        'campaignId': ObjectId(campaign_id),
-        'influencerId': session.get(influencer_id),
+        'campaignId': campaign_id,
+        'influencerId': '668ae2ae09727d27521e2928', #change to session.get
         EntityName.CONST_ASKING_PRICE: int(data[EntityName.CONST_ASKING_PRICE])
     }
 
@@ -110,8 +109,7 @@ def apply_for_campaign(campaign_id, influencer_id):
     applications_collection = db.client['Database']['Applications']
     result = applications_collection.insert_one(application_data)
 
-    # Return the inserted document ID
-    return jsonify({'id': str(result.inserted_id), 'application_data': application_data}), 201
+    return jsonify(""), 201
 
 
 # Influencer explore page for active campaigns
