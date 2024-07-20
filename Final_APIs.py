@@ -6,9 +6,12 @@ from DatabaseLogic import DatabaseLogic
 import string
 import EntityName
 import random
-from Algorithm import algorithm_prep, knapsack
+from Algorithm import algorithm_prep, knapsack, calculate_score
 from datetime import datetime
 from bson import ObjectId
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
@@ -171,6 +174,61 @@ def id_generator(chars=string.ascii_uppercase + string.digits, size=9):
 
 # MAYAS APIs
 
+def notify_influencer(influencer, campaign):
+    sender_email = "team.ad.venture.company@gmail.com"
+    receiver_email = influencer['email']
+    password = "qpic idhh vlbs xwip"
+
+    subject = "Congratulations! Looks like you might be a match."
+    body = f"""
+        Hello {influencer['full_name']},
+
+        Congratulations! Based on your stats, you might be a possible match for a new campaign: "{campaign['campaign_name']}".
+        Go fill out your application!
+
+        Best regards,
+        Ad-Venture
+        """
+
+    # Create the email message
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = receiver_email
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain'))
+
+    try:
+        # Connect to the Gmail SMTP server
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()  # Upgrade the connection to a secure encrypted SSL/TLS connection
+            server.login(sender_email, password)  # Log in to the email account
+            server.send_message(msg)  # Send the email
+        print(f"Email sent to {receiver_email}")
+    except Exception as e:
+        print(f"Failed to send email to {receiver_email}: {e}")
+
+
+def notify_top_5(campaign):
+    influencers_collection = database['Influencers']
+    # get all documents from the collection
+    influencers = influencers_collection.find()
+    top_5_scores = []
+    for influencer in influencers:
+        current_score = calculate_score(influencer, campaign)
+        top_5_scores = sorted(top_5_scores, key=lambda x: int(x[0]))
+        if len(top_5_scores) == 5:
+            for i in range(len(top_5_scores)):
+                # go over the top 5 scores and check if the current score is bigger than one of them
+                if int(current_score) > int(top_5_scores[i][0]):
+                    top_5_scores[i] = (current_score, influencer)
+                    break
+        else:
+            top_5_scores.append((current_score, influencer))
+    # notify the top 5 influencers
+    for score, influencer in top_5_scores:
+        notify_influencer(influencer, campaign)
+
+
 @app.route('/api/company/home/create', methods=['POST'])
 def upload_campaign():
     try:
@@ -229,9 +287,11 @@ def upload_campaign():
         }
 
         # Save campaign data to MongoDB
-        campaigns_collection = db.client['Database']['Campaigns']
+        campaigns_collection = database['Campaigns']
         campaigns_collection.insert_one(campaign_data)
 
+
+        # notify_top_5(campaign_data)
         return jsonify("Campaign was successfully created"), 201
 
     except Exception as e:
