@@ -18,7 +18,7 @@ app.secret_key = 'your_secret_key'  # Necessary for session management
 db = DatabaseLogic("mongodb+srv://ProjectMainAdmin:SzReRV0ZxjeWm7vN@datastorage1.dlfth1l.mongodb.net/?retryWrites=true&w=majority&appName=DataStorage1")
 
 #TODO there is a to do in this function
-@app.route('/signup/influencer', methods=['POST'])
+@app.route('/api/signup/influencer', methods=['POST'])
 def signup_influencer():
     required_fields = [
         EntityName.CONST_EMAIL,
@@ -55,7 +55,7 @@ def signup_influencer():
             }), 201
 
 #TODO there is a to do in this function
-@app.route('/signup/company', methods=['POST'])
+@app.route('/api/signup/company', methods=['POST'])
 def signup_company():
     required_fields = [
         EntityName.CONST_EMAIL,
@@ -86,7 +86,7 @@ def signup_company():
 
 
 #TODO? add logout?
-@app.route('/login', methods=['POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
     email = request.json[EntityName.CONST_EMAIL]
     password = request.json[EntityName.CONST_PASSWORD]
@@ -145,7 +145,7 @@ def login():
             }), 401
 
 
-@app.route("/logout")
+@app.route("/api/logout")
 def logout():
     db.deleteSessionToken(session[EntityName.CONST_RANDOM_SESSION_TOKEN])
     session[EntityName.CONST_RANDOM_SESSION_TOKEN] = ""
