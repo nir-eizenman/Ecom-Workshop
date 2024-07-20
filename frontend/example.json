@@ -1,0 +1,34 @@
+{
+  "campaign_name": "",
+  "budget": "",
+  "is_active": false,
+  "about": "",
+  "target_audience": {
+    "location": {
+      "Jordan": "12",
+      "Italy": "33"
+    },
+    "gender": {
+      "male": "",
+      "female": "",
+      "other": ""
+    },
+    "age": {
+      "13-17": "",
+      "18-24": "",
+      "25-34": "",
+      "35-44": "",
+      "45-54": "",
+      "55-64": "",
+      "65+": ""
+    }
+  },
+  "categories": [],
+  "company_id": "",
+  "campaign_goal": "",
+  "campaign_objective": {
+    "reels": 0,
+    "posts": 0,
+    "stories": 0
+  }
+}

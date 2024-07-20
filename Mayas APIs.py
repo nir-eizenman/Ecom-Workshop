@@ -5,6 +5,7 @@ from bson import ObjectId
 from flask import Flask, jsonify, render_template, request, redirect, url_for, session
 from flask_session import Session
 from flask_cors import CORS
+# from flask_cors import CORS
 from DatabaseLogic import DatabaseLogic
 import EntityName
 

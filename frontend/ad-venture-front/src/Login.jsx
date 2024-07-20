@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import { Container, Box, Paper, Typography } from '@mui/material';
+import { Container, Box, Paper, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { ThemeProvider } from '@mui/material/styles';
-import Form from '@rjsf/antd';
-import validator from '@rjsf/validator-ajv8';
-// import theme from './theme'; // Assume you have a Material UI theme file
+import GeneralForm from './GeneralForm';
+
+
+const schema = {
+  'email': {label: 'Username', type: 'email'},
+  'password': {label: 'Password', type: 'password'},
+  'userType': {options: ['Company', 'Influencer'], label: 'User Type', type: 'radio'}
+}
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -15,25 +19,9 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = ({ formData }) => {
+  const handleSubmit = () => {
     navigate(`/${formData.userType}/home`);
     console.log(formData);
-  };
-
-  const schema = {
-    title: "Login",
-    type: "object",
-    required: ["email", "password"],
-    properties: {
-      email: { type: 'string', title: 'Email' },
-      password: { type: 'string', title: 'Password' }
-    }
-  };
-
-  const uiSchema = {
-    password: {
-      "ui:widget": "password"
-    }
   };
 
   return (
@@ -44,17 +32,14 @@ const Login = () => {
             <Typography variant="h4" sx={{ mb: 2 }}>
               Login
             </Typography>
-
-            <Form
+            <GeneralForm
               schema={schema}
-              uiSchema={uiSchema}
-              onChange={({ formData }) => setFormData(formData)}
-              onSubmit={handleSubmit}
-              onError={(errors) => console.log("errors", errors)}
-              validator={validator}
               formData={formData}
-              
+              setFormData={setFormData}
             />
+            <Button variant='outlined' onClick={handleSubmit}>
+              Login
+            </Button>
           </Paper>
         </Box>
       </Container>

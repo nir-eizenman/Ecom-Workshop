@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Box,
   Typography,
@@ -12,6 +12,8 @@ import {
   FormControl,
   Chip,
   OutlinedInput,
+  Radio,
+  RadioGroup,
 } from '@mui/material';
 import _ from 'lodash';
 
@@ -129,7 +131,8 @@ const GeneralForm = ({ schema, formData, setFormData }) => {
           </FormControl>
         );
       case 'multiselectpercent':
-        const selectedOptions = _.get(formData, fieldKey, []);
+        const selectedOptions = _.get(formData, fieldKey, {});
+        const selectedCountries = Object.keys(selectedOptions);
         const handleMultiselectPercentChange = (event) => {
           const { name, value: inputValue } = event.target;
           setFormData(prevState => {
@@ -144,12 +147,17 @@ const GeneralForm = ({ schema, formData, setFormData }) => {
               <InputLabel>{value.label}</InputLabel>
               <Select
                 multiple
-                value={selectedOptions}
+                value={selectedCountries}
                 onChange={(event) => {
                   const { name, value: selectedValues } = event.target;
                   setFormData(prevState => {
                     const newFormData = { ...prevState };
-                    _.set(newFormData, name, selectedValues);
+                    const currentValues = _.get(newFormData, name, {});
+                    const updatedValues = selectedValues.reduce((acc, val) => {
+                      acc[val] = currentValues[val] || '';
+                      return acc;
+                    }, {});
+                    _.set(newFormData, name, updatedValues);
                     return newFormData;
                   });
                 }}
@@ -170,7 +178,7 @@ const GeneralForm = ({ schema, formData, setFormData }) => {
                 ))}
               </Select>
             </FormControl>
-            {selectedOptions.map(option => (
+            {selectedCountries.map(option => (
               <TextField
                 key={`${fieldKey}.${option}`}
                 name={`${fieldKey}.${option}`}
@@ -182,6 +190,37 @@ const GeneralForm = ({ schema, formData, setFormData }) => {
               />
             ))}
           </>
+        );
+      case 'password':
+        return (
+          <TextField
+            name={fieldKey}
+            label={value.label}
+            type="password"
+            fullWidth
+            value={_.get(formData, fieldKey, '')}
+            onChange={handleChange}
+          />
+        );
+      case 'radio':
+        return (
+          <FormControl component="fieldset">
+            <Typography variant="h6">{value.label}</Typography>
+            <RadioGroup
+              name={fieldKey}
+              value={_.get(formData, fieldKey, '')}
+              onChange={handleChange}
+            >
+              {value.options.map((option) => (
+                <FormControlLabel
+                  key={option}
+                  value={option}
+                  control={<Radio />}
+                  label={option}
+                />
+              ))}
+            </RadioGroup>
+          </FormControl>
         );
       default:
         return (

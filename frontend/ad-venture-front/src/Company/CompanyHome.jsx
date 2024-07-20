@@ -30,11 +30,10 @@ const scheme = {
   "about": {type: 'string', label: 'About'},
   "target_audience": {
     location: { 
-      countries: {
-        type: 'multiselectpercent', 
-        options: ['Israel', 'Egypt', 'Jordan', 'Italy', 'France', 'Narnia', 'Wakanda'],
-        label: 'Countries Followers Percentage'
-      } 
+      type: 'multiselectpercent', 
+      options: ['Israel', 'Egypt', 'Jordan', 'Italy', 'France', 'Narnia', 'Wakanda'],
+      label: 'Countries Followers Percentage'
+    
     },
     "gender": {
       type: 'percent', 
@@ -94,19 +93,18 @@ const CompanyHome = () => {
   const [newCampaign, setNewCampaign] = useState({
     campaign_name: '',
     budget: '',
-    is_active: '',
+    is_active: false,
     about: '',
     target_audience: {
-      location: { 
-        countries: []
-      },
+      
+      location: {},
       gender: { male: '', female: '', other: '' },
       age: { '13-17': '', '18-24': '', '25-34': '', '35-44': '', '45-54': '', '55-64': '', '65+': '' },
     },
     categories: [],
-    company_id: '',
+    // company_id: '',
     campaign_goal: '',
-    campaign_objective: { reels: '', posts: '', stories: '' }
+    campaign_objective: { reels: 0, posts: 0, stories: 0 }
   });
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [selectedBid, setSelectedBid] = useState(null);
@@ -163,19 +161,29 @@ const CompanyHome = () => {
         bids: []
       }
     ]);
-    // fetch('localhost:5000/api/company/create')
+    fetch('http://127.0.0.1:5000/api/company/home/create', {
+      method: 'POST',
+      body: JSON.stringify({...newCampaign, is_active: newCampaign.is_active.toString()}),
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    }).then(resp => resp.text())
+      .then(resp => console.log(resp))
+      
     setNewCampaign({
       campaign_name: '',
       budget: '',
-      is_active: '',
+      is_active: false,
       about: '',
       target_audience: {
-        location: { country: '' },
+         
+        location: {},
         gender: { male: '', female: '', other: '' },
-        age: { '13-17': '', '18-24': '', '25-34': '', '35-44': '', '45-54': '', '55-64': '', '65+': '' }
+        age: { '13-17': '', '18-24': '', '25-34': '', '35-44': '', '45-54': '', '55-64': '', '65+': '' },
       },
-      categories: '',
-      company_id: '',
+      categories: [],
+      // company_id: '',
       campaign_goal: '',
       campaign_objective: { reels: '', posts: '', stories: '' }
     });
