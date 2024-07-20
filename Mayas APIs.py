@@ -1,4 +1,5 @@
 # The APIS here: upload_campaign, apply_for_campaign, explore_campaigns
+import json
 from datetime import datetime
 
 from bson import ObjectId
@@ -45,8 +46,8 @@ def upload_campaign():
         EntityName.CONST_ABOUT: data[EntityName.CONST_ABOUT],
         'target_audience': {
             'location': {
-                'country': int(data[EntityName.CONST_TARGET_LOCATION]) if data[
-                    EntityName.CONST_TARGET_LOCATION] else None
+                # location is a dictionary with the country name as the key and the value as the percentage
+                'country': json.dumps({country: percentage for country, percentage in data.get(EntityName.CONST_TARGET_LOCATION).items() if percentage})
             },
             'gender': {
                 'male': int(data[EntityName.CONST_TARGET_GENDER_MALE]) if data[
@@ -83,7 +84,7 @@ def upload_campaign():
     campaigns_collection = db.client['Database']['Campaigns']
     result = campaigns_collection.insert_one(campaign_data)
 
-    return jsonify(""), 201
+    return jsonify("Campaign was successfully created"), 201
 
 
 @app.route('/api/influencer/home/explore/<campaign_id>/apply', methods=['POST'])
@@ -109,7 +110,7 @@ def apply_for_campaign(campaign_id):
     applications_collection = db.client['Database']['Applications']
     result = applications_collection.insert_one(application_data)
 
-    return jsonify(""), 201
+    return jsonify("Application was submitted."), 201
 
 
 # Influencer explore page for active campaigns
