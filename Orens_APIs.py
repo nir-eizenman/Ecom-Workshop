@@ -7,6 +7,7 @@ from DatabaseLogic import DatabaseLogic
 import string
 import EntityName
 import random
+from Algorithm import algorithm_prep, calculate_score, knapsack
 
 app = Flask(__name__)
 app.config["SESSION_PERMANENT"] = False
@@ -24,15 +25,39 @@ database = db.client['Database']
 @app.route("/api/company/home/<campaignId>/end", methods=['POST'])
 def company_home(campaignId):
     # get the campaign by id
-    collection = database["Campaigns"]
-    campaign = collection.find_one({"_id": ObjectId(campaignId)})
+    campaigns_collection = database["Campaigns"]
+    results_collection = database["Results"]
+    campaign = campaigns_collection.find_one({"_id": ObjectId(campaignId)})
     # check if the campaign exists
     if not campaign:
         return jsonify({'error': 'Campaign not found'}), 404
     # update the campaign to be inactive
-    collection.update_one({"_id": ObjectId(campaignId)}, {"$set": {"is_active": False}})
+    campaigns_collection.update_one({"_id": ObjectId(campaignId)}, {"$set": {"is_active": False}})
+    # calculate the results of the campaign
+    influencers_data, budget = algorithm_prep(campaignId)
+    # calculate the knapsack
+    selected_influencers_names, selected_influencers_salaries, selected_influencers, score = knapsack(influencers_data,
+                                                                                                      budget)
+    # create the results
+    results = []
+    result = {
+        "score": score,
+        "influencers": [
+            {
+                "full_name": selected_influencers_names[i],
+                "influencer_id": selected_influencers[i],
+                "salary": selected_influencers_salaries[i]
+            }
+            for i in range(len(selected_influencers_names))
+        ],
+        "cost": sum(selected_influencers_salaries),
+        "chosen": False
+    }
+    results.append(result)
+    # add the results to the db
+    results_collection.insert_one({"campaign_id": ObjectId(campaignId), "results": results})
     # return the campaign no content
-    return '', 204
+    return jsonify("Successfully ended campaign"), 204
 
 
 # Campaign results - GET - /api/company/home/<campaignId>/results
@@ -86,7 +111,7 @@ def company_home_results_choose(campaignId):
     # update influencer in the campaign
     collection.update_one({"_id": ObjectId(campaignId)}, {"$set": {"influencers": influencers_id}})
     # return the campaign no content
-    return '', 204
+    return jsonify("Successfully chosen plan"), 204
 
 
 if __name__ == '__main__':
