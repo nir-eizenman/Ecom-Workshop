@@ -65,6 +65,8 @@ def signup_company():
         EntityName.CONST_COMPANY_SITE_LINK,
         EntityName.CONST_COMPANY_ABOUT_US
     ]
+
+    print(request.headers)
     
     data = {field: request.json[field] for field in required_fields}
 
