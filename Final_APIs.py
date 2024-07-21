@@ -291,7 +291,7 @@ def upload_campaign():
         campaigns_collection.insert_one(campaign_data)
 
 
-        # notify_top_5(campaign_data)
+        notify_top_5(campaign_data)
         return jsonify("Campaign was successfully created"), 201
 
     except Exception as e:
