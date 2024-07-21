@@ -45,17 +45,19 @@ def algorithm_prep(campaign_id1):
             'id': influencer['_id'],
             'full_name': influencer['full_name'],
             'cost': influencer['cost'],
-            'score': calculate_score(influencer, campaign)
+            'score': [calculate_score_balanced(influencer, campaign), calculate_score_exposure(influencer, campaign),
+                      calculate_score_relevant_categories(influencer, campaign)]
+
         }
         influencers_data.append(influencer_data)
 
     return influencers_data, campaign['budget']
 
 
-def calculate_score(influencer, campaign):
+def calculate_score_base(influencer, campaign):
     '''
-    Calculate the score ("value of the influencer") based on the campaign data and the influencer data
-    '''
+        Calculate the score ("value of the influencer") based on the campaign data and the influencer data
+        '''
     # the values to consider in the calculation are:
     # 1. Influencer's followers count and exposure to content
     # 2. Influencer's followers location (vs the campaign target location)
@@ -71,10 +73,10 @@ def calculate_score(influencer, campaign):
         gender_score += min(percentage, int(campaign['target_audience']['gender'].get(gender, 0)))
     age_score = 0
     for age, percentage in influencer['instagram']['age_stats'].items():
-        age_score += min(percentage, int(campaign['target_audience']['age'].get(age,0)))
+        age_score += min(percentage, int(campaign['target_audience']['age'].get(age, 0)))
     location_score = 0
     for location, percentage in influencer['instagram']['followers_location'].items():
-        location_score += min(percentage, int(campaign['target_audience']['location'].get(location,0)))
+        location_score += min(percentage, int(campaign['target_audience']['location'].get(location, 0)))
 
     # we'll set the score for the followers categories of interest to be:
     # check how many of the influencer's followers categories of interest are in the campaign categories
@@ -89,46 +91,90 @@ def calculate_score(influencer, campaign):
     # we'll set the score for the followers count and exposure to content to be:
     accounts_reached_30 = influencer['instagram']['accounts_reached_30']
     followers_count = influencer['instagram']['followers_count']
+    return followers_count, accounts_reached_30, gender_score, age_score, location_score, categories_score
 
-    return (followers_count / 1000) * (accounts_reached_30 / 1000) * (
+
+def calculate_score_balanced(influencer, campaign):
+    followers_count, accounts_reached_30, gender_score, age_score, location_score, categories_score = calculate_score_base(
+        influencer, campaign)
+
+    return 0.3*(followers_count / 1000) + 0.3*(accounts_reached_30 / 1000) + 0.3*(
             gender_score + age_score + location_score + categories_score)
 
 
+def calculate_score_exposure(influencer, campaign):
+    followers_count, accounts_reached_30, gender_score, age_score, location_score, categories_score = calculate_score_base(
+        influencer, campaign)
+
+    return (followers_count / 1000) + (accounts_reached_30 / 1000)
+
+
+def calculate_score_relevant_categories(influencer, campaign):
+    followers_count, accounts_reached_30, gender_score, age_score, location_score, categories_score = calculate_score_base(
+        influencer, campaign)
+
+    return 0.1* (followers_count / 1000) + 0.1*(accounts_reached_30 / 1000) + 0.8*(
+            0.11 * gender_score + 0.12 * age_score + 0.11 * location_score + 0.66 * categories_score)
+
+
 def knapsack(influencers, budget):
-    n = len(influencers)
+    def knapsack_for_score(score_index):
+        n = len(influencers)
 
-    # Create a 2D DP array
-    dp = [[0 for _ in range(budget + 1)] for _ in range(n + 1)]
+        # Create a 2D DP array
+        dp = [[0 for _ in range(budget + 1)] for _ in range(n + 1)]
 
-    # Populate the DP array
-    for i in range(1, n + 1):
-        for w in range(budget + 1):
-            if influencers[i - 1]['cost'] <= w:
-                dp[i][w] = max(dp[i - 1][w], dp[i - 1][w - influencers[i - 1]['cost']] + influencers[i - 1]['score'])
-            else:
-                dp[i][w] = dp[i - 1][w]
+        # Populate the DP array
+        for i in range(1, n + 1):
+            for w in range(budget + 1):
+                if influencers[i - 1]['cost'] <= w:
+                    dp[i][w] = max(dp[i - 1][w],
+                                   dp[i - 1][w - influencers[i - 1]['cost']] + influencers[i - 1]['score'][score_index])
+                else:
+                    dp[i][w] = dp[i - 1][w]
 
-    # Backtrack to find the selected influencers
-    w = budget
-    selected_influencers = []
-    selected_influencers_names = []
-    selected_influencers_salaries = []
-    for i in range(n, 0, -1):
-        if dp[i][w] != dp[i - 1][w]:
-            selected_influencers.append(influencers[i - 1]['id'])
-            selected_influencers_names.append(influencers[i - 1]['full_name'])
-            selected_influencers_salaries.append(influencers[i - 1]['cost'])
-            w -= influencers[i - 1]['cost']
+        # Backtrack to find the selected influencers
+        w = budget
+        selected_influencers = []
+        selected_influencers_names = []
+        selected_influencers_salaries = []
+        for i in range(n, 0, -1):
+            if dp[i][w] != dp[i - 1][w]:
+                selected_influencers.append(influencers[i - 1]['id'])
+                selected_influencers_names.append(influencers[i - 1]['full_name'])
+                selected_influencers_salaries.append(influencers[i - 1]['cost'])
+                w -= influencers[i - 1]['cost']
 
-    return selected_influencers_names, selected_influencers_salaries, selected_influencers, dp[n][budget]
+        return selected_influencers_names, selected_influencers_salaries, selected_influencers, dp[n][budget]
+
+    # Get results for each of the three scores
+    results = []
+    for i in range(3):
+        results.append(knapsack_for_score(i))
+
+    return results
+
+# Example usage:
+# influencers = [
+#     {'id': 1, 'full_name': 'Influencer A', 'cost': 50, 'score': [60, 70, 80]},
+#     {'id': 2, 'full_name': 'Influencer B', 'cost': 30, 'score': [40, 50, 60]},
+#     # more influencers
+# ]
+# budget = 100
+# results = knapsack(influencers, budget)
+# for i, result in enumerate(results):
+#     print(f"Results for score {i+1}:")
+#     print("Selected Influencers:", result[0])
+#     print("Selected Salaries:", result[1])
+#     print("Total Score:", result[3])
 
 
 # test from database -----------------------------------------
 
-campaign_id = "668ae97d09727d27521e292d"
-influencers, budget = algorithm_prep(campaign_id)
-selected_influencers_names, selected_influencers_salaries, selected_influencers, max_score = knapsack(influencers,
-                                                                                                      budget)
+# campaign_id = "668ae97d09727d27521e292d"
+# influencers, budget = algorithm_prep(campaign_id)
+# selected_influencers_names, selected_influencers_salaries, selected_influencers, max_score = knapsack(influencers,
+#                                                                                                       budget)
 # print(selected_influencers_names, selected_influencers, max_score)
 #
 # # test1 -----------------------------------------

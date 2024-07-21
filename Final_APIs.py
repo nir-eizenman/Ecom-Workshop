@@ -6,7 +6,7 @@ from DatabaseLogic import DatabaseLogic
 import string
 import EntityName
 import random
-from Algorithm import algorithm_prep, knapsack, calculate_score
+from Algorithm import algorithm_prep, knapsack, calculate_score_balanced
 from datetime import datetime
 from bson import ObjectId
 import smtplib
@@ -214,7 +214,7 @@ def notify_top_5(campaign):
     influencers = influencers_collection.find()
     top_5_scores = []
     for influencer in influencers:
-        current_score = calculate_score(influencer, campaign)
+        current_score = calculate_score_balanced(influencer, campaign)
         top_5_scores = sorted(top_5_scores, key=lambda x: int(x[0]))
         if len(top_5_scores) == 5:
             for i in range(len(top_5_scores)):
@@ -290,7 +290,6 @@ def upload_campaign():
         campaigns_collection = database['Campaigns']
         campaigns_collection.insert_one(campaign_data)
 
-
         notify_top_5(campaign_data)
         return jsonify("Campaign was successfully created"), 201
 
@@ -341,7 +340,6 @@ def explore_campaigns():
 
 
 # ORENS APISs
-
 # End campaign - POST - /api/company/home/<campaignId>/end
 @app.route("/api/company/home/<campaignId>/end", methods=['POST'])
 def end_campaign(campaignId):
@@ -349,34 +347,44 @@ def end_campaign(campaignId):
     campaigns_collection = database["Campaigns"]
     results_collection = database["Results"]
     campaign = campaigns_collection.find_one({"_id": ObjectId(campaignId)})
+
     # check if the campaign exists
     if not campaign:
         return jsonify({'error': 'Campaign not found'}), 404
+
     # update the campaign to be inactive
     campaigns_collection.update_one({"_id": ObjectId(campaignId)}, {"$set": {"is_active": False}})
+
     # calculate the results of the campaign
     influencers_data, budget = algorithm_prep(campaignId)
-    # calculate the knapsack
-    selected_influencers_names, selected_influencers_salaries, selected_influencers, score = knapsack(influencers_data,
-                                                                                                      budget)
-    # create the results
+
+    # calculate the knapsack for each score
+    knapsack_results = knapsack(influencers_data, budget)
+    objectives = ["Most balanced", "Best Exposure", "Influencer in relevant category"]
+
     results = []
-    result = {
-        "score": score,
-        "influencers": [
-            {
-                "full_name": selected_influencers_names[i],
-                "influencer_id": selected_influencers[i],
-                "salary": selected_influencers_salaries[i]
-            }
-            for i in range(len(selected_influencers_names))
-        ],
-        "cost": sum(selected_influencers_salaries),
-        "chosen": False
-    }
-    results.append(result)
+    for score_index, (
+            selected_influencers_names, selected_influencers_salaries, selected_influencers, score) in enumerate(
+        knapsack_results):
+        result = {
+            "score": score,
+            "influencers": [
+                {
+                    "full_name": selected_influencers_names[i],
+                    "influencer_id": selected_influencers[i],
+                    "salary": selected_influencers_salaries[i]
+                }
+                for i in range(len(selected_influencers_names))
+            ],
+            "cost": sum(selected_influencers_salaries),
+            "chosen": False,
+            "campaign_objective": f"{objectives[score_index]}"
+        }
+        results.append(result)
+
     # add the results to the db
     results_collection.insert_one({"campaign_id": ObjectId(campaignId), "results": results})
+
     # return the campaign no content
     return jsonify("Successfully ended campaign"), 204
 
