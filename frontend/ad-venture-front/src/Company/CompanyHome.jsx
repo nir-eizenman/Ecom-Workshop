@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   Card,
@@ -11,39 +11,35 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  TextField,
   List,
   ListItem,
   ListItemText,
   ButtonBase,
   CardContent,
-  CardMedia,
-  Checkbox,
-  FormControlLabel
+  CardMedia
 } from '@mui/material';
-import GeneralForm from '../GeneralForm'
+import GeneralForm from '../GeneralForm';
 
 const scheme = {
-  "campaign_name": {type: 'string', label: 'Campaign Name'},
-  "budget": {type: 'int', label: 'Budget'},
-  "is_active": {type: 'boolean', label: 'Active'},
-  "about": {type: 'string', label: 'About'},
+  "campaign_name": { type: 'string', label: 'Campaign Name' },
+  "budget": { type: 'int', label: 'Budget' },
+  "is_active": { type: 'boolean', label: 'Active' },
+  "about": { type: 'string', label: 'About' },
   "target_audience": {
-    location: { 
-      type: 'multiselectpercent', 
+    location: {
+      type: 'multiselectpercent',
       options: ['Israel', 'Egypt', 'Jordan', 'Italy', 'France', 'Narnia', 'Wakanda'],
       label: 'Countries Followers Percentage'
-    
     },
     "gender": {
-      type: 'percent', 
+      type: 'percent',
       options: ["male", "female", "other"],
       label: 'Gender'
     },
-    "age": { 
+    "age": {
       type: 'percent',
       label: 'Age',
-      options: ["13-17", "18-24",  "25-34", "35-44", "45-54", "55-64", "65+"]
+      options: ["13-17", "18-24", "25-34", "35-44", "45-54", "55-64", "65+"]
     }
   },
   "categories": {
@@ -51,43 +47,16 @@ const scheme = {
     label: 'Categories',
     options: ['Sports', 'Fashion', 'Food', 'Travels', 'Books', 'Other']
   },
-  // "company_id": {type: 'string', label},
-  "campaign_goal": {type: 'string', label: 'Campaign Goal'},
-  "campaign_objective": { 
-    "reels": {type: 'int', label: 'Reels'}, 
-    "posts": {type: 'int', label: 'Posts'}, 
-    "stories": {type: 'int', label: 'Stories'} 
+  "campaign_goal": { type: 'string', label: 'Campaign Goal' },
+  "campaign_objective": {
+    "reels": { type: 'int', label: 'Reels' },
+    "posts": { type: 'int', label: 'Posts' },
+    "stories": { type: 'int', label: 'Stories' }
   }
-}
+};
 
 const CompanyHome = () => {
-  const [campaigns, setCampaigns] = useState([
-    {
-      id: 1,
-      name: 'Campaign 1',
-      description: 'Description of Campaign 1',
-      maxPayment: '1500',
-      category: 'Fashion',
-      productImage: 'https://ynet-pic1.yit.co.il/cdn-cgi/image/format=auto/picserver5/crop_images/2024/07/03/BJbZiulXwA/BJbZiulXwA_0_49_1000_563_0_medium.jpg',
-      bids: [
-        { id: 1, influencer: 'Influencer 1', bid: '1000' },
-        { id: 2, influencer: 'Influencer 2', bid: '1200' }
-      ]
-    },
-    {
-      id: 2,
-      name: 'Campaign 2',
-      description: 'Description of Campaign 2',
-      maxPayment: '2000',
-      category: 'Tech',
-      productImage: '',
-      bids: [
-        { id: 3, influencer: 'Influencer 3', bid: '800' },
-        { id: 4, influencer: 'Influencer 4', bid: '950' }
-      ]
-    }
-  ]);
-
+  const [campaigns, setCampaigns] = useState([]);
   const [open, setOpen] = useState(false);
   const [bidOpen, setBidOpen] = useState(false);
   const [newCampaign, setNewCampaign] = useState({
@@ -96,18 +65,26 @@ const CompanyHome = () => {
     is_active: false,
     about: '',
     target_audience: {
-      
       location: {},
       gender: { male: '', female: '', other: '' },
-      age: { '13-17': '', '18-24': '', '25-34': '', '35-44': '', '45-54': '', '55-64': '', '65+': '' },
+      age: { '13-17': '', '18-24': '', '25-34': '', '35-44': '', '45-54': '', '55-64': '', '65+': '' }
     },
     categories: [],
-    // company_id: '',
     campaign_goal: '',
     campaign_objective: { reels: 0, posts: 0, stories: 0 }
   });
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [selectedBid, setSelectedBid] = useState(null);
+
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      const response = await fetch('http://127.0.0.1:5001/api/company/home');
+      const data = await response.json();
+      setCampaigns(data);
+    };
+
+    fetchCampaigns();
+  }, []);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -141,14 +118,6 @@ const CompanyHome = () => {
     }
   };
 
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
-    setNewCampaign({
-      ...newCampaign,
-      [name]: checked
-    });
-  };
-
   const handleAddCampaign = () => {
     setCampaigns([
       ...campaigns, {
@@ -161,29 +130,27 @@ const CompanyHome = () => {
         bids: []
       }
     ]);
-    fetch('http://127.0.0.1:5000/api/company/home/create', {
+    fetch('http://127.0.0.1:5001/api/company/home/create', {
       method: 'POST',
-      body: JSON.stringify({...newCampaign, is_active: newCampaign.is_active.toString()}),
+      body: JSON.stringify({ ...newCampaign, is_active: newCampaign.is_active.toString() }),
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
-      },
+      }
     }).then(resp => resp.text())
-      .then(resp => console.log(resp))
-      
+      .then(resp => console.log(resp));
+
     setNewCampaign({
       campaign_name: '',
       budget: '',
       is_active: false,
       about: '',
       target_audience: {
-         
         location: {},
         gender: { male: '', female: '', other: '' },
-        age: { '13-17': '', '18-24': '', '25-34': '', '35-44': '', '45-54': '', '55-64': '', '65+': '' },
+        age: { '13-17': '', '18-24': '', '25-34': '', '35-44': '', '45-54': '', '55-64': '', '65+': '' }
       },
       categories: [],
-      // company_id: '',
       campaign_goal: '',
       campaign_objective: { reels: '', posts: '', stories: '' }
     });
@@ -199,6 +166,19 @@ const CompanyHome = () => {
     setSelectedBid(bid);
     console.log(`Selected bid from ${bid.influencer} for ${selectedCampaign.name} with bid amount ${bid.bid}`);
     // Implement bid selection logic here
+  };
+
+  const handleEndCampaign = async (campaignId) => {
+    const response = await fetch(`http://127.0.0.1:5001/api/company/home/${campaignId}/end`, {
+      method: 'POST',
+    });
+
+    if (response.ok) {
+      setCampaigns(campaigns.filter(campaign => campaign.id !== campaignId));
+      console.log(`Successfully ended campaign with ID ${campaignId}`);
+    } else {
+      console.error(`Failed to end campaign with ID ${campaignId}:`, response.statusText);
+    }
   };
 
   return (
@@ -235,7 +215,6 @@ const CompanyHome = () => {
               sx={{ width: '100%' }}
             >
               <ListItem fullWidth>
-
                 <CardContent>
                   <ListItemText
                     primary={campaign.name}
@@ -260,6 +239,14 @@ const CompanyHome = () => {
                 </CardContent>
               </ListItem>
             </ButtonBase>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => handleEndCampaign(campaign.id)}
+              sx={{ m: 2 }}
+            >
+              End Campaign
+            </Button>
           </Card>
         ))}
       </List>

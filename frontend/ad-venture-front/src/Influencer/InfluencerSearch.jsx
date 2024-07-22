@@ -1,64 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Box, Typography, Grid, Card, CardMedia, CardContent, CardActions, Button, Modal, Fab } from '@mui/material';
+import { Container, Box, Typography, Grid, Card, CardMedia, CardContent, CardActions, Button, Modal, Fab, TextField } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-
+import { ASKING_PRICE } from '../constants';
 
 const InfluencerSearch = () => {
   const navigate = useNavigate();
-  const [campaigns, setCampaigns] = useState([
-    { name: 'Campaign 1', maxPayment: '1000', category: 'Beauty', productImage: 'https://via.placeholder.com/150', description: 'Description of Campaign 1' },
-    { name: 'Campaign 2', maxPayment: '1200', category: 'Fitness', productImage: 'https://via.placeholder.com/150', description: 'Description of Campaign 2' },
-    { name: 'Campaign 3', maxPayment: '900', category: 'Health', productImage: 'https://via.placeholder.com/150', description: 'Description of Campaign 3' },
-  ]);
-
+  const [campaigns, setCampaigns] = useState([]);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
-  const [bidDetails, setBidDetails] = useState({
-    number_of_stories: '',
-    number_of_posts: '',
-    number_of_reels: '',
-    minimum_asking_price: ''
+  const [formData, setFormData] = useState({
+    [ASKING_PRICE]: ''
   });
 
-  const handleApply = (campaign) => {
-    setSelectedCampaign(campaign);
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      const response = await fetch('http://127.0.0.1:5001/api/influencer/home/explore');
+      const data = await response.json();
+      const mappedData = data.map(campaign => ({
+        id: campaign._id.$oid,
+        name: campaign.campaign_name,
+        maxPayment: campaign.budget,
+        category: campaign.categories.join(', '),
+        productImage: 'https://via.placeholder.com/150',
+        description: campaign.about,
+      }));
+      setCampaigns(mappedData);
+    };
+
+    fetchCampaigns();
+  }, []);
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
-  const submitBid = ({ formData }) => {
-    console.log(`Applying to ${selectedCampaign.name} with the following details:`, formData);
-    // Implement application submission logic here
-    setBidDetails({
-      number_of_stories: '',
-      number_of_posts: '',
-      number_of_reels: '',
-      minimum_asking_price: ''
+  const submitBid = async () => {
+    const response = await fetch(`http://127.0.0.1:5001/api/influencer/home/explore/${selectedCampaign.id}/apply`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
     });
+
+    if (response.ok) {
+      console.log(`Successfully applied to ${selectedCampaign.name} with the following details:`, formData);
+      // Handle success, such as showing a notification or updating the UI
+    } else {
+      console.error('Failed to submit bid:', response.statusText);
+      // Handle error, such as showing an error message
+    }
+
     setSelectedCampaign(null);
   };
 
   const handleGoBack = () => {
     navigate('/influencer/home');
-  };
-
-  const schema = {
-    title: "Example Form",
-    type: "object",
-    required: ["firstName", "lastName"],
-    properties: {
-      firstName: { type: "string", title: "First Name" },
-      lastName: { type: "string", title: "Last Name" },
-      age: { type: "number", title: "Age" },
-      bio: { type: "string", title: "Biography" }
-    }
-  };
-  
-  const uiSchema = {
-    age: {
-      "ui:widget": "updown"
-    },
-    bio: {
-      "ui:widget": "textarea"
-    }
   };
 
   return (
@@ -74,8 +74,8 @@ const InfluencerSearch = () => {
         </Box>
 
         <Grid container spacing={3}>
-          {campaigns.map((campaign, index) => (
-            <Grid item key={index} xs={12} sm={6} md={4}>
+          {campaigns.map((campaign) => (
+            <Grid item key={campaign.id} xs={12} sm={6} md={4}>
               <Card>
                 <CardMedia
                   component="img"
@@ -98,7 +98,7 @@ const InfluencerSearch = () => {
                   </Typography>
                 </CardContent>
                 <CardActions>
-                  <Button size="small" color="primary" onClick={() => handleApply(campaign)}>
+                  <Button size="small" color="primary" onClick={() => setSelectedCampaign(campaign)}>
                     Apply
                   </Button>
                 </CardActions>
@@ -131,7 +131,17 @@ const InfluencerSearch = () => {
               <Typography id="apply-modal-description" sx={{ mt: 2, mb: 2 }}>
                 {selectedCampaign.description}
               </Typography>
-
+              <TextField
+                variant="outlined"
+                type='number'
+                label="Bid"
+                name={ASKING_PRICE}
+                value={formData[ASKING_PRICE]}
+                onChange={handleInputChange}
+              />
+              <Button variant="contained" onClick={submitBid} sx={{ mt: 2 }}>
+                Submit Bid!
+              </Button>
             </Box>
           </Modal>
         )}
@@ -151,7 +161,6 @@ const InfluencerSearch = () => {
           <ArrowBackIcon />
           Go Back
         </Fab>
-
       </Box>
     </>
   );

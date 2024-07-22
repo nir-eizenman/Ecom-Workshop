@@ -1,19 +1,20 @@
-import React, { useState } from 'react';
-import { Container, Box, Typography, Paper, Button, List, ListItem, ListItemText, Modal, TextField, ListItemSecondaryAction } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Container, Box, Typography, Paper, Button, List, ListItem, ListItemText } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 const InfluencerHome = () => {
-  const [currentWorks, setCurrentWorks] = useState([
-    { name: 'Current Work 1', description: 'Description of Current Work 1' },
-    { name: 'Current Work 2', description: 'Description of Current Work 2' },
-  ]);
-
-  const [previousWorks, setPreviousWorks] = useState([
-    { name: 'Previous Work 1', description: 'Description of Previous Work 1' },
-    { name: 'Previous Work 2', description: 'Description of Previous Work 2' },
-  ]);
-
+  const [campaigns, setCampaigns] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      const response = await fetch('http://127.0.0.1:5001/api/influencer/home');
+      const data = await response.json();
+      setCampaigns(data);
+    };
+
+    fetchCampaigns();
+  }, []);
 
   const handleSearch = () => {
     navigate('/influencer/search');
@@ -32,25 +33,12 @@ const InfluencerHome = () => {
 
       <Paper elevation={6} sx={{ p: 3, mb: 4 }}>
         <Typography variant="h5" sx={{ mb: 2 }}>
-          Current Works
+          Current Campaigns
         </Typography>
         <List>
-          {currentWorks.map((work, index) => (
+          {campaigns.map((campaign, index) => (
             <ListItem key={index}>
-              <ListItemText primary={work.name} secondary={work.description} />
-            </ListItem>
-          ))}
-        </List>
-      </Paper>
-
-      <Paper elevation={6} sx={{ p: 3, mb: 4 }}>
-        <Typography variant="h5" sx={{ mb: 2 }}>
-          Previous Works
-        </Typography>
-        <List>
-          {previousWorks.map((work, index) => (
-            <ListItem key={index}>
-              <ListItemText primary={work.name} secondary={work.description} />
+              <ListItemText primary={campaign.campaign_name} secondary={campaign.about} />
             </ListItem>
           ))}
         </List>
