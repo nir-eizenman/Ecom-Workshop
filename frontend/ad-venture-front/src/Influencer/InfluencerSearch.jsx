@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+<<<<<<< Updated upstream
 import { Container, Box, Typography, Grid, Card, CardMedia, CardContent, CardActions, Button, Modal, Fab } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
+=======
+import { Container, Box, Typography, Grid, CardMedia, CardActions, Button, Modal, Fab, TextField } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { ASKING_PRICE } from '../constants';
+import CampaignCard from './CampaignCard'; // Import the CampaignCard component
+>>>>>>> Stashed changes
 
 const InfluencerSearch = () => {
   const navigate = useNavigate();
@@ -20,6 +27,7 @@ const InfluencerSearch = () => {
     minimum_asking_price: ''
   });
 
+<<<<<<< Updated upstream
   const handleApply = (campaign) => {
     setSelectedCampaign(campaign);
   };
@@ -33,6 +41,40 @@ const InfluencerSearch = () => {
       number_of_reels: '',
       minimum_asking_price: ''
     });
+=======
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      const response = await fetch('http://127.0.0.1:5001/api/influencer/home/explore');
+      const data = await response.json();
+      setCampaigns(data.available_campaigns); // Set the campaigns directly from the fetched data
+    };
+
+    fetchCampaigns();
+  }, []);
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const submitBid = async () => {
+    const response = await fetch(`http://127.0.0.1:5001/api/influencer/home/explore/${selectedCampaign.company_id}/apply`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    });
+
+    if (response.ok) {
+      console.log(`Successfully applied to ${selectedCampaign.campaign_name} with the following details:`, formData);
+    } else {
+      console.error('Failed to submit bid:', response.statusText);
+    }
+
+>>>>>>> Stashed changes
     setSelectedCampaign(null);
   };
 
@@ -74,6 +116,7 @@ const InfluencerSearch = () => {
         </Box>
 
         <Grid container spacing={3}>
+<<<<<<< Updated upstream
           {campaigns.map((campaign, index) => (
             <Grid item key={index} xs={12} sm={6} md={4}>
               <Card>
@@ -103,6 +146,22 @@ const InfluencerSearch = () => {
                   </Button>
                 </CardActions>
               </Card>
+=======
+          {campaigns.map((campaign) => (
+            <Grid item key={campaign.company_id} xs={12} sm={6} md={4}>
+              <CardMedia
+                component="img"
+                height="140"
+                image="https://via.placeholder.com/150"
+                alt={campaign.campaign_name}
+              />
+              <CampaignCard campaign={campaign} />
+              <CardActions>
+                <Button size="small" color="primary" onClick={() => setSelectedCampaign(campaign)}>
+                  Apply
+                </Button>
+              </CardActions>
+>>>>>>> Stashed changes
             </Grid>
           ))}
         </Grid>
@@ -126,12 +185,24 @@ const InfluencerSearch = () => {
               p: 4,
             }}>
               <Typography id="apply-modal-title" variant="h6" component="h2">
-                Apply to {selectedCampaign.name}
+                Apply to {selectedCampaign.campaign_name}
               </Typography>
-              <Typography id="apply-modal-description" sx={{ mt: 2, mb: 2 }}>
-                {selectedCampaign.description}
-              </Typography>
+<<<<<<< Updated upstream
 
+=======
+              <CampaignCard campaign={selectedCampaign} />
+              <TextField
+                variant="outlined"
+                type='number'
+                label="Bid"
+                name={ASKING_PRICE}
+                value={formData[ASKING_PRICE]}
+                onChange={handleInputChange}
+              />
+              <Button variant="contained" onClick={submitBid} sx={{ mt: 2 }}>
+                Submit Bid!
+              </Button>
+>>>>>>> Stashed changes
             </Box>
           </Modal>
         )}

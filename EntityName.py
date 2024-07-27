@@ -23,6 +23,8 @@ CONST_RESULT = 'result'
 CONST_MESSAGE = 'message'
 CONST_USER_TYPE = 'user_type'
 CONST_RANDOM_SESSION_TOKEN = 'random_session_token'
+CONST_COMPANY = 'company'
+CONST_INFLUENCER = 'influencer'
 
 #social networks
 CONST_INSTAGRAM = 'instagram'

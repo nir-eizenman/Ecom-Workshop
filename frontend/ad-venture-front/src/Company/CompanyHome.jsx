@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import React, { useState } from 'react';
 import {
   Container,
@@ -22,6 +23,13 @@ import {
   FormControlLabel
 } from '@mui/material';
 import GeneralForm from '../GeneralForm'
+=======
+import React, { useState, useEffect } from 'react';
+import { Container, Box, Typography, Button } from '@mui/material';
+import CampaignList from './CampaignList';
+import CampaignFormDialog from './CampaignFormDialog';
+import BidDialog from './BidDialog';
+>>>>>>> Stashed changes
 
 const scheme = {
   "campaign_name": {type: 'string', label: 'Campaign Name'},
@@ -122,6 +130,7 @@ const CompanyHome = () => {
     setSelectedCampaign(null);
   };
 
+<<<<<<< Updated upstream
   const handleChange = (e) => {
     const { name, value } = e.target;
     const [section, field] = name.split('.');
@@ -149,6 +158,8 @@ const CompanyHome = () => {
     });
   };
 
+=======
+>>>>>>> Stashed changes
   const handleAddCampaign = () => {
     setCampaigns([
       ...campaigns, {
@@ -163,7 +174,11 @@ const CompanyHome = () => {
     ]);
     fetch('http://127.0.0.1:5000/api/company/home/create', {
       method: 'POST',
+<<<<<<< Updated upstream
       body: JSON.stringify({...newCampaign, is_active: newCampaign.is_active.toString()}),
+=======
+      body: JSON.stringify({ ...newCampaign, is_active: newCampaign.is_active.toString(), company_id: '123' }),
+>>>>>>> Stashed changes
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
@@ -212,7 +227,7 @@ const CompanyHome = () => {
             WebkitTextFillColor: 'transparent'
           }}
         >
-          Sign Up Influencer
+          Let's Get Famous!
         </Typography>
         <Typography variant="subtitle1" color="textSecondary">
           Welcome to your company dashboard. Manage your campaigns below.
@@ -222,6 +237,7 @@ const CompanyHome = () => {
       <Typography variant="h5" sx={{ mb: 2 }}>
         Your Campaigns
       </Typography>
+<<<<<<< Updated upstream
       <List>
         {campaigns.map((campaign) => (
           <Card
@@ -263,69 +279,34 @@ const CompanyHome = () => {
           </Card>
         ))}
       </List>
+=======
+      <CampaignList
+        campaigns={campaigns}
+        onCampaignClick={handleCampaignClick}
+        onEndCampaign={handleEndCampaign}
+      />
+>>>>>>> Stashed changes
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
         <Button variant="contained" color="primary" onClick={handleClickOpen}>
           Add Campaign
         </Button>
       </Box>
 
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Create a New Campaign</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Please fill in the details of the new campaign.
-          </DialogContentText>
-          <GeneralForm schema={scheme} formData={newCampaign} setFormData={setNewCampaign} />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleAddCampaign} color="primary">
-            Add Campaign
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <CampaignFormDialog
+        open={open}
+        onClose={handleClose}
+        onAddCampaign={handleAddCampaign}
+        scheme={scheme}
+        newCampaign={newCampaign}
+        setNewCampaign={setNewCampaign}
+      />
 
-      <Dialog open={bidOpen} onClose={handleBidClose}>
-        <DialogTitle>Bids for {selectedCampaign?.name}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Review and manage bids from influencers for this campaign.
-          </DialogContentText>
-          {selectedCampaign?.bids.map((bid) => (
-            <Paper
-              elevation={3}
-              sx={{ p: 2, mb: 2 }}
-              key={bid.id}
-            >
-              <Typography variant="subtitle1">
-                Influencer: {bid.influencer}
-              </Typography>
-              <Typography variant="body1">
-                Bid Amount: {bid.bid}
-              </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => handleSelectBid(bid)}
-              >
-                Select
-              </Button>
-            </Paper>
-          ))}
-          {selectedCampaign?.bids.length === 0 && (
-            <Typography variant="body2" color="textSecondary">
-              No bids available for this campaign.
-            </Typography>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleBidClose} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {/* <BidDialog
+        open={bidOpen}
+        onClose={handleBidClose}
+        selectedCampaign={selectedCampaign}
+        handleSelectBid={handleSelectBid}
+      /> */}
     </Container>
   );
 };

@@ -1,6 +1,12 @@
+<<<<<<< Updated upstream
 import React, { useState } from 'react';
 import { Container, Box, Typography, Paper, Button, List, ListItem, ListItemText, Modal, TextField, ListItemSecondaryAction } from '@mui/material';
+=======
+import React, { useState, useEffect } from 'react';
+import { Container, Box, Typography, Paper, Button, List } from '@mui/material';
+>>>>>>> Stashed changes
 import { useNavigate } from 'react-router-dom';
+import CampaignCard from './CampaignCard';
 
 const InfluencerHome = () => {
   const [currentWorks, setCurrentWorks] = useState([
@@ -35,6 +41,7 @@ const InfluencerHome = () => {
           Current Works
         </Typography>
         <List>
+<<<<<<< Updated upstream
           {currentWorks.map((work, index) => (
             <ListItem key={index}>
               <ListItemText primary={work.name} secondary={work.description} />
@@ -52,6 +59,10 @@ const InfluencerHome = () => {
             <ListItem key={index}>
               <ListItemText primary={work.name} secondary={work.description} />
             </ListItem>
+=======
+          {campaigns.map((campaign, index) => (
+            <CampaignCard key={index} campaign={campaign} />
+>>>>>>> Stashed changes
           ))}
         </List>
       </Paper>
