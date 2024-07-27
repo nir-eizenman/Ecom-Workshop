@@ -3,6 +3,8 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from UserTypeEnum import UserType
 import EntityName
+from bson import ObjectId
+
 #uri = "mongodb+srv://ProjectMainAdmin:SzReRV0ZxjeWm7vN@datastorage1.dlfth1l.mongodb.net/?retryWrites=true&w=majority&appName=DataStorage1"
 # Create a new client and connect to the server
 #client = MongoClient(uri, server_api=ServerApi('1'))
@@ -71,6 +73,16 @@ class DatabaseLogic:
             print(e)
             return None
 
+
+    def getDocumentById(self,  id: str, documentType: str) -> dict:
+        db = self.client[CONST_DATA_BASE]
+        try:
+            collection = db[documentType]
+            result = collection.find_one({EntityName.CONST_ID: ObjectId(id)})
+            return result
+        except Exception as e:
+            print(e)
+            return None
 
     def getCompanyCampaigns(self, companyName: str):
         

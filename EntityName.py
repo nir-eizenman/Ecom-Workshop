@@ -1,19 +1,23 @@
+#database entities
+CONST_ID = '_id'
+
 
 #company user
 CONST_COMPANY_NAME = 'company_name'
-CONST_COMPANY_SITE_LINK = 'company_site_link'
-CONST_COMPANY_ABOUT_US = 'company_about_us'
+CONST_COMPANY_SITE_LINK = 'company_site'
+CONST_COMPANY_ABOUT_US = 'about_us'
+CONST_COMPANY_ID = 'company_id'
 
 #influencer user
-CONST_INFLUENCER_FULL_NAME = 'influencer_full_name'
+CONST_INFLUENCER_FULL_NAME = 'full_name'
 CONST_INFLUENCER_SOCIAL_NETWORK_LINKS = 'influencer_social_network_links'
 CONST_INFLUENCER_FOLLOWER_INTEREST_TYPES = 'influencer_follower_interest_types'
 CONST_INFLUENCER_FOLLOWERS_LOCATION = 'influencer_followers_location'
 CONST_INFLUENCER_FOLLOWER_AGE = 'influencer_followers_age'
 CONST_INFLUENCER_FOLLOWER_GENDER = 'influencer_followers_gender'
 CONST_INFLUENCER_EXPOSURE_CONTENT = 'influencer_exposure_content'
-CONST_INFLUENCER_AGE = 'influencer_age'
-CONST_INFLUENCER_GENDER = 'influencer_gender'
+CONST_INFLUENCER_AGE = 'age'
+CONST_INFLUENCER_GENDER = 'gender'
 
 #general user
 CONST_EMAIL = 'email'
@@ -27,7 +31,8 @@ CONST_USER_ID = 'user_id'
 
 #social networks
 CONST_INSTAGRAM = 'instagram'
-
+CONST_CONTENT_TYPE = 'content_type'
+CONST_URL = 'url'
 
 
 #For Upload Campaign 

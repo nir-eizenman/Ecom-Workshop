@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, render_template, request, redirect, url_for, session
 from flask_session import Session
 from UserTypeEnum import UserType
+from ContentTypeEnum import ContentType
 from flask_cors import CORS
 from DatabaseLogic import DatabaseLogic
 import string
@@ -103,18 +104,18 @@ def signup_company():
 def login():
     email = request.json[EntityName.CONST_EMAIL]
     password = request.json[EntityName.CONST_PASSWORD]
-    user_type_num = request.json[EntityName.CONST_USER_TYPE]
+    user_type_str = request.json[EntityName.CONST_USER_TYPE]
     
     # Ensure the user_type is valid
 
     #need to fix here?
-    print("user type number is:", user_type_num)
+    print("user type is:", user_type_str)
 
     #Test it
-    if user_type_num == 1:
+    if user_type_str == 'company':
         user_type = UserType(1)
         print("I am influencer hereeeee")
-    elif user_type_num == 2:
+    elif user_type_str == 'influencer':
         user_type = UserType(2)
         print("I am company here")
     else:
@@ -158,6 +159,85 @@ def logout():
             EntityName.CONST_RESULT: True,
             EntityName.CONST_MESSAGE: ""
         }), 200
+
+
+@app.route('/api/influencer/home/completion', methods=['POST'])
+def influencer_one_objective_completion():
+    influencer_id = request.json[EntityName.CONST_USER_ID]
+    content_type_str = request.json[EntityName.CONST_CONTENT_TYPE] # should be string
+    content_url = request.json[EntityName.CONST_URL]
+    campaign_id = request.json['campaign_id']
+
+
+    influencer_document = db.getDocumentById(influencer_id, UserType.Influencers.name)
+    campaign_document = db.getDocumentById(campaign_id, 'Campaigns')
+    company_document = db.getDocumentById(str(campaign_document[EntityName.CONST_COMPANY_ID]), UserType.Companies.name)
+
+    if influencer_document is None or campaign_document is None or company_document is None:
+        return jsonify(
+        {
+            EntityName.CONST_MESSAGE: "Either influencer, campaign or company is invalid"
+        }), 400
+
+
+    # TODO - later make it use the enum and add posts and stories
+    # if content_type_str == str(ContentType.Reels):
+    #     content_type = ContentType.Reels
+
+    #print("company campaign is: ", campaign_document)
+    #print("company doc is: ", company_document)
+    sender_email = "team.ad.venture.company@gmail.com"
+    receiver_email = company_document[EntityName.CONST_EMAIL]
+    password = "qpic idhh vlbs xwip"
+
+    influencer_full_name = influencer_document[EntityName.CONST_INFLUENCER_FULL_NAME]
+    campaign_name = campaign_document[EntityName.CONST_CAMPAIGN_NAME]
+
+    subject = f"{influencer_full_name} Has Uploaded New Content for Your Campaign: \"{campaign_name}\"!"
+    body = f"""
+        Dear {company_document[EntityName.CONST_COMPANY_NAME]} Team,
+
+        We hope this message finds you well.
+
+        We are excited to inform you that {influencer_full_name} has just uploaded new content for your campaign: \"{campaign_name}\". Below are the details:
+
+        Campaign Name: {campaign_name}
+        Content Type: {content_type_str}
+        Content URL: {content_url}
+        We encourage you to check out the new content and share your feedback. If you have any questions or require further assistance, please do not hesitate to reach out.
+
+        Thank you for choosing our services to connect you with top influencers.
+
+        Best regards,
+
+        Ad-Venture
+        """
+
+    # Create the email message
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = receiver_email
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain'))
+
+    try:
+        # Connect to the Gmail SMTP server
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()  # Upgrade the connection to a secure encrypted SSL/TLS connection
+            server.login(sender_email, password)  # Log in to the email account
+            server.send_message(msg)  # Send the email
+        print(f"Email sent to {receiver_email}")
+        return jsonify(
+        {
+            EntityName.CONST_MESSAGE: f"Email sent to {receiver_email} successfully"
+        }), 200
+
+    except Exception as e:
+        print(f"Failed to send email to {receiver_email}: {e}")
+        return jsonify(
+        {
+            EntityName.CONST_MESSAGE: f"Failed to send email to {receiver_email}"
+        }), 401
 
 
 # def id_generator(chars=string.ascii_uppercase + string.digits, size=9):
