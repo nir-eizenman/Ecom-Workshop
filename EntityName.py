@@ -23,6 +23,7 @@ CONST_RESULT = 'result'
 CONST_MESSAGE = 'message'
 CONST_USER_TYPE = 'user_type'
 CONST_RANDOM_SESSION_TOKEN = 'random_session_token'
+CONST_USER_ID = 'user_id'
 
 #social networks
 CONST_INSTAGRAM = 'instagram'

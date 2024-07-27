@@ -53,15 +53,15 @@ def signup_influencer():
     if not db.addUser(data, UserType.Influencers):
         return jsonify(
             {
-                "result": False,
-                "message": "User influencer failed to create"
+                EntityName.CONST_RESULT: False,
+                EntityName.CONST_MESSAGE: "User influencer failed to create"
             }), 406
 
     # addign user succeded
     return jsonify(
         {
-            "result": True,
-            "message": ""
+            EntityName.CONST_RESULT: True,
+            EntityName.CONST_MESSAGE: ""
         }), 201
 
 
@@ -86,15 +86,15 @@ def signup_company():
     if not db.addUser(data, UserType.Companies):
         return jsonify(
             {
-                "result": False,
-                "message": "User company failed to create"
+                EntityName.CONST_RESULT: False,
+                EntityName.CONST_MESSAGE: "User company failed to create"
             }), 406
 
     # addign user succeded
     return jsonify(
         {
-            "result": True,
-            "message": ""
+            EntityName.CONST_RESULT: True,
+            EntityName.CONST_MESSAGE: ""
         }), 201
 
 
@@ -104,13 +104,13 @@ def login():
     email = request.json[EntityName.CONST_EMAIL]
     password = request.json[EntityName.CONST_PASSWORD]
     user_type_num = request.json[EntityName.CONST_USER_TYPE]
-
+    
     # Ensure the user_type is valid
 
-    # need to fix here?
+    #need to fix here?
     print("user type number is:", user_type_num)
 
-    # Test it
+    #Test it
     if user_type_num == 1:
         user_type = UserType(1)
         print("I am influencer hereeeee")
@@ -120,56 +120,48 @@ def login():
     else:
         return jsonify(
             {
-                "result": False,
-                "message": "Invalid user type"
+            EntityName.CONST_RESULT: False,
+            EntityName.CONST_MESSAGE: "Invalid user type"
             }), 400
 
+    
     print(user_type)
     user_data = db.getUserByEmail(email, user_type)
-    print(user_data)
-    # if user_data is None:
-    #   return 'Invalid credentials', 401
+
 
     if user_data and user_data[EntityName.CONST_PASSWORD] == password:
-        randSessionToken = id_generator()
-        session[EntityName.CONST_RANDOM_SESSION_TOKEN] = randSessionToken
-        session[EntityName.CONST_EMAIL] = user_data[EntityName.CONST_EMAIL]
-        if not db.addSessionToken(randSessionToken, user_data[EntityName.CONST_EMAIL]):
-            return jsonify(
-                {
-                    "result": False,
-                    "message": "Error insert session token into db"
-                }), 400
+        # session[EntityName.CONST_RANDOM_SESSION_TOKEN] = randSessionToken
+        # session[EntityName.CONST_EMAIL] = user_data[EntityName.CONST_EMAIL]
+        
+        user_id_str = str(user_data['_id'])
+        print("in login the value of user_id_str is", user_id_str)
 
-        # session['user_type'] = user_type_str
         return jsonify(
             {
-                "result": True,
-                "message": ""
+            EntityName.CONST_RESULT: True,
+            EntityName.CONST_MESSAGE: "",
+            EntityName.CONST_USER_ID: user_id_str
             }), 200
-
+    
     return jsonify(
-        {
-            "result": False,
-            "message": "Invalid credentials"
-        }), 401
+            {
+            EntityName.CONST_RESULT: False,
+            EntityName.CONST_MESSAGE: "Invalid credentials"
+            }), 401
 
 
 @app.route("/api/logout")
 def logout():
-    db.deleteSessionToken(session[EntityName.CONST_RANDOM_SESSION_TOKEN])
-    session[EntityName.CONST_RANDOM_SESSION_TOKEN] = ""
-    session[EntityName.CONST_EMAIL] = ""
 
     return jsonify(
         {
-            "result": True,
-            "message": ""
+            EntityName.CONST_RESULT: True,
+            EntityName.CONST_MESSAGE: ""
         }), 200
 
 
-def id_generator(chars=string.ascii_uppercase + string.digits, size=9):
-    return ''.join(random.choice(chars) for _ in range(size))
+# def id_generator(chars=string.ascii_uppercase + string.digits, size=9):
+#     return ''.join(random.choice(chars) for _ in range(size))
 
 
 # MAYAS APIs
