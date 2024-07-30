@@ -370,8 +370,8 @@ def upload_campaign(companyId):
         return jsonify({"status": "error", "message": str(e)}), 400
 
 
-@app.route('/api/influencer/home/explore/<campaign_id>/apply', methods=['POST'])
-def apply_for_campaign(campaign_id):
+@app.route('/api/influencer/<influencerId>/home/explore/<campaign_id>/apply', methods=['POST'])
+def apply_for_campaign(influencerId, campaign_id):
     required_fields = [
         EntityName.CONST_ASKING_PRICE,
         EntityName.CONST_INFLUENCER_ID
@@ -386,7 +386,7 @@ def apply_for_campaign(campaign_id):
     # Create application data
     application_data = {
         'campaignId': campaign_id,
-        'influencerId': data[EntityName.CONST_INFLUENCER_ID],  # change to session.get
+        'influencerId': influencerId,  # change to session.get
         EntityName.CONST_ASKING_PRICE: int(data[EntityName.CONST_ASKING_PRICE])
     }
 
