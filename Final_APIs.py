@@ -160,10 +160,10 @@ def logout():
             EntityName.CONST_MESSAGE: ""
         }), 200
 
-
-@app.route('/api/influencer/home/completion', methods=['POST'])
-def influencer_one_objective_completion():
-    influencer_id = request.json[EntityName.CONST_USER_ID]
+# TODO - 
+@app.route('/api/influencer/<influencerId>/home/completion', methods=['POST'])
+def influencer_one_objective_completion(influencerId):
+    influencer_id = influencerId
     content_type_str = request.json[EntityName.CONST_CONTENT_TYPE] # should be string
     content_url = request.json[EntityName.CONST_URL]
     campaign_id = request.json['campaign_id']
@@ -301,8 +301,8 @@ def notify_top_5(campaign):
         notify_influencer(influencer, campaign)
 
 
-@app.route('/api/company/home/create', methods=['POST'])
-def upload_campaign():
+@app.route('/api/company/<companyId>/home/create', methods=['POST'])
+def upload_campaign(companyId):
     try:
         data = request.json
 
@@ -314,6 +314,7 @@ def upload_campaign():
         is_active = data['is_active']
         about = data['about']
 
+        company_id = companyId
         target_audience = data['target_audience']
         # Extract nested dictionaries from target_audience
         location = target_audience['location']
@@ -347,7 +348,7 @@ def upload_campaign():
                 "age": age
             },
             "categories": categories,
-            'company_id': "6695650dd312588ddbf599fe",  # change to session.get
+            'company_id': company_id,  # change to session.get
             "campaign_goal": campaign_goal,
             "campaign_objective": {
                 "reels": reels,
@@ -372,7 +373,8 @@ def upload_campaign():
 @app.route('/api/influencer/home/explore/<campaign_id>/apply', methods=['POST'])
 def apply_for_campaign(campaign_id):
     required_fields = [
-        EntityName.CONST_ASKING_PRICE
+        EntityName.CONST_ASKING_PRICE,
+        EntityName.CONST_INFLUENCER_ID
     ]
 
     data = {field: request.json.get(field) for field in required_fields}
@@ -384,7 +386,7 @@ def apply_for_campaign(campaign_id):
     # Create application data
     application_data = {
         'campaignId': campaign_id,
-        'influencerId': '668ae2ae09727d27521e2928',  # change to session.get
+        'influencerId': data[EntityName.CONST_INFLUENCER_ID],  # change to session.get
         EntityName.CONST_ASKING_PRICE: int(data[EntityName.CONST_ASKING_PRICE])
     }
 
@@ -396,9 +398,9 @@ def apply_for_campaign(campaign_id):
 
 
 # Influencer explore page for active campaigns
-@app.route('/api/influencer/home/explore', methods=['GET'])
-def explore_campaigns():
-    influencer_id = '668ae2ae09727d27521e2928',  # change to session.get
+@app.route('/api/influencer/home/<influencer_id>/explore', methods=['GET'])
+def explore_campaigns(influencer_id):
+    influencer_id = influencer_id,  # change to session.get
     if not influencer_id:
         return jsonify({'error': 'Influencer not authenticated'}), 401
 
@@ -518,12 +520,12 @@ def company_home_results_choose(campaignId):
 # NIRS APIs
 
 # Company home - GET - /api/company/home - return value: 5 last campaign (sorted by active first) (then by creation time)
-@app.route("/api/company/home", methods=['GET'])
-def company_home():
+@app.route("/api/company/<companyId>/home", methods=['GET'])
+def company_home(companyId):
     # get the last 5 campaigns of the company
     collection = database["Campaigns"]
     # TODO: add session logic instead of const company id (session['company_id']) or (session['user_id'])
-    campaigns = collection.find({"company_id": 123}).sort([("is_active", -1), ("create_time", -1)]).limit(5)
+    campaigns = collection.find({"company_id": companyId}).sort([("is_active", -1), ("create_time", -1)]).limit(5)
     # convert the object to list
     campaigns = list(campaigns)
     # remove the _id field
@@ -534,13 +536,13 @@ def company_home():
 
 
 # Influencer home - GET - /api/influencer/home - return value: 5 last campaign that the influencer was chosen for (sorted by active first) (then by creation time)
-@app.route("/api/influencer/home", methods=['GET'])
-def influencer_home():
+@app.route("/api/influencer/<influencerId>/home", methods=['GET'])
+def influencer_home(influencerId):
     # get the last 5 campaigns of the influencer
     collection = database["Campaigns"]
     # TODO: add session logic instead of const influencer id (session['influencer_id']) or (session['user_id'])
     # find the campaigns that the influencers array contains 1234
-    campaigns = collection.find({"influencers": "12345"}).sort([("is_active", -1), ("create_time", -1)]).limit(5)
+    campaigns = collection.find({"influencers": influencerId}).sort([("is_active", -1), ("create_time", -1)]).limit(5)
     # convert the object to list
     campaigns = list(campaigns)
     # remove the _id field and the influencers array field

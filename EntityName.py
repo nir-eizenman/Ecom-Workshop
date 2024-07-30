@@ -18,6 +18,7 @@ CONST_INFLUENCER_FOLLOWER_GENDER = 'influencer_followers_gender'
 CONST_INFLUENCER_EXPOSURE_CONTENT = 'influencer_exposure_content'
 CONST_INFLUENCER_AGE = 'age'
 CONST_INFLUENCER_GENDER = 'gender'
+CONST_INFLUENCER_ID = 'influencer_id'
 
 #general user
 CONST_EMAIL = 'email'
