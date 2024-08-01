@@ -2,25 +2,37 @@ import React, { useState } from 'react';
 import { Container, Box, Paper, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import GeneralForm from './GeneralForm';
+import { USER_TYPE } from './constants';
 
 
 const schema = {
   'email': {label: 'Username', type: 'email'},
   'password': {label: 'Password', type: 'password'},
-  'userType': {options: ['Company', 'Influencer'], label: 'User Type', type: 'radio'}
+  [USER_TYPE]: {options: ['company', 'influencer'], label: 'User Type', type: 'radio'}
 }
 
 const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    userType: 'company',
+    [USER_TYPE]: '',
   });
 
   const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    navigate(`/${formData.userType}/home`);
+  const handleSubmit = async () => {
+    console.log("HIII")
+    await fetch('http://localhost:5001/api/login', {
+      method: 'POST', 
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData),
+      credentials: "include"
+    })
+
+    await navigate(`/${formData[USER_TYPE]}/home`);
     console.log(formData);
   };
 

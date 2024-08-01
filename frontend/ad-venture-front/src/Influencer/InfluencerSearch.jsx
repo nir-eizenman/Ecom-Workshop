@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Box, Typography, Grid, Card, CardMedia, CardContent, CardActions, Button, Modal, Fab, TextField } from '@mui/material';
+import { Container, Box, Typography, Grid, CardMedia, CardActions, Button, Modal, Fab, TextField } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ASKING_PRICE } from '../constants';
+import CampaignCard from './CampaignCard'; // Import the CampaignCard component
 
 const InfluencerSearch = () => {
   const navigate = useNavigate();
@@ -16,15 +17,7 @@ const InfluencerSearch = () => {
     const fetchCampaigns = async () => {
       const response = await fetch('http://127.0.0.1:5001/api/influencer/home/explore');
       const data = await response.json();
-      const mappedData = data.map(campaign => ({
-        id: campaign._id.$oid,
-        name: campaign.campaign_name,
-        maxPayment: campaign.budget,
-        category: campaign.categories.join(', '),
-        productImage: 'https://via.placeholder.com/150',
-        description: campaign.about,
-      }));
-      setCampaigns(mappedData);
+      setCampaigns(data.available_campaigns); // Set the campaigns directly from the fetched data
     };
 
     fetchCampaigns();
@@ -38,7 +31,7 @@ const InfluencerSearch = () => {
   };
 
   const submitBid = async () => {
-    const response = await fetch(`http://127.0.0.1:5001/api/influencer/home/explore/${selectedCampaign.id}/apply`, {
+    const response = await fetch(`http://127.0.0.1:5001/api/influencer/home/explore/${selectedCampaign.company_id}/apply`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -47,11 +40,9 @@ const InfluencerSearch = () => {
     });
 
     if (response.ok) {
-      console.log(`Successfully applied to ${selectedCampaign.name} with the following details:`, formData);
-      // Handle success, such as showing a notification or updating the UI
+      console.log(`Successfully applied to ${selectedCampaign.campaign_name} with the following details:`, formData);
     } else {
       console.error('Failed to submit bid:', response.statusText);
-      // Handle error, such as showing an error message
     }
 
     setSelectedCampaign(null);
@@ -74,35 +65,20 @@ const InfluencerSearch = () => {
         </Box>
 
         <Grid container spacing={3}>
-          {campaigns.map((campaign) => (
-            <Grid item key={campaign.id} xs={12} sm={6} md={4}>
-              <Card>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={campaign.productImage}
-                  alt={campaign.name}
-                />
-                <CardContent>
-                  <Typography gutterBottom variant="h5" component="div">
-                    {campaign.name}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    Max Payment: {campaign.maxPayment}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    Category: {campaign.category}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                    {campaign.description}
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button size="small" color="primary" onClick={() => setSelectedCampaign(campaign)}>
-                    Apply
-                  </Button>
-                </CardActions>
-              </Card>
+          {campaigns.map((campaign, i) => (
+            <Grid item key={i} xs={12} sm={6} md={4}>
+              <CardMedia
+                component="img"
+                height="140"
+                image="https://via.placeholder.com/150"
+                alt={campaign.campaign_name}
+              />
+              <CampaignCard campaign={campaign} />
+              <CardActions>
+                <Button size="small" color="primary" onClick={() => setSelectedCampaign(campaign)}>
+                  Apply
+                </Button>
+              </CardActions>
             </Grid>
           ))}
         </Grid>
@@ -126,11 +102,9 @@ const InfluencerSearch = () => {
               p: 4,
             }}>
               <Typography id="apply-modal-title" variant="h6" component="h2">
-                Apply to {selectedCampaign.name}
+                Apply to {selectedCampaign.campaign_name}
               </Typography>
-              <Typography id="apply-modal-description" sx={{ mt: 2, mb: 2 }}>
-                {selectedCampaign.description}
-              </Typography>
+              {/* <CampaignCard campaign={selectedCampaign} /> */}
               <TextField
                 variant="outlined"
                 type='number'

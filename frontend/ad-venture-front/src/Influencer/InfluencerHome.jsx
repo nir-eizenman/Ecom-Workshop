@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Box, Typography, Paper, Button, List, ListItem, ListItemText } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import CampaignCard from './CampaignCard';
 
 const InfluencerHome = () => {
   const [campaigns, setCampaigns] = useState([]);
@@ -37,9 +38,7 @@ const InfluencerHome = () => {
         </Typography>
         <List>
           {campaigns.map((campaign, index) => (
-            <ListItem key={index}>
-              <ListItemText primary={campaign.campaign_name} secondary={campaign.about} />
-            </ListItem>
+            <CampaignCard key={index} campaign={campaign} />
           ))}
         </List>
       </Paper>

@@ -12,12 +12,30 @@ from bson import ObjectId
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from json import JSONEncoder
+from bson import json_util
+from mongoengine.base import BaseDocument
+from mongoengine.queryset.base import BaseQuerySet
+
+class MongoEngineJSONEncoder(JSONEncoder):
+    def default(self,obj):
+        if isinstance(obj, BaseDocument):
+            return json_util._json_convert(obj.to_mongo())
+        elif isinstance(obj, BaseQuerySet):
+            return json_util._json_convert(obj.as_pymongo())
+        return JSONEncoder.default(self, obj)
+
 
 app = Flask(__name__)
-app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_PERMANENT"] = True
 app.config["SESSION_TYPE"] = "filesystem"
+app.config['SECRET_KEY'] = 'NIR IS ANGRY'
+app.config.from_object(__name__)
+app.config.update(SESSION_COOKIE_SAMESITE="None", SESSION_COOKIE_SECURE=True)
+app.json_encoder = MongoEngineJSONEncoder
+
 Session(app)
-CORS(app)
+CORS(app, supports_credentials=True)
 app.secret_key = 'your_secret_key'  # Necessary for session management
 
 db = DatabaseLogic(
@@ -111,11 +129,15 @@ def login():
     print("user type number is:", user_type_num)
 
     # Test it
-    if user_type_num == 1:
+    if user_type_num == EntityName.CONST_INFLUENCER:
         user_type = UserType(1)
+        
         print("I am influencer hereeeee")
-    elif user_type_num == 2:
+    elif user_type_num == EntityName.CONST_COMPANY:
         user_type = UserType(2)
+        #userByEmail = db.getUserByEmail(email, UserType.Companies)
+        #print(userByEmail)
+        session['company_id'] = "6695650dd312588ddbf599fe"
         print("I am company here")
     else:
         return jsonify(
@@ -326,7 +348,7 @@ def apply_for_campaign(campaign_id):
 # Influencer explore page for active campaigns
 @app.route('/api/influencer/home/explore', methods=['GET'])
 def explore_campaigns():
-    influencer_id = '668ae2ae09727d27521e2928',  # change to session.get
+    influencer_id = '668ae2ae09727d27521e2933',  # change to session.get
     if not influencer_id:
         return jsonify({'error': 'Influencer not authenticated'}), 401
 
@@ -335,7 +357,10 @@ def explore_campaigns():
 
     applied_campaign_ids = [app['campaign_id'] for app in applied_campaigns]
     available_campaigns = [campaign for campaign in active_campaigns if campaign['_id'] not in applied_campaign_ids]
-
+    for campaign in available_campaigns:
+        print(campaign['_id'])
+        campaign['campaign_id'] = str(campaign.pop('_id', None))
+    print(available_campaigns)
     return jsonify({'available_campaigns': available_campaigns}), 200
 
 
@@ -418,6 +443,7 @@ def company_home_results_choose(campaignId):
     # get the result number chosen
     result_number = request.json.get('result_number')
     # check if the result number is valid
+    print(result_number)
     if result_number is None or result_number < 0 or result_number >= len(campaign['results']):
         return jsonify({'error': 'Invalid result number'}), 400
     # get the result chosen
@@ -449,14 +475,15 @@ def company_home_results_choose(campaignId):
 @app.route("/api/company/home", methods=['GET'])
 def company_home():
     # get the last 5 campaigns of the company
+    print("in company home: " + str(session.get('company_id')))
     collection = database["Campaigns"]
     # TODO: add session logic instead of const company id (session['company_id']) or (session['user_id'])
-    campaigns = collection.find({"company_id": 123}).sort([("is_active", -1), ("create_time", -1)]).limit(5)
+    campaigns = collection.find({"company_id": '6695650dd312588ddbf599fe'}).sort([("is_active", -1), ("create_time", -1)]).limit(5)
     # convert the object to list
     campaigns = list(campaigns)
     # remove the _id field
     for campaign in campaigns:
-        campaign.pop('_id')
+        campaign['campaign_id'] = str(campaign.pop('_id'))
     # return the campaigns
     return jsonify(campaigns), 200
 
@@ -468,7 +495,8 @@ def influencer_home():
     collection = database["Campaigns"]
     # TODO: add session logic instead of const influencer id (session['influencer_id']) or (session['user_id'])
     # find the campaigns that the influencers array contains 1234
-    campaigns = collection.find({"influencers": "12345"}).sort([("is_active", -1), ("create_time", -1)]).limit(5)
+    campaigns = collection.find({"company_id": "6695650dd312588ddbf599fe"}).sort([("is_active", -1), ("create_time", -1)]).limit(5)
+    print(campaigns)
     # convert the object to list
     campaigns = list(campaigns)
     # remove the _id field and the influencers array field
@@ -481,3 +509,4 @@ def influencer_home():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)  # Changed port to 5001
+
