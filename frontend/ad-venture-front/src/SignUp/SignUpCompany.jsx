@@ -8,7 +8,7 @@ import {
   Typography,
   Grid
 } from '@mui/material';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 const SignUpCompanyForm = () => {
   const [formData, setFormData] = useState({
@@ -44,11 +44,16 @@ const SignUpCompanyForm = () => {
 
       const result = await response.json();
       console.log('Success:', result);
+      
+      // Save result in localStorage
+      localStorage.setItem('signupResult', JSON.stringify(result));
+      
+      // Navigate to another page (e.g., company home page)
+      navigate('/company-home');
     } catch (error) {
       console.error('Error:', error);
     }
   };
-
 
   return (
     <Container sx={{ p: 2 }}>
