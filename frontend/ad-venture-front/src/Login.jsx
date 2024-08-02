@@ -44,7 +44,7 @@ const Login = () => {
         sessionStorage.setItem(RANDOM_SESSION_TOKEN, data[RANDOM_SESSION_TOKEN]);
         sessionStorage.setItem(USER_ID, data[RANDOM_SESSION_TOKEN]);
 
-        navigate(`/${data[USER_TYPE]}/home`);
+        navigate(`/${formData.userType}/home`);
         console.log(formData);
       } else {
         setError(data[MESSAGE]);
