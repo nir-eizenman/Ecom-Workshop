@@ -389,6 +389,7 @@ def upload_campaign(companyId):
         return jsonify("Campaign was successfully created"), 201
 
     except Exception as e:
+        print(e)
         return jsonify({"status": "error", "message": str(e)}), 400
 
 

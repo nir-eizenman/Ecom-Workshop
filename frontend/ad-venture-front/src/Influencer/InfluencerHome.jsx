@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Box, Typography, Paper, Button, List, ListItem, ListItemText } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import CampaignCard from './CampaignCard';
+import { USER_ID } from '../constants'
 
 const InfluencerHome = () => {
   const [campaigns, setCampaigns] = useState([]);
@@ -9,7 +10,7 @@ const InfluencerHome = () => {
 
   useEffect(() => {
     const fetchCampaigns = async () => {
-      const response = await fetch('http://127.0.0.1:5001/api/influencer/home');
+      const response = await fetch(`http://127.0.0.1:5001/api/influencer/${sessionStorage.getItem(USER_ID)}/home`);
       const data = await response.json();
       setCampaigns(data);
     };
