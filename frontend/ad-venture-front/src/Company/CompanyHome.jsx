@@ -64,7 +64,7 @@ const CompanyHome = () => {
 
   useEffect(() => {
     const fetchCampaigns = async () => {
-      const response = await fetch(`http://127.0.0.1:5001/api/company/${localStorage.getItem(USER_ID)}/home`);
+      const response = await fetch(`http://127.0.0.1:5001/api/company/${sessionStorage.getItem(USER_ID)}/home`);
       const data = await response.json();
       setCampaigns(data);
     };
@@ -82,12 +82,12 @@ const CompanyHome = () => {
 
   const handleAddCampaign = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:5001/api/company/${localStorage.getItem(USER_ID)}/home/create`, {
+      const response = await fetch(`http://127.0.0.1:5001/api/company/${sessionStorage.getItem(USER_ID)}/home/create`, {
         method: 'POST',
         body: JSON.stringify({
           ...newCampaign,
           is_active: newCampaign.is_active.toString(),
-          company_id: localStorage.getItem('company_id')
+          company_id: sessionStorage.getItem('company_id')
         }),
         headers: {
           'Accept': 'application/json',
@@ -96,7 +96,7 @@ const CompanyHome = () => {
       });
 
       if (response.ok) {
-        const campaignsResponse = await fetch(`http://127.0.0.1:5001/api/company/${localStorage.getItem(USER_ID)}/home`);
+        const campaignsResponse = await fetch(`http://127.0.0.1:5001/api/company/${sessionStorage.getItem(USER_ID)}/home`);
         const campaignsData = await campaignsResponse.json();
         setCampaigns(campaignsData);
 

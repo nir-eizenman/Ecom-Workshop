@@ -325,7 +325,7 @@ def notify_top_5(campaign):
 
 @app.route('/api/company/<companyId>/home/create', methods=['POST'])
 def upload_campaign(companyId):
-    try:
+    # try:
         data = request.json
 
         # Extract required fields directly from data
@@ -385,12 +385,13 @@ def upload_campaign(companyId):
         campaigns_collection = database['Campaigns']
         campaigns_collection.insert_one(campaign_data)
 
-        notify_top_5(campaign_data)
+        # notify_top_5(campaign_data)
         return jsonify("Campaign was successfully created"), 201
 
-    except Exception as e:
-        print(e)
-        return jsonify({"status": "error", "message": str(e)}), 400
+    # except Exception as e:
+    #     print('HELLO')
+    #     print(e)
+    #     return jsonify({"status": "error", "message": str(e)}), 400
 
 
 @app.route('/api/influencer/<influencerId>/home/explore/<campaign_id>/apply', methods=['POST'])

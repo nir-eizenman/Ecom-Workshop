@@ -1,36 +1,44 @@
 import React, { useState } from 'react';
 import {
-  TextField,
   Button,
   Box,
   Container,
   Paper,
   Typography,
-  Grid
+  Grid,
+  CircularProgress,
+  Link
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import GeneralForm from '../GeneralForm'; // Make sure to import the GeneralForm component
+import { COMPANY_ABOUT_US, COMPANY_NAME, COMPANY_SITE_LINK, EMAIL, PASSWORD } from '../constants';
+
+const schema = {
+  [EMAIL]: { type: 'string', label: 'Email' },
+  [COMPANY_NAME]: { type: 'string', label: 'Company Name' },
+  [PASSWORD]: { type: 'password', label: 'Password' },
+  [COMPANY_SITE_LINK]: { type: 'string', label: 'Company Site Link' },
+  [COMPANY_ABOUT_US]: { type: 'string', label: 'About Us' }
+};
 
 const SignUpCompanyForm = () => {
   const [formData, setFormData] = useState({
     email: '',
     company_name: '',
     password: '',
-    payment_method: '',
     company_site_link: '',
     company_about_us: ''
   });
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
-      const response = await fetch('http://127.0.0.1:5001/signup/company', {
+      const response = await fetch('http://127.0.0.1:5001/api/signup/company', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -46,12 +54,15 @@ const SignUpCompanyForm = () => {
       console.log('Success:', result);
       
       // Save result in localStorage
-      localStorage.setItem('signupResult', JSON.stringify(result));
+      sessionStorage.setItem('signupResult', JSON.stringify(result));
       
       // Navigate to another page (e.g., company home page)
       navigate('/company-home');
     } catch (error) {
       console.error('Error:', error);
+    } finally {
+      setLoading(false);
+      navigate('/login');
     }
   };
 
@@ -79,77 +90,17 @@ const SignUpCompanyForm = () => {
               </Typography>
             </Box>
             <Grid container spacing={2} justifyContent="center" sx={{ textAlign: 'center' }}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  name="email"
-                  label="Email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  margin='normal'
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  margin='normal'
-                  name="company_name"
-                  label="Company Name"
-                  value={formData.company_name}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  margin='normal'
-                  name="password"
-                  label="Password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  margin='normal'
-                  name="payment_method"
-                  label="Payment Method"
-                  value={formData.payment_method}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  margin='normal'
-                  name="company_site_link"
-                  label="Company Site Link"
-                  value={formData.company_site_link}
-                  onChange={handleChange}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  margin='normal'
-                  name="company_about_us"
-                  label="About Us"
-                  multiline
-                  rows={4}
-                  value={formData.company_about_us}
-                  onChange={handleChange}
-                />
-              </Grid>
+              <GeneralForm schema={schema} formData={formData} setFormData={setFormData} />
               <Grid item xs={12} container justifyContent="center">
-                <Button type="submit" variant="contained" color="primary">
-                  Sign Up
+                <Button type="submit" variant="contained" color="primary" disabled={loading}>
+                  {loading ? <CircularProgress size={24} /> : 'Sign Up'}
                 </Button>
+              </Grid>
+              <Grid item xs={12} container justifyContent="center" sx={{ mt: 2 }}>
+                <Typography variant="body2">
+                  Already signed up?{' '}
+                  <Link href="/login" sx={{ ml: 1 }}>Login here</Link>
+                </Typography>
               </Grid>
             </Grid>
           </Paper>
