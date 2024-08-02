@@ -130,11 +130,11 @@ def login():
     print("user type is:", user_type_str)
 
     #Test it
-    if user_type_str == 'company':
+    if user_type_str == 'influencer':
         user_type = UserType(1)
         
         print("I am influencer hereeeee")
-    elif user_type_str == 'influencer':
+    elif user_type_str == 'company':
         user_type = UserType(2)
         #userByEmail = db.getUserByEmail(email, UserType.Companies)
         #print(userByEmail)
