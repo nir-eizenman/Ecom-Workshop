@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Box, Typography, Grid, CardMedia, CardActions, Button, Modal, Fab, TextField } from '@mui/material';
+import { Container, Box, Typography, Grid, CardMedia, CardActions, Button, Modal, Fab, TextField, CircularProgress } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ASKING_PRICE, USER_ID } from '../constants';
 import CampaignCard from './CampaignCard'; // Import the CampaignCard component
@@ -8,6 +8,7 @@ import CampaignCard from './CampaignCard'; // Import the CampaignCard component
 const InfluencerSearch = () => {
   const navigate = useNavigate();
   const [campaigns, setCampaigns] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [formData, setFormData] = useState({
     [ASKING_PRICE]: ''
@@ -15,9 +16,16 @@ const InfluencerSearch = () => {
 
   useEffect(() => {
     const fetchCampaigns = async () => {
-      const response = await fetch(`http://127.0.0.1:5001/api/influencer/${sessionStorage.getItem(USER_ID)}/home/explore`);
-      const data = await response.json();
-      setCampaigns(data.available_campaigns); // Set the campaigns directly from the fetched data
+      setLoading(true);
+      try {
+        const response = await fetch(`http://127.0.0.1:5001/api/influencer/${sessionStorage.getItem(USER_ID)}/home/explore`);
+        const data = await response.json();
+        setCampaigns(data.available_campaigns); // Set the campaigns directly from the fetched data
+      } catch (error) {
+        console.error('Error fetching campaigns:', error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchCampaigns();
@@ -64,24 +72,30 @@ const InfluencerSearch = () => {
           </Typography>
         </Box>
 
-        <Grid container spacing={3}>
-          {campaigns.map((campaign, i) => (
-            <Grid item key={i} xs={12} sm={6} md={4}>
-              <CardMedia
-                component="img"
-                height="140"
-                image="https://via.placeholder.com/150"
-                alt={campaign.campaign_name}
-              />
-              <CampaignCard campaign={campaign} />
-              <CardActions>
-                <Button size="small" color="primary" onClick={() => setSelectedCampaign(campaign)}>
-                  Apply
-                </Button>
-              </CardActions>
-            </Grid>
-          ))}
-        </Grid>
+        {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <Grid container spacing={3}>
+            {campaigns.map((campaign, i) => (
+              <Grid item key={i} xs={12} sm={6} md={4}>
+                <CardMedia
+                  component="img"
+                  height="140"
+                  image="https://via.placeholder.com/150"
+                  alt={campaign.campaign_name}
+                />
+                <CampaignCard campaign={campaign} />
+                <CardActions>
+                  <Button size="small" color="primary" onClick={() => setSelectedCampaign(campaign)}>
+                    Apply
+                  </Button>
+                </CardActions>
+              </Grid>
+            ))}
+          </Grid>
+        )}
 
         {selectedCampaign && (
           <Modal
@@ -104,7 +118,6 @@ const InfluencerSearch = () => {
               <Typography id="apply-modal-title" variant="h6" component="h2">
                 Apply to {selectedCampaign.campaign_name}
               </Typography>
-              {/* <CampaignCard campaign={selectedCampaign} /> */}
               <TextField
                 variant="outlined"
                 type='number'

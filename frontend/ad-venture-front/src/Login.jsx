@@ -42,9 +42,9 @@ const Login = () => {
         // Store the user type and session token received from the server in localStorage
         sessionStorage.setItem(USER_TYPE, data[USER_TYPE]);
         sessionStorage.setItem(RANDOM_SESSION_TOKEN, data[RANDOM_SESSION_TOKEN]);
-        sessionStorage.setItem(USER_ID, data[RANDOM_SESSION_TOKEN]);
+        sessionStorage.setItem(USER_ID, data[USER_ID]);
 
-        navigate(`/${data[USER_TYPE]}/home`);
+        navigate(`/${formData.userType}/home`);
         console.log(formData);
       } else {
         setError(data[MESSAGE]);
