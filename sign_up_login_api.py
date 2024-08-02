@@ -116,28 +116,20 @@ def login():
     
     print(user_type)
     user_data = db.getUserByEmail(email, user_type)
-    print(user_data)
-    #if user_data is None:
-     #   return 'Invalid credentials', 401
-
 
 
     if user_data and user_data[EntityName.CONST_PASSWORD] == password:
-        randSessionToken = id_generator()
-        session[EntityName.CONST_RANDOM_SESSION_TOKEN] = randSessionToken
-        session[EntityName.CONST_EMAIL] = user_data[EntityName.CONST_EMAIL]
-        if not db.addSessionToken(randSessionToken, user_data[EntityName.CONST_EMAIL]):
-            return jsonify(
-                {
-                "result": False,
-                "message": "Error insert session token into db"
-                }), 400
+        # session[EntityName.CONST_RANDOM_SESSION_TOKEN] = randSessionToken
+        # session[EntityName.CONST_EMAIL] = user_data[EntityName.CONST_EMAIL]
+        
+        user_id_str = str(user_data['_id'])
+        print("in login the value of user_id_str is", user_id_str)
 
-        #session['user_type'] = user_type_str
         return jsonify(
             {
             "result": True,
-            "message": ""
+            "message": "",
+            
             }), 200
     
     return jsonify(
@@ -161,8 +153,8 @@ def logout():
 
 
 
-def id_generator(chars=string.ascii_uppercase + string.digits, size=9):
-    return ''.join(random.choice(chars) for _ in range(size))
+# def id_generator(chars=string.ascii_uppercase + string.digits, size=9):
+#     return ''.join(random.choice(chars) for _ in range(size))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)  # Changed port to 5001

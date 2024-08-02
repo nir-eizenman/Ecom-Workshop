@@ -4,6 +4,7 @@ import CampaignList from './CampaignList';
 import CampaignFormDialog from './CampaignFormDialog';
 import BidDialog from './BidDialog';
 import ResultDialog from './ResultDialog';
+import { USER_ID } from '../constants';
 
 const scheme = {
   "campaign_name": { type: 'string', label: 'Campaign Name' },
@@ -66,7 +67,7 @@ const CompanyHome = () => {
 
   useEffect(() => {
     const fetchCampaigns = async () => {
-      const response = await fetch('http://127.0.0.1:5001/api/company/home');
+      const response = await fetch(`http://127.0.0.1:5001/api/${sessionStorage.get(USER_ID)}/home`);
       const data = await response.json();
       setCampaigns(data);
     };
@@ -89,9 +90,17 @@ const CompanyHome = () => {
 
   const handleAddCampaign = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5001/api/company/home/create', {
+      const response = await fetch(`http://127.0.0.1:5001/api/company/${sessionStorage.getItem(USER_ID)}/home/create`, {
         method: 'POST',
-        body: JSON.stringify({ ...newCampaign, is_active: newCampaign.is_active.toString(), company_id: '123' }),
+        body: JSON.stringify(
+          { 
+            ...newCampaign, 
+            is_active: newCampaign.is_active.toString(), 
+            company_id: localStorage.getItem('company_id')
+
+          }
+
+        ),
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
@@ -100,7 +109,7 @@ const CompanyHome = () => {
 
       if (response.ok) {
         // Fetch all campaigns after adding a new one
-        const campaignsResponse = await fetch('http://127.0.0.1:5001/api/company/home');
+        const campaignsResponse = await fetch(`http://127.0.0.1:5001/api/company/${sessionStorage.get(USER_ID)}/home`);
         const campaignsData = await campaignsResponse.json();
         setCampaigns(campaignsData);
 

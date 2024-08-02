@@ -107,6 +107,8 @@ export const PAYMENT_METHOD = 'payment_method';
 export const RESULT = 'result';
 export const MESSAGE = 'message';
 export const USER_TYPE = 'user_type';
+export const USER_ID = 'user_id';
+
 export const RANDOM_SESSION_TOKEN = 'random_session_token';
 
 // Social networks
