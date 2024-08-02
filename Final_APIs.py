@@ -431,7 +431,7 @@ def apply_for_campaign(influencerId, campaign_id):
 
 
 # Influencer explore page for active campaigns
-@app.route('/api/influencer/home/<influencer_id>/explore', methods=['GET'])
+@app.route('/api/influencer/<influencer_id>/home/explore', methods=['GET'])
 def explore_campaigns(influencer_id):
     influencer_id = influencer_id,  # change to session.get
     if not influencer_id:

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Container, Box, Typography, Button } from '@mui/material';
 import CampaignList from './CampaignList';
 import CampaignFormDialog from './CampaignFormDialog';
-import BidDialog from './BidDialog';
 import ResultDialog from './ResultDialog';
 import { USER_ID } from '../constants';
 
@@ -17,34 +16,33 @@ const scheme = {
       options: ['Israel', 'Egypt', 'Jordan', 'Italy', 'France', 'Narnia', 'Wakanda'],
       label: 'Countries Followers Percentage'
     },
-    "gender": {
+    gender: {
       type: 'percent',
       options: ["male", "female", "other"],
       label: 'Gender'
     },
-    "age": {
+    age: {
       type: 'percent',
       label: 'Age',
       options: ["13-17", "18-24", "25-34", "35-44", "45-54", "55-64", "65+"]
     }
   },
-  "categories": {
+  categories: {
     type: 'multiselect',
     label: 'Categories',
     options: ['Sports', 'Fashion', 'Food', 'Travels', 'Books', 'Other']
   },
-  "campaign_goal": { type: 'string', label: 'Campaign Goal' },
-  "campaign_objective": {
-    "reels": { type: 'int', label: 'Reels' },
-    "posts": { type: 'int', label: 'Posts' },
-    "stories": { type: 'int', label: 'Stories' }
+  campaign_goal: { type: 'string', label: 'Campaign Goal' },
+  campaign_objective: {
+    reels: { type: 'int', label: 'Reels' },
+    posts: { type: 'int', label: 'Posts' },
+    stories: { type: 'int', label: 'Stories' }
   }
 };
 
 const CompanyHome = () => {
   const [campaigns, setCampaigns] = useState([]);
   const [open, setOpen] = useState(false);
-  const [bidOpen, setBidOpen] = useState(false);
   const [resultOpen, setResultOpen] = useState(false);
   const [newCampaign, setNewCampaign] = useState({
     campaign_name: '',
@@ -53,21 +51,20 @@ const CompanyHome = () => {
     about: '',
     target_audience: {
       location: {},
-      gender: { male: '', female: '', other: '' },
-      age: { '13-17': '', '18-24': '', '25-34': '', '35-44': '', '45-54': '', '55-64': '', '65+': '' }
+      gender: { male: 0, female: 0, other: 0 },
+      age: { '13-17': '0', '18-24': '0', '25-34': '0', '35-44': '0', '45-54': '0', '55-64': '0', '65+': '0' }
     },
     categories: [],
     campaign_goal: '',
     campaign_objective: { reels: 0, posts: 0, stories: 0 }
   });
   const [selectedCampaign, setSelectedCampaign] = useState(null);
-  const [selectedBid, setSelectedBid] = useState(null);
   const [results, setResults] = useState([]);
-  const [resultsCampaignId, setResultsCampaignId] = useState('')
+  const [resultsCampaignId, setResultsCampaignId] = useState('');
 
   useEffect(() => {
     const fetchCampaigns = async () => {
-      const response = await fetch(`http://127.0.0.1:5001/api/company/${sessionStorage.getItem(USER_ID)}/home`);
+      const response = await fetch(`http://127.0.0.1:5001/api/company/${localStorage.getItem(USER_ID)}/home`);
       const data = await response.json();
       setCampaigns(data);
     };
@@ -83,24 +80,15 @@ const CompanyHome = () => {
     setOpen(false);
   };
 
-  const handleBidClose = () => {
-    setBidOpen(false);
-    setSelectedCampaign(null);
-  };
-
   const handleAddCampaign = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:5001/api/company/${sessionStorage.getItem(USER_ID)}/home/create`, {
+      const response = await fetch(`http://127.0.0.1:5001/api/company/${localStorage.getItem(USER_ID)}/home/create`, {
         method: 'POST',
-        body: JSON.stringify(
-          { 
-            ...newCampaign, 
-            is_active: newCampaign.is_active.toString(), 
-            company_id: localStorage.getItem('company_id')
-
-          }
-
-        ),
+        body: JSON.stringify({
+          ...newCampaign,
+          is_active: newCampaign.is_active.toString(),
+          company_id: localStorage.getItem('company_id')
+        }),
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
@@ -108,8 +96,7 @@ const CompanyHome = () => {
       });
 
       if (response.ok) {
-        // Fetch all campaigns after adding a new one
-        const campaignsResponse = await fetch(`http://127.0.0.1:5001/api/company/${sessionStorage.getItem(USER_ID)}/home`);
+        const campaignsResponse = await fetch(`http://127.0.0.1:5001/api/company/${localStorage.getItem(USER_ID)}/home`);
         const campaignsData = await campaignsResponse.json();
         setCampaigns(campaignsData);
 
@@ -138,17 +125,10 @@ const CompanyHome = () => {
 
   const handleCampaignClick = (campaign) => {
     setSelectedCampaign(campaign);
-    setBidOpen(true);
-  };
-
-  const handleSelectBid = (bid) => {
-    setSelectedBid(bid);
-    console.log(`Selected bid from ${bid.influencer} for ${selectedCampaign.name} with bid amount ${bid.bid}`);
-    // Implement bid selection logic here
   };
 
   const handleEndCampaign = async (campaignId) => {
-    const response = await fetch(`http://127.0.0.1:5001/api/company/${sessionStorage.getItem(USER_ID)}/home/${campaignId}/end`, {
+    const response = await fetch(`http://127.0.0.1:5001/api/company/home/${campaignId}/end`, {
       method: 'POST',
     });
 
@@ -156,12 +136,12 @@ const CompanyHome = () => {
       setCampaigns(campaigns.filter(campaign => campaign.id !== campaignId));
       console.log(`Successfully ended campaign with ID ${campaignId}`);
 
-      const resultResponse = await fetch(`http://127.0.0.1:5001/api/company/${sessionStorage.getItem(USER_ID)}/home/${campaignId}/results`);
+      const resultResponse = await fetch(`http://127.0.0.1:5001/api/company/home/${campaignId}/results`);
       const resultData = await resultResponse.json();
 
       setResults(resultData.results);
-      setResultsCampaignId(campaignId)
-      console.log('resultData.campaign_id ' + campaignId)
+      setResultsCampaignId(campaignId);
+      console.log('resultData.campaign_id ' + campaignId);
       setResultOpen(true);
     } else {
       console.error(`Failed to end campaign with ID ${campaignId}:`, response.statusText);
@@ -174,10 +154,10 @@ const CompanyHome = () => {
 
   const handleSelectResult = async (result) => {
     console.log(`Selected result: ${JSON.stringify(result)}`);
-    const { result_number } = result; // Assuming result contains campaignId and result_number
-    console.log('results campaign id ' + resultsCampaignId)
+    const { result_number } = result;
+    console.log('results campaign id ' + resultsCampaignId);
     try {
-      const response = await fetch(`http://127.0.0.1:5001/api/company/${sessionStorage.getItem(USER_ID)}/home/${resultsCampaignId}/results/choose`, {
+      const response = await fetch(`http://127.0.0.1:5001/api/company/home/${resultsCampaignId}/results/choose`, {
         method: 'POST',
         body: JSON.stringify({ result_number }),
         headers: {
@@ -242,16 +222,8 @@ const CompanyHome = () => {
         open={resultOpen}
         onClose={handleResultClose}
         results={results}
-        // campaignId={resultsCampaignId}
         onSelectResult={handleSelectResult}
       />
-
-      {/* <BidDialog
-        open={bidOpen}
-        onClose={handleBidClose}
-        selectedCampaign={selectedCampaign}
-        handleSelectBid={handleSelectBid}
-      /> */}
     </Container>
   );
 };
