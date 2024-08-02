@@ -307,6 +307,7 @@ def notify_top_5(campaign):
     # get all documents from the collection
     influencers = influencers_collection.find()
     top_5_scores = []
+    print("maybe here???")
     for influencer in influencers:
         current_score = calculate_score_balanced(influencer, campaign)
         top_5_scores = sorted(top_5_scores, key=lambda x: int(x[0]))
@@ -319,6 +320,7 @@ def notify_top_5(campaign):
         else:
             top_5_scores.append((current_score, influencer))
     # notify the top 5 influencers
+    print("haaaaaaaaaaaaa???")
     for score, influencer in top_5_scores:
         notify_influencer(influencer, campaign)
 
@@ -336,6 +338,8 @@ def upload_campaign(companyId):
         is_active = data['is_active']
         about = data['about']
 
+        print("its budget?")
+
         company_id = companyId
         target_audience = data['target_audience']
         # Extract nested dictionaries from target_audience
@@ -346,6 +350,7 @@ def upload_campaign(companyId):
         campaign_goal = data['campaign_goal']
         campaign_objective = data['campaign_objective']
         # Extract nested dictionaries from campaign_objective
+        print("awwwwwwwwwww")
         reels = campaign_objective['reels']
         if int(reels) < 0:
             raise Exception("Negative reels")
@@ -355,7 +360,7 @@ def upload_campaign(companyId):
         stories = campaign_objective['stories']
         if int(stories) < 0:
             raise Exception("Negative stories")
-
+        print("its not objective?")
         create_time = datetime.now()
         influencers = []
 
@@ -380,12 +385,17 @@ def upload_campaign(companyId):
             "create_time": create_time,
             "influencers": influencers
         }
-
+        print("its the data???")
         # Save campaign data to MongoDB
         campaigns_collection = database['Campaigns']
-        campaigns_collection.insert_one(campaign_data)
+        try:
+            campaigns_collection.insert_one(campaign_data)
 
-        notify_top_5(campaign_data)
+            notify_top_5(campaign_data)
+        except Exception as e:
+            campaigns_collection.delete_one(campaign_data)
+            raise Exception
+
         return jsonify("Campaign was successfully created"), 201
 
     except Exception as e:
