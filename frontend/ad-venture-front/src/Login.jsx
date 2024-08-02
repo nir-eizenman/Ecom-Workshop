@@ -3,7 +3,7 @@ import { Container, Box, Paper, Typography, Button, Alert } from '@mui/material'
 import { useNavigate } from 'react-router-dom';
 import GeneralForm from './GeneralForm';
 import {
-  EMAIL, PASSWORD, USER_TYPE, RESULT, MESSAGE, RANDOM_SESSION_TOKEN,
+  EMAIL, PASSWORD, USER_TYPE, RESULT, MESSAGE, RANDOM_SESSION_TOKEN, USER_ID
 } from './constants'; // Adjust the import path according to your project structure
 
 const schema = {

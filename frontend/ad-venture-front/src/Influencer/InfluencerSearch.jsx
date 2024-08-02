@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Box, Typography, Grid, CardMedia, CardActions, Button, Modal, Fab, TextField } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { ASKING_PRICE } from '../constants';
+import { ASKING_PRICE, USER_ID } from '../constants';
 import CampaignCard from './CampaignCard'; // Import the CampaignCard component
 
 const InfluencerSearch = () => {
