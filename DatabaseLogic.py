@@ -122,6 +122,27 @@ class DatabaseLogic:
 
 
 
+    def clear_collection(self, collection_name: str):
+        """
+        Delete all documents in a MongoDB collection without deleting the collection itself.
+        Requires a confirmation text for verification.
+
+        :param collection_name: Name of the collection.
+        """
+        confirmation_text = "You shall not pass, well pass but it's at your own risk"
+        user_input = input(f"To confirm the deletion of all documents in the collection '{collection_name}', "
+                       f"type the following text: '{confirmation_text}':\n")
+        
+        if user_input == confirmation_text:
+            try:
+                db = self.client[CONST_DATA_BASE]
+                collection = db[collection_name]
+                result = collection.delete_many({})  # Delete all documents
+                print(f"Deleted {result.deleted_count} documents from the collection '{collection_name}'.")
+            except Exception as e:
+                print(f"An error occurred: {e}")
+        else:
+            print("Confirmation text does not match. Operation aborted.")
 
     # def createCollection(self, databaseName: str, collectionName: str):
     #     # Ensure the company name is a valid collection name
