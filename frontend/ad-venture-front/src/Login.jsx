@@ -24,7 +24,7 @@ const Login = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch('/api/login', {
+      const response = await fetch('http://localhost:5001/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -32,6 +32,7 @@ const Login = () => {
         body: JSON.stringify({
           [EMAIL]: formData.email,
           [PASSWORD]: formData.password,
+          [USER_TYPE]: formData.userType
         }),
       });
 
