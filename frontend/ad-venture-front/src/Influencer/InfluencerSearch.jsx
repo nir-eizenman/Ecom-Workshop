@@ -15,7 +15,7 @@ const InfluencerSearch = () => {
 
   useEffect(() => {
     const fetchCampaigns = async () => {
-      const response = await fetch(`http://127.0.0.1:5001/api/influencer/${sessionStorage.get(USER_ID)}/home/explore`);
+      const response = await fetch(`http://127.0.0.1:5001/api/influencer/${sessionStorage.getItem(USER_ID)}/home/explore`);
       const data = await response.json();
       setCampaigns(data.available_campaigns); // Set the campaigns directly from the fetched data
     };
@@ -31,7 +31,7 @@ const InfluencerSearch = () => {
   };
 
   const submitBid = async () => {
-    const response = await fetch(`http://127.0.0.1:5001/api/influencer/${sessionStorage.get(USER_ID)}/home/explore/${selectedCampaign.company_id}/apply`, {
+    const response = await fetch(`http://127.0.0.1:5001/api/influencer/${sessionStorage.getItem(USER_ID)}/home/explore/${selectedCampaign.company_id}/apply`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

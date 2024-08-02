@@ -67,7 +67,7 @@ const CompanyHome = () => {
 
   useEffect(() => {
     const fetchCampaigns = async () => {
-      const response = await fetch(`http://127.0.0.1:5001/api/${sessionStorage.get(USER_ID)}/home`);
+      const response = await fetch(`http://127.0.0.1:5001/api/${sessionStorage.getItem(USER_ID)}/home`);
       const data = await response.json();
       setCampaigns(data);
     };
@@ -109,7 +109,7 @@ const CompanyHome = () => {
 
       if (response.ok) {
         // Fetch all campaigns after adding a new one
-        const campaignsResponse = await fetch(`http://127.0.0.1:5001/api/company/${sessionStorage.get(USER_ID)}/home`);
+        const campaignsResponse = await fetch(`http://127.0.0.1:5001/api/company/${sessionStorage.getItem(USER_ID)}/home`);
         const campaignsData = await campaignsResponse.json();
         setCampaigns(campaignsData);
 

@@ -9,7 +9,7 @@ import {
 const schema = {
   'email': { label: 'Username', type: 'email' },
   'password': { label: 'Password', type: 'password' },
-  'userType': { options: ['Company', 'Influencer'], label: 'User Type', type: 'radio' }
+  'userType': { options: ['company', 'influencer'], label: 'User Type', type: 'radio' }
 }
 
 const Login = () => {
