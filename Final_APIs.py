@@ -70,6 +70,16 @@ def signup_influencer():
     data[EntityName.CONST_INFLUENCER_AGE] = int(data[EntityName.CONST_INFLUENCER_AGE])
 
     data[EntityName.CONST_INSTAGRAM]['followers_count'] = int(data[EntityName.CONST_INSTAGRAM]['followers_count'])
+    data[EntityName.CONST_INSTAGRAM]['accounts_reached_30'] = int(data[EntityName.CONST_INSTAGRAM]['accounts_reached_30'])
+
+    for key in data[EntityName.CONST_INSTAGRAM]['followers_location']:
+        data[EntityName.CONST_INSTAGRAM]['followers_location'][key] = int(data[EntityName.CONST_INSTAGRAM]['followers_location'][key])
+
+    for key in data[EntityName.CONST_INSTAGRAM]['gender_stats']:
+        data[EntityName.CONST_INSTAGRAM]['gender_stats'][key] = int(data[EntityName.CONST_INSTAGRAM]['gender_stats'][key])
+
+    for key in data[EntityName.CONST_INSTAGRAM]['age_stats']:
+            data[EntityName.CONST_INSTAGRAM]['age_stats'][key] = int(data[EntityName.CONST_INSTAGRAM]['age_stats'][key])
 
     # TODO - maybe use exceptions so I will know what was the problem and describe it in the message
     # if adding user failed
