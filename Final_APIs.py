@@ -434,7 +434,7 @@ def apply_for_campaign(influencerId, campaign_id):
     # Create application data
     application_data = {
         'campaign_id': ObjectId(campaign_id),
-        'influencer_id': ObjectId(influencerId),  # change to session.get
+        EntityName.CONST_INFLUENCER_ID: ObjectId(influencerId),  # change to session.get
         EntityName.CONST_ASKING_PRICE: int(data[EntityName.CONST_ASKING_PRICE])
     }
 
@@ -555,7 +555,7 @@ def company_home_results_choose(campaignId):
     # get the influencer id
     influencers = result['influencers']
     # get the influencer id for each influencer
-    influencers_id = [influencer['influencer_id'] for influencer in influencers]
+    influencers_id = [influencer[EntityName.CONST_INFLUENCER_ID] for influencer in influencers]
     # get the campaign by id
     collection = database["Campaigns"]
     campaign = collection.find_one({"_id": ObjectId(campaignId)})
@@ -594,7 +594,7 @@ def company_home(companyId):
 def influencer_home(influencerId):
     # get the last 5 campaigns of the influencer
     collection = database["Campaigns"]
-    # TODO: add session logic instead of const influencer id (session['influencer_id']) or (session['user_id'])
+    # TODO: add session logic instead of const influencer id (session[EntityName.CONST_INFLUENCER_ID]) or (session['user_id'])
     # find the campaigns that the influencers array contains 1234
     campaigns = collection.find({"influencers": influencerId}).sort([("is_active", -1), ("create_time", -1)]).limit(5)
     # convert the object to list

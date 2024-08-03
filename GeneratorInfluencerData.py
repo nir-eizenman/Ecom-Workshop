@@ -93,7 +93,7 @@ def generate_influencers_data(num_companies: int) -> list:
             "password": random_string(12),
             "gender": random_gender(),
             "age": random_age(),
-            "Instagram": random_instagram_data()
+            EntityName.CONST_INSTAGRAM: random_instagram_data()
         }
         companies_data.append(data)
     
