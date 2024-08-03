@@ -453,7 +453,7 @@ def explore_campaigns(influencer_id):
         return jsonify({'error': 'Influencer not authenticated'}), 401
 
     active_campaigns = list(db.client['Database']['Campaigns'].find({EntityName.CONST_IS_ACTIVE: True}))
-    applied_campaigns = list(db.client['Database']['Applications'].find({"influencer_id": influencer_id}))
+    applied_campaigns = list(db.client['Database']['Applications'].find({"influencer_id": ObjectId(influencer_id)}))
 
     applied_campaign_ids = [app[EntityName.CONST_CAMPAIGN_ID] for app in applied_campaigns]
     available_campaigns = [campaign for campaign in active_campaigns if campaign['_id'] not in applied_campaign_ids]
