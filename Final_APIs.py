@@ -477,8 +477,8 @@ def end_campaign(campaignId):
     if not campaign:
         return jsonify({'error': 'Campaign not found'}), 404
     # update the campaign to be inactive
-    # if(not campaign['is_active']):
-    #     return jsonify("Successfully ended campaign, don't have result yet"), 204
+    if(not campaign['is_active']):
+        return jsonify("Successfully ended campaign, don't have result yet"), 204
             
     campaigns_collection.update_one({"_id": ObjectId(campaignId)}, {"$set": {"is_active": False}})
     # calculate the results of the campaign
@@ -533,7 +533,8 @@ def company_home_results(campaignId):
     
 
     for array_cell in campaign['results']:
-        array_cell['influencers'].pop('influencer_id')
+        for influencer in array_cell['influencers']:
+            influencer.pop('influencer_id')
 
     # return the results
     return jsonify(campaign), 200
@@ -557,6 +558,9 @@ def company_home_results_choose(campaignId):
     # get the result chosen
     result = campaign['results'][result_number]
     # set the result to be chosen (change boolean to true)
+    print("result numebr:", result_number)
+    print("campaign id:", campaignId)
+
     collection.update_one({EntityName.CONST_CAMPAIGN_ID: ObjectId(campaignId)},
                           {"$set": {"results." + str(result_number) + ".chosen": True}})
     # get the influencer id
@@ -592,7 +596,9 @@ def company_home(companyId):
     # remove the _id field
     for campaign in campaigns:
         campaign[EntityName.CONST_CAMPAIGN_ID] = str(campaign.pop('_id'))
-    # return the campaigns
+        campaign.pop('influencers')
+        # return the campaigns
+
     return jsonify(campaigns), 200
 
 
@@ -603,7 +609,7 @@ def influencer_home(influencerId):
     collection = database["Campaigns"]
     # TODO: add session logic instead of const influencer id (session[EntityName.CONST_INFLUENCER_ID]) or (session['user_id'])
     # find the campaigns that the influencers array contains 1234
-    campaigns = collection.find({"influencers": influencerId}).sort([("is_active", -1), ("create_time", -1)]).limit(5)
+    campaigns = collection.find({"influencers": ObjectId(influencerId)}).sort([("is_active", -1), ("create_time", -1)]).limit(5)
     # convert the object to list
     campaigns = list(campaigns)
     # remove the _id field and the influencers array field
@@ -611,6 +617,7 @@ def influencer_home(influencerId):
         campaign.pop('_id')
         campaign.pop('influencers')
         # return the campaigns
+    
     return jsonify(campaigns), 200
 
 
