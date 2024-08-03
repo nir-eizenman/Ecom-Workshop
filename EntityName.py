@@ -37,6 +37,7 @@ CONST_URL = 'url'
 
 
 #For Upload Campaign 
+CONST_CAMPAIGN_ID = 'campaign_id'
 CONST_CAMPAIGN_NAME = 'campaign_name'
 CONST_BUDGET = 'budget'
 CONST_CAMPAIGN_CATEGORY = 'campaign_category'

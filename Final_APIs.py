@@ -202,7 +202,7 @@ def influencer_one_objective_completion(influencerId):
     influencer_id = influencerId
     content_type_str = request.json[EntityName.CONST_CONTENT_TYPE] # should be string
     content_url = request.json[EntityName.CONST_URL]
-    campaign_id = request.json['campaign_id']
+    campaign_id = request.json[EntityName.CONST_CAMPAIGN_ID]
 
 
     influencer_document = db.getDocumentById(influencer_id, UserType.Influencers.name)
@@ -346,7 +346,7 @@ def upload_campaign(companyId):
 
         # Extract required fields directly from data
         campaign_name = data[EntityName.CONST_CAMPAIGN_NAME]
-        budget = data['budget']
+        budget = data[EntityName.CONST_BUDGET]
         if int(budget) <= 0:
             raise Exception("Negative budget")
         is_active = data['is_active']
@@ -380,7 +380,7 @@ def upload_campaign(companyId):
 
         campaign_data = {
             EntityName.CONST_CAMPAIGN_NAME: campaign_name,
-            "budget": int(budget),
+            EntityName.CONST_BUDGET: int(budget),
             "is_active": bool(is_active),
             "about": about,
             "target_audience": {
@@ -433,7 +433,7 @@ def apply_for_campaign(influencerId, campaign_id):
 
     # Create application data
     application_data = {
-        'campaign_id': ObjectId(campaign_id),
+        EntityName.CONST_CAMPAIGN_ID: ObjectId(campaign_id),
         EntityName.CONST_INFLUENCER_ID: ObjectId(influencerId),  # change to session.get
         EntityName.CONST_ASKING_PRICE: int(data[EntityName.CONST_ASKING_PRICE])
     }
@@ -455,11 +455,11 @@ def explore_campaigns(influencer_id):
     active_campaigns = list(db.client['Database']['Campaigns'].find({EntityName.CONST_IS_ACTIVE: True}))
     applied_campaigns = list(db.client['Database']['Applications'].find({"influencer_id": influencer_id}))
 
-    applied_campaign_ids = [app['campaign_id'] for app in applied_campaigns]
+    applied_campaign_ids = [app[EntityName.CONST_CAMPAIGN_ID] for app in applied_campaigns]
     available_campaigns = [campaign for campaign in active_campaigns if campaign['_id'] not in applied_campaign_ids]
     for campaign in available_campaigns:
         print(campaign['_id'])
-        campaign['campaign_id'] = str(campaign.pop('_id', None))
+        campaign[EntityName.CONST_CAMPAIGN_ID] = str(campaign.pop('_id', None))
     print(available_campaigns)
     return jsonify({'available_campaigns': available_campaigns}), 200
 
@@ -509,7 +509,7 @@ def end_campaign(campaignId):
         results.append(result)
 
     # add the results to the db
-    results_collection.insert_one({"campaign_id": ObjectId(campaignId), "results": results})
+    results_collection.insert_one({EntityName.CONST_CAMPAIGN_ID: ObjectId(campaignId), "results": results})
 
     # return the campaign no content
     return jsonify("Successfully ended campaign"), 204
@@ -520,13 +520,20 @@ def end_campaign(campaignId):
 def company_home_results(campaignId):
     # get the campaign by id
     collection = database["Results"]
-    campaign = collection.find_one({"campaign_id": ObjectId(campaignId)})
+    campaign = collection.find_one({EntityName.CONST_CAMPAIGN_ID: ObjectId(campaignId)})
     # check if the campaign exists
     if not campaign:
         return jsonify({'error': 'Campaign not found'}), 404
     # remove the _id field
     campaign.pop('_id')
-    campaign.pop('campaign_id')
+    campaign.pop(EntityName.CONST_CAMPAIGN_ID)
+
+    campaign['results']
+
+    
+
+    for array_cell in campaign['results']:
+        array_cell['influencers'].pop('influencer_id')
 
     # return the results
     return jsonify(campaign), 200
@@ -537,7 +544,7 @@ def company_home_results(campaignId):
 def company_home_results_choose(campaignId):
     # get the campaign by id
     collection = database["Results"]
-    campaign = collection.find_one({"campaign_id": ObjectId(campaignId)})
+    campaign = collection.find_one({EntityName.CONST_CAMPAIGN_ID: ObjectId(campaignId)})
     # check if the campaign exists
     if not campaign:
         return jsonify({'error': 'Campaign not found'}), 404
@@ -550,7 +557,7 @@ def company_home_results_choose(campaignId):
     # get the result chosen
     result = campaign['results'][result_number]
     # set the result to be chosen (change boolean to true)
-    collection.update_one({"campaign_id": ObjectId(campaignId)},
+    collection.update_one({EntityName.CONST_CAMPAIGN_ID: ObjectId(campaignId)},
                           {"$set": {"results." + str(result_number) + ".chosen": True}})
     # get the influencer id
     influencers = result['influencers']
@@ -584,7 +591,7 @@ def company_home(companyId):
     campaigns = list(campaigns)
     # remove the _id field
     for campaign in campaigns:
-        campaign['campaign_id'] = str(campaign.pop('_id'))
+        campaign[EntityName.CONST_CAMPAIGN_ID] = str(campaign.pop('_id'))
     # return the campaigns
     return jsonify(campaigns), 200
 
