@@ -1,0 +1,7 @@
+Flask==3.0.3
+Flask-Session==0.8.0
+Flask-CORS==4.0.1
+pymongo==4.7.3
+mongoengine==0.28.2
+bson==0.5.10
+gunicorn==20.1.0
