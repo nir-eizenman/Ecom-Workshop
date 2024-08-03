@@ -39,7 +39,7 @@ const InfluencerSearch = () => {
   };
 
   const submitBid = async () => {
-    const response = await fetch(`http://127.0.0.1:5001/api/influencer/${sessionStorage.getItem(USER_ID)}/home/explore/${selectedCampaign.company_id}/apply`, {
+    const response = await fetch(`http://127.0.0.1:5001/api/influencer/${sessionStorage.getItem(USER_ID)}/home/explore/${selectedCampaign.campaign_id}/apply`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

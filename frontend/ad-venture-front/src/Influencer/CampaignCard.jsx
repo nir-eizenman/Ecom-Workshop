@@ -75,11 +75,11 @@ const CampaignCard = ({ campaign, handleApply }) => {
           </Grid>
         </Grid>
       </CardContent>
-      <CardActions>
+      {handleApply && <CardActions>
         <Button size="large" color="primary" variant="contained" onClick={handleApply}>
           Apply
         </Button>
-      </CardActions>
+      </CardActions>}
     </Card>
   );
 };
