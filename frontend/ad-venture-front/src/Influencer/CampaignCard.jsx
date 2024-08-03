@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, CardContent, Typography, Grid } from '@mui/material';
+import { Card, CardContent, Typography, Grid, CardActions, Button } from '@mui/material';
 
-const CampaignCard = ({ campaign }) => {
+const CampaignCard = ({ campaign, handleApply }) => {
   return (
     <Card elevation={6} sx={{ mb: 2 }}>
       <CardContent>
@@ -75,6 +75,11 @@ const CampaignCard = ({ campaign }) => {
           </Grid>
         </Grid>
       </CardContent>
+      <CardActions>
+        <Button size="large" color="primary" variant="contained" onClick={handleApply}>
+          Apply
+        </Button>
+      </CardActions>
     </Card>
   );
 };

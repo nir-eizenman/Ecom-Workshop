@@ -86,12 +86,8 @@ const InfluencerSearch = () => {
                   image="https://via.placeholder.com/150"
                   alt={campaign.campaign_name}
                 />
-                <CampaignCard campaign={campaign} />
-                <CardActions>
-                  <Button size="small" color="primary" onClick={() => setSelectedCampaign(campaign)}>
-                    Apply
-                  </Button>
-                </CardActions>
+                <CampaignCard campaign={campaign} handleApply={() => setSelectedCampaign(campaign)} />
+
               </Grid>
             ))}
           </Grid>
