@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
+import {useNavigate} from 'react-router-dom';
 import {
   TextField,
   Button,
@@ -10,46 +11,101 @@ import {
   Grid,
   MenuItem,
   Select,
-  InputLabel
+  InputLabel,
+  CircularProgress,
+  Link
 } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
-import { genders, interestTypes } from '../constants';
+import { countries, genders, interestTypes } from '../constants';
+import GeneralForm from '../GeneralForm';
 
-const StyledTextField = styled(TextField)(({theme}) => ({
+const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiTextField-root': {
     margin: 0,
     width: 'auto'
   }
-}))
+}));
 
-
+const schema = {
+  "email": {type: 'string', label: 'EMail'},
+  "full_name": {type: 'string', label: "Full Name"},
+  "password": {type: 'password', label: 'Password'},
+  "gender": {type: 'select', label: 'Gender', options: ['Female', 'Male', 'Other']},
+  
+  "age": {type: 'int', label: 'Age'},
+  "instagram": {
+    "url": {type: 'string', label: "URL"},
+    "username": {type: 'string', label: 'Instagram Username'},
+    "followers_interests": {
+      type: 'multiselect', 
+      label: 'Followers\' Interests', 
+      options: [
+      "technology",
+      "lifestyle",
+      "travel"
+      ]
+    },
+    "followers_location": {
+      type: 'multiselectpercent',
+      label: 'Followers Locations',
+      options: countries
+    },
+    "gender_stats": {
+      type: 'percent',
+      label: "Gender Distribution",
+      options: genders
+    },
+    "age_stats": {
+      type: 'percent',
+      label: 'Age Distribution',
+      options: [
+        "13-17",
+        "18-24",
+        "25-34",
+        "35-44",
+        "45-54",
+        "55-64",
+        "65+"
+      ] 
+    },
+    "accounts_reached_30": {type: "int", label: 'Reaching-30 Accounts'},
+    "followers_count": {type: 'int', label: "Followers Count"}
+  }
+}
 
 const SignUpInfluencerForm = () => {
-  const [formData,
-    setFormData] = useState({
+  const [formData, setFormData] = useState({
     email: '',
-    influencer_full_name: '',
+    full_name: '',
     password: '',
-    payment_method: '',
-    influencer_social_network_links: {
-      instagram: ''
-    },
-    influencer_follower_interest_types: [],
-    influencer_followers_location: '',
-    influencer_followers_age: '',
-    influencer_followers_gender: [],
-    influencer_exposure_content: 0,
-    influencer_age: 0,
-    influencer_gender: ''
+    gender: '',
+    // payment_method: '',
+    // influencer_social_network_links: {
+    //   instagram: ''
+    // },
+    instagram: {
+      url: "",
+      username: "",
+      followers_interests: [],
+      followers_location: {},
+      gender_stats: {},
+      age_stats: {},
+      accounts_reached_30: 0,
+      followers_count: 0
+    }
   });
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+  const navigate = useNavigate();
+
+
+  // const handleChange = (e) => {
+  //   const { name, value } = e.target;
+  //   setFormData({
+  //     ...formData,
+  //     [name]: value,
+  //   });
+  // };
 
   const handleInterestChange = (event) => {
     setFormData({
@@ -58,11 +114,13 @@ const SignUpInfluencerForm = () => {
     });
   };
 
-  const handleSubmit = async(e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
-      const response = await fetch('http://127.0.0.1:5001/signup/influencer', {
+      const response = await fetch('http://127.0.0.1:5001/api/signup/influencer', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -78,207 +136,58 @@ const SignUpInfluencerForm = () => {
       console.log('Success:', result);
     } catch (error) {
       console.error('Error:', error);
+    } finally {
+      setLoading(false);
+      navigate('/login')
     }
   };
 
-
   return (
-    <Container sx={{
-      p: 2
-    }}>
-      <form onSubmit={handleSubmit}>
+    <Container sx={{ p: 2 }}>
+
+      {/* <form onSubmit={handleSubmit}> */}
         <Box
           sx={{
-          maxWidth: 600,
-          mx: 'auto',
-          // '& .MuiTextField-root': {
-          //   m: 1,
-          //   width: '25ch'
-          // }
-        }}>
-          <Paper elevation={6} sx={{
-            p: 3
-          }} square={false}>
+            maxWidth: 600,
+            mx: 'auto'
+          }}
+        >
+          <Paper elevation={6} sx={{ p: 3 }} square={false}>
             <Box
               sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              mb: 3
-            }}>
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                mb: 3
+              }}
+            >
               <Typography
                 variant="h2"
                 sx={{
-                background: 'linear-gradient(to right, #f00, #9500ff);',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent'
-              }}>
+                  background: 'linear-gradient(to right, #f00, #9500ff);',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent'
+                }}
+              >
                 Sign Up Influencer
               </Typography>
             </Box>
-            <Grid
-              container
-              spacing={2}
-              justifyContent="center"
-              sx={{
-              textAlign: 'center'
-            }}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  name="email"
-                  label="Email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  margin='normal'/>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  margin='normal'
-                  name="influencer_full_name"
-                  label="Full Name"
-                  value={formData.influencer_full_name}
-                  onChange={handleChange}/>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  margin='normal'
-                  name="password"
-                  label="Password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleChange}/>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  margin='normal'
-                  name="payment_method"
-                  label="Payment Method"
-                  value={formData.payment_method}
-                  onChange={handleChange}/>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  margin='normal'
-                  name="influencer_social_network_links.instagram"
-                  label="Instagram Link"
-                  value={formData.influencer_social_network_links.instagram}
-                  onChange={handleChange}/>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth margin='normal'>
-                  <InputLabel id="interest-label">Follower Interest Types</InputLabel>
-                  <Select
-                    labelId="interest-label"
-                    name="influencer_follower_interest_types"
-                    multiple
-                    value={formData.influencer_follower_interest_types}
-                    onChange={handleInterestChange}
-                    renderValue={(selected) => selected.join(', ')}
-                    label="Followers Interest Types">
-                    {interestTypes.map((option) => (
-                      <MenuItem key={option} value={option}>
-                        {option}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  margin='normal'
-                  name="influencer_followers_location"
-                  label="Followers Location"
-                  value={formData.influencer_followers_location}
-                  onChange={handleChange}/>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  margin='normal'
-                  name="influencer_followers_age"
-                  label="Followers Age"
-                  type="number"
-                  value={formData.influencer_followers_age}
-                  onChange={handleChange}/>
-              </Grid>
+              <GeneralForm schema={schema} setFormData={setFormData} formData={formData} />
 
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth margin='normal'>
-                  <InputLabel id="followers-gender-label">Followers Gender</InputLabel>
-                  <Select
-                    labelId="followers-gender-label"
-                    name="influencer_followers_gender"
-                    multiple
-                    value={formData.influencer_followers_gender}
-                    onChange={handleChange}
-                    renderValue={(selected) => selected.join(', ')}
-                    label="Followers Gender">
-                      {
-                        genders.map(g => <MenuItem value={g}>{g}</MenuItem>)
-                      }
-                  </Select>
-                </FormControl>
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  margin='normal'
-                  name="influencer_exposure_content"
-                  label="Exposure to Content (%)"
-                  type="number"
-                  value={formData.influencer_exposure_content}
-                  onChange={handleChange}/>
-              </Grid>
-
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  margin='normal'
-                  name="influencer_age"
-                  label="Influencer Age"
-                  type="number"
-                  value={formData.influencer_age}
-                  onChange={handleChange}/>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <FormControl fullWidth margin='normal'>
-                  <InputLabel id="influencer-gender-label">Influencer Gender</InputLabel>
-                  <Select
-                    labelId="influencer-gender-label"
-                    name="influencer_gender"
-                    value={formData.influencer_gender}
-                    onChange={handleChange}>
-                      {genders.map(g => <MenuItem value={g}>{g}</MenuItem>)}
-                    
-
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} container justifyContent="center">
-                <Button type="submit" variant="contained" color="primary">
-                  Sign Up
+              {/* <Grid item xs={12} container justifyContent="center"> */}
+                <Button type="submit" variant="contained" color="primary" disabled={loading} onClick={handleSubmit}>
+                  {loading ? <CircularProgress size={24} /> : 'Sign Up'}
                 </Button>
-              </Grid>
-            </Grid>
+              {/* </Grid> */}
+              {/* <Grid item xs={12} container justifyContent="center" sx={{ mt: 2 }}> */}
+                <Typography variant="body2">
+                  Already signed up?{' '}
+                  <Link href="/login" sx={{ ml: 1 }}>Login here</Link>
+                </Typography>
+              {/* </Grid> */}
+            {/* </Grid> */}
           </Paper>
         </Box>
-      </form>
     </Container>
   );
 };

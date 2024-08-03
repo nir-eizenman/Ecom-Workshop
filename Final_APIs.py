@@ -13,12 +13,30 @@ from bson import ObjectId
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from json import JSONEncoder
+from bson import json_util
+from mongoengine.base import BaseDocument
+from mongoengine.queryset.base import BaseQuerySet
+
+class MongoEngineJSONEncoder(JSONEncoder):
+    def default(self,obj):
+        if isinstance(obj, BaseDocument):
+            return json_util._json_convert(obj.to_mongo())
+        elif isinstance(obj, BaseQuerySet):
+            return json_util._json_convert(obj.as_pymongo())
+        return JSONEncoder.default(self, obj)
+
 
 app = Flask(__name__)
-app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_PERMANENT"] = True
 app.config["SESSION_TYPE"] = "filesystem"
+app.config['SECRET_KEY'] = 'NIR IS ANGRY'
+app.config.from_object(__name__)
+app.config.update(SESSION_COOKIE_SAMESITE="None", SESSION_COOKIE_SECURE=True)
+app.json_encoder = MongoEngineJSONEncoder
+
 Session(app)
-CORS(app)
+CORS(app, supports_credentials=True)
 app.secret_key = 'your_secret_key'  # Necessary for session management
 
 db = DatabaseLogic(
@@ -48,6 +66,20 @@ def signup_influencer():
     ]
 
     data = {field: request.json[field] for field in required_fields}
+
+    data[EntityName.CONST_INFLUENCER_AGE] = int(data[EntityName.CONST_INFLUENCER_AGE])
+
+    data[EntityName.CONST_INSTAGRAM]['followers_count'] = int(data[EntityName.CONST_INSTAGRAM]['followers_count'])
+    data[EntityName.CONST_INSTAGRAM]['accounts_reached_30'] = int(data[EntityName.CONST_INSTAGRAM]['accounts_reached_30'])
+
+    for key in data[EntityName.CONST_INSTAGRAM]['followers_location']:
+        data[EntityName.CONST_INSTAGRAM]['followers_location'][key] = int(data[EntityName.CONST_INSTAGRAM]['followers_location'][key])
+
+    for key in data[EntityName.CONST_INSTAGRAM]['gender_stats']:
+        data[EntityName.CONST_INSTAGRAM]['gender_stats'][key] = int(data[EntityName.CONST_INSTAGRAM]['gender_stats'][key])
+
+    for key in data[EntityName.CONST_INSTAGRAM]['age_stats']:
+            data[EntityName.CONST_INSTAGRAM]['age_stats'][key] = int(data[EntityName.CONST_INSTAGRAM]['age_stats'][key])
 
     # TODO - maybe use exceptions so I will know what was the problem and describe it in the message
     # if adding user failed
@@ -112,11 +144,15 @@ def login():
     print("user type is:", user_type_str)
 
     #Test it
-    if user_type_str == 'company':
+    if user_type_str == 'influencer':
         user_type = UserType(1)
+        
         print("I am influencer hereeeee")
-    elif user_type_str == 'influencer':
+    elif user_type_str == 'company':
         user_type = UserType(2)
+        #userByEmail = db.getUserByEmail(email, UserType.Companies)
+        #print(userByEmail)
+        session['company_id'] = "6695650dd312588ddbf599fe"
         print("I am company here")
     else:
         return jsonify(
@@ -166,7 +202,7 @@ def influencer_one_objective_completion(influencerId):
     influencer_id = influencerId
     content_type_str = request.json[EntityName.CONST_CONTENT_TYPE] # should be string
     content_url = request.json[EntityName.CONST_URL]
-    campaign_id = request.json['campaign_id']
+    campaign_id = request.json[EntityName.CONST_CAMPAIGN_ID]
 
 
     influencer_document = db.getDocumentById(influencer_id, UserType.Influencers.name)
@@ -255,7 +291,7 @@ def notify_influencer(influencer, campaign):
     body = f"""
         Hello {influencer['full_name']},
 
-        Congratulations! Based on your stats, you might be a possible match for a new campaign: "{campaign['campaign_name']}".
+        Congratulations! Based on your stats, you might be a possible match for a new campaign: "{campaign[EntityName.CONST_CAMPAIGN_NAME]}".
         Go fill out your application!
 
         Best regards,
@@ -285,6 +321,7 @@ def notify_top_5(campaign):
     # get all documents from the collection
     influencers = influencers_collection.find()
     top_5_scores = []
+    print("maybe here???")
     for influencer in influencers:
         current_score = calculate_score_balanced(influencer, campaign)
         top_5_scores = sorted(top_5_scores, key=lambda x: int(x[0]))
@@ -297,22 +334,25 @@ def notify_top_5(campaign):
         else:
             top_5_scores.append((current_score, influencer))
     # notify the top 5 influencers
+    print("haaaaaaaaaaaaa???")
     for score, influencer in top_5_scores:
         notify_influencer(influencer, campaign)
 
 
 @app.route('/api/company/<companyId>/home/create', methods=['POST'])
 def upload_campaign(companyId):
-    try:
+    # try:
         data = request.json
 
         # Extract required fields directly from data
-        campaign_name = data['campaign_name']
-        budget = data['budget']
+        campaign_name = data[EntityName.CONST_CAMPAIGN_NAME]
+        budget = data[EntityName.CONST_BUDGET]
         if int(budget) <= 0:
             raise Exception("Negative budget")
         is_active = data['is_active']
         about = data['about']
+
+        print("its budget?")
 
         company_id = companyId
         target_audience = data['target_audience']
@@ -324,6 +364,7 @@ def upload_campaign(companyId):
         campaign_goal = data['campaign_goal']
         campaign_objective = data['campaign_objective']
         # Extract nested dictionaries from campaign_objective
+        print("awwwwwwwwwww")
         reels = campaign_objective['reels']
         if int(reels) < 0:
             raise Exception("Negative reels")
@@ -333,13 +374,13 @@ def upload_campaign(companyId):
         stories = campaign_objective['stories']
         if int(stories) < 0:
             raise Exception("Negative stories")
-
+        print("its not objective?")
         create_time = datetime.now()
         influencers = []
 
         campaign_data = {
-            "campaign_name": campaign_name,
-            "budget": int(budget),
+            EntityName.CONST_CAMPAIGN_NAME: campaign_name,
+            EntityName.CONST_BUDGET: int(budget),
             "is_active": bool(is_active),
             "about": about,
             "target_audience": {
@@ -358,16 +399,23 @@ def upload_campaign(companyId):
             "create_time": create_time,
             "influencers": influencers
         }
-
+        print("its the data???")
         # Save campaign data to MongoDB
         campaigns_collection = database['Campaigns']
-        campaigns_collection.insert_one(campaign_data)
+        try:
+            campaigns_collection.insert_one(campaign_data)
 
-        notify_top_5(campaign_data)
+            notify_top_5(campaign_data)
+        except Exception as e:
+            campaigns_collection.delete_one(campaign_data)
+            raise Exception
+
         return jsonify("Campaign was successfully created"), 201
 
-    except Exception as e:
-        return jsonify({"status": "error", "message": str(e)}), 400
+    # except Exception as e:
+    #     print('HELLO')
+    #     print(e)
+    #     return jsonify({"status": "error", "message": str(e)}), 400
 
 
 @app.route('/api/influencer/<influencerId>/home/explore/<campaign_id>/apply', methods=['POST'])
@@ -385,8 +433,8 @@ def apply_for_campaign(influencerId, campaign_id):
 
     # Create application data
     application_data = {
-        'campaignId': campaign_id,
-        'influencerId': influencerId,  # change to session.get
+        EntityName.CONST_CAMPAIGN_ID: ObjectId(campaign_id),
+        EntityName.CONST_INFLUENCER_ID: ObjectId(influencerId),  # change to session.get
         EntityName.CONST_ASKING_PRICE: int(data[EntityName.CONST_ASKING_PRICE])
     }
 
@@ -398,7 +446,7 @@ def apply_for_campaign(influencerId, campaign_id):
 
 
 # Influencer explore page for active campaigns
-@app.route('/api/influencer/home/<influencer_id>/explore', methods=['GET'])
+@app.route('/api/influencer/<influencer_id>/home/explore', methods=['GET'])
 def explore_campaigns(influencer_id):
     influencer_id = influencer_id,  # change to session.get
     if not influencer_id:
@@ -407,9 +455,12 @@ def explore_campaigns(influencer_id):
     active_campaigns = list(db.client['Database']['Campaigns'].find({EntityName.CONST_IS_ACTIVE: True}))
     applied_campaigns = list(db.client['Database']['Applications'].find({"influencer_id": influencer_id}))
 
-    applied_campaign_ids = [app['campaign_id'] for app in applied_campaigns]
+    applied_campaign_ids = [app[EntityName.CONST_CAMPAIGN_ID] for app in applied_campaigns]
     available_campaigns = [campaign for campaign in active_campaigns if campaign['_id'] not in applied_campaign_ids]
-
+    for campaign in available_campaigns:
+        print(campaign['_id'])
+        campaign[EntityName.CONST_CAMPAIGN_ID] = str(campaign.pop('_id', None))
+    print(available_campaigns)
     return jsonify({'available_campaigns': available_campaigns}), 200
 
 
@@ -425,13 +476,14 @@ def end_campaign(campaignId):
     # check if the campaign exists
     if not campaign:
         return jsonify({'error': 'Campaign not found'}), 404
-
     # update the campaign to be inactive
+    if(not campaign['is_active']):
+        return jsonify("Successfully ended campaign, don't have result yet"), 204
+            
     campaigns_collection.update_one({"_id": ObjectId(campaignId)}, {"$set": {"is_active": False}})
-
     # calculate the results of the campaign
     influencers_data, budget = algorithm_prep(campaignId)
-
+    print(influencers_data, budget)
     # calculate the knapsack for each score
     knapsack_results = knapsack(influencers_data, budget)
     objectives = ["Most balanced", "Best Exposure", "Influencer in relevant category"]
@@ -457,7 +509,7 @@ def end_campaign(campaignId):
         results.append(result)
 
     # add the results to the db
-    results_collection.insert_one({"campaign_id": ObjectId(campaignId), "results": results})
+    results_collection.insert_one({EntityName.CONST_CAMPAIGN_ID: ObjectId(campaignId), "results": results})
 
     # return the campaign no content
     return jsonify("Successfully ended campaign"), 204
@@ -468,13 +520,21 @@ def end_campaign(campaignId):
 def company_home_results(campaignId):
     # get the campaign by id
     collection = database["Results"]
-    campaign = collection.find_one({"campaign_id": ObjectId(campaignId)})
+    campaign = collection.find_one({EntityName.CONST_CAMPAIGN_ID: ObjectId(campaignId)})
     # check if the campaign exists
     if not campaign:
         return jsonify({'error': 'Campaign not found'}), 404
     # remove the _id field
     campaign.pop('_id')
-    campaign.pop('campaign_id')
+    campaign.pop(EntityName.CONST_CAMPAIGN_ID)
+
+    campaign['results']
+
+    
+
+    for array_cell in campaign['results']:
+        for influencer in array_cell['influencers']:
+            influencer.pop('influencer_id')
 
     # return the results
     return jsonify(campaign), 200
@@ -485,24 +545,28 @@ def company_home_results(campaignId):
 def company_home_results_choose(campaignId):
     # get the campaign by id
     collection = database["Results"]
-    campaign = collection.find_one({"campaign_id": ObjectId(campaignId)})
+    campaign = collection.find_one({EntityName.CONST_CAMPAIGN_ID: ObjectId(campaignId)})
     # check if the campaign exists
     if not campaign:
         return jsonify({'error': 'Campaign not found'}), 404
     # get the result number chosen
     result_number = request.json.get('result_number')
     # check if the result number is valid
+    print(result_number)
     if result_number is None or result_number < 0 or result_number >= len(campaign['results']):
         return jsonify({'error': 'Invalid result number'}), 400
     # get the result chosen
     result = campaign['results'][result_number]
     # set the result to be chosen (change boolean to true)
-    collection.update_one({"campaign_id": ObjectId(campaignId)},
+    print("result numebr:", result_number)
+    print("campaign id:", campaignId)
+
+    collection.update_one({EntityName.CONST_CAMPAIGN_ID: ObjectId(campaignId)},
                           {"$set": {"results." + str(result_number) + ".chosen": True}})
     # get the influencer id
     influencers = result['influencers']
     # get the influencer id for each influencer
-    influencers_id = [influencer['influencer_id'] for influencer in influencers]
+    influencers_id = [influencer[EntityName.CONST_INFLUENCER_ID] for influencer in influencers]
     # get the campaign by id
     collection = database["Campaigns"]
     campaign = collection.find_one({"_id": ObjectId(campaignId)})
@@ -523,6 +587,7 @@ def company_home_results_choose(campaignId):
 @app.route("/api/company/<companyId>/home", methods=['GET'])
 def company_home(companyId):
     # get the last 5 campaigns of the company
+    print("in company home: " + str(session.get('company_id')))
     collection = database["Campaigns"]
     # TODO: add session logic instead of const company id (session['company_id']) or (session['user_id'])
     campaigns = collection.find({"company_id": companyId}).sort([("is_active", -1), ("create_time", -1)]).limit(5)
@@ -530,8 +595,10 @@ def company_home(companyId):
     campaigns = list(campaigns)
     # remove the _id field
     for campaign in campaigns:
-        campaign.pop('_id')
-    # return the campaigns
+        campaign[EntityName.CONST_CAMPAIGN_ID] = str(campaign.pop('_id'))
+        campaign.pop('influencers')
+        # return the campaigns
+
     return jsonify(campaigns), 200
 
 
@@ -540,9 +607,9 @@ def company_home(companyId):
 def influencer_home(influencerId):
     # get the last 5 campaigns of the influencer
     collection = database["Campaigns"]
-    # TODO: add session logic instead of const influencer id (session['influencer_id']) or (session['user_id'])
+    # TODO: add session logic instead of const influencer id (session[EntityName.CONST_INFLUENCER_ID]) or (session['user_id'])
     # find the campaigns that the influencers array contains 1234
-    campaigns = collection.find({"influencers": influencerId}).sort([("is_active", -1), ("create_time", -1)]).limit(5)
+    campaigns = collection.find({"influencers": ObjectId(influencerId)}).sort([("is_active", -1), ("create_time", -1)]).limit(5)
     # convert the object to list
     campaigns = list(campaigns)
     # remove the _id field and the influencers array field
@@ -550,8 +617,10 @@ def influencer_home(influencerId):
         campaign.pop('_id')
         campaign.pop('influencers')
         # return the campaigns
+    
     return jsonify(campaigns), 200
 
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)  # Changed port to 5001
+
