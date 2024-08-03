@@ -291,7 +291,7 @@ def notify_influencer(influencer, campaign):
     body = f"""
         Hello {influencer['full_name']},
 
-        Congratulations! Based on your stats, you might be a possible match for a new campaign: "{campaign['campaign_name']}".
+        Congratulations! Based on your stats, you might be a possible match for a new campaign: "{campaign[EntityName.CONST_CAMPAIGN_NAME]}".
         Go fill out your application!
 
         Best regards,
@@ -345,7 +345,7 @@ def upload_campaign(companyId):
         data = request.json
 
         # Extract required fields directly from data
-        campaign_name = data['campaign_name']
+        campaign_name = data[EntityName.CONST_CAMPAIGN_NAME]
         budget = data['budget']
         if int(budget) <= 0:
             raise Exception("Negative budget")
@@ -379,7 +379,7 @@ def upload_campaign(companyId):
         influencers = []
 
         campaign_data = {
-            "campaign_name": campaign_name,
+            EntityName.CONST_CAMPAIGN_NAME: campaign_name,
             "budget": int(budget),
             "is_active": bool(is_active),
             "about": about,
@@ -433,8 +433,8 @@ def apply_for_campaign(influencerId, campaign_id):
 
     # Create application data
     application_data = {
-        'campaignId': campaign_id,
-        'influencerId': influencerId,  # change to session.get
+        'campaign_id': ObjectId(campaign_id),
+        'influencer_id': ObjectId(influencerId),  # change to session.get
         EntityName.CONST_ASKING_PRICE: int(data[EntityName.CONST_ASKING_PRICE])
     }
 
