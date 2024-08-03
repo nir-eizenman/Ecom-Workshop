@@ -67,6 +67,10 @@ def signup_influencer():
 
     data = {field: request.json[field] for field in required_fields}
 
+    data[EntityName.CONST_INFLUENCER_AGE] = int(data[EntityName.CONST_INFLUENCER_AGE])
+
+    data[EntityName.CONST_INSTAGRAM]['followers_count'] = int(data[EntityName.CONST_INSTAGRAM]['followers_count'])
+
     # TODO - maybe use exceptions so I will know what was the problem and describe it in the message
     # if adding user failed
     if not db.addUser(data, UserType.Influencers):
