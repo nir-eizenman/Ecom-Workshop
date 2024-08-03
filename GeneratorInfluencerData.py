@@ -73,7 +73,7 @@ def random_age_stats() -> dict:
 def random_instagram_data() -> dict:
     """Generate random Instagram data."""
     return {
-        "url": f"https://instagram.com/{random_string(10)}",
+        EntityName.CONST_URL: f"https://instagram.com/{random_string(10)}",
         "username": random_string(8),
         "followers_interests": random_followers_interests(),
         "followers_location": random_followers_location(),
@@ -88,11 +88,11 @@ def generate_influencers_data(num_companies: int) -> list:
     companies_data = []
     for _ in range(num_companies):
         data = {
-            "email": random_email(),
-            "full_name": random_full_name(),
-            "password": random_string(12),
-            "gender": random_gender(),
-            "age": random_age(),
+            EntityName.CONST_EMAIL: random_email(),
+            EntityName.CONST_INFLUENCER_FULL_NAME: random_full_name(),
+            EntityName.CONST_PASSWORD: random_string(12),
+            EntityName.CONST_INFLUENCER_GENDER: random_gender(),
+            EntityName.CONST_INFLUENCER_AGE: random_age(),
             EntityName.CONST_INSTAGRAM: random_instagram_data()
         }
         companies_data.append(data)
