@@ -50,3 +50,4 @@ export const CAMPAIGN_STORIES = 'campaign_stories';
 
 // For Apply for Campaign
 export const ASKING_PRICE = 'asking_price';
+

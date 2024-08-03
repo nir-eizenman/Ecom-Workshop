@@ -477,13 +477,13 @@ def end_campaign(campaignId):
     if not campaign:
         return jsonify({'error': 'Campaign not found'}), 404
     # update the campaign to be inactive
-    if(not campaign['is_active']):
-        return jsonify("Successfully ended campaign, don't have result yet"), 204
+    # if(not campaign['is_active']):
+    #     return jsonify("Successfully ended campaign, don't have result yet"), 204
             
     campaigns_collection.update_one({"_id": ObjectId(campaignId)}, {"$set": {"is_active": False}})
     # calculate the results of the campaign
     influencers_data, budget = algorithm_prep(campaignId)
-
+    print(influencers_data, budget)
     # calculate the knapsack for each score
     knapsack_results = knapsack(influencers_data, budget)
     objectives = ["Most balanced", "Best Exposure", "Influencer in relevant category"]
