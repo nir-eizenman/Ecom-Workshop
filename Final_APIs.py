@@ -4,9 +4,7 @@ from UserTypeEnum import UserType
 from ContentTypeEnum import ContentType
 from flask_cors import CORS
 from DatabaseLogic import DatabaseLogic
-import string
 import EntityName
-import random
 from Algorithm import algorithm_prep, knapsack, calculate_score_best_fit
 from datetime import datetime
 from bson import ObjectId
@@ -46,20 +44,12 @@ database = db.client['Database']
 
 
 # NATANELS APIs
-# TODO there is a to do in this function
 @app.route('/api/signup/influencer', methods=['POST'])
 def signup_influencer():
     required_fields = [
         EntityName.CONST_EMAIL,
         EntityName.CONST_INFLUENCER_FULL_NAME,
         EntityName.CONST_PASSWORD,
-        # EntityName.CONST_PAYMENT_METHOD,
-        # EntityName.CONST_INFLUENCER_SOCIAL_NETWORK_LINKS,
-        # EntityName.CONST_INFLUENCER_FOLLOWER_INTEREST_TYPES,
-        # EntityName.CONST_INFLUENCER_FOLLOWERS_LOCATION,
-        # EntityName.CONST_INFLUENCER_FOLLOWER_AGE,
-        # EntityName.CONST_INFLUENCER_FOLLOWER_GENDER,
-        # EntityName.CONST_INFLUENCER_EXPOSURE_CONTENT,
         EntityName.CONST_INFLUENCER_AGE,
         EntityName.CONST_INFLUENCER_GENDER,
         EntityName.CONST_INSTAGRAM
@@ -72,6 +62,7 @@ def signup_influencer():
     data[EntityName.CONST_INSTAGRAM]['followers_count'] = int(data[EntityName.CONST_INSTAGRAM]['followers_count'])
     data[EntityName.CONST_INSTAGRAM]['accounts_reached_30'] = int(data[EntityName.CONST_INSTAGRAM]['accounts_reached_30'])
 
+    #insert as int and not string
     for key in data[EntityName.CONST_INSTAGRAM]['followers_location']:
         data[EntityName.CONST_INSTAGRAM]['followers_location'][key] = int(data[EntityName.CONST_INSTAGRAM]['followers_location'][key])
 
@@ -81,7 +72,6 @@ def signup_influencer():
     for key in data[EntityName.CONST_INSTAGRAM]['age_stats']:
             data[EntityName.CONST_INSTAGRAM]['age_stats'][key] = int(data[EntityName.CONST_INSTAGRAM]['age_stats'][key])
 
-    # TODO - maybe use exceptions so I will know what was the problem and describe it in the message
     # if adding user failed
     if not db.addUser(data, UserType.Influencers):
         return jsonify(
@@ -98,23 +88,18 @@ def signup_influencer():
         }), 201
 
 
-# TODO there is a to do in this function
 @app.route('/api/signup/company', methods=['POST'])
 def signup_company():
     required_fields = [
         EntityName.CONST_EMAIL,
         EntityName.CONST_COMPANY_NAME,
         EntityName.CONST_PASSWORD,
-        # EntityName.CONST_PAYMENT_METHOD,
         EntityName.CONST_COMPANY_SITE_LINK,
         EntityName.CONST_COMPANY_ABOUT_US
     ]
 
-    print(request.headers)
-
     data = {field: request.json[field] for field in required_fields}
 
-    # TODO - maybe use exceptions so I will know what was the problem and describe it in the message
     # if adding user failed
     if not db.addUser(data, UserType.Companies):
         return jsonify(
@@ -131,29 +116,17 @@ def signup_company():
         }), 201
 
 
-# TODO? add logout?
 @app.route('/api/login', methods=['POST'])
 def login():
     email = request.json[EntityName.CONST_EMAIL]
     password = request.json[EntityName.CONST_PASSWORD]
     user_type_str = request.json[EntityName.CONST_USER_TYPE]
     
-    # Ensure the user_type is valid
 
-    #need to fix here?
-    print("user type is:", user_type_str)
-
-    #Test it
     if user_type_str == 'influencer':
         user_type = UserType(1)
-        
-        print("I am influencer hereeeee")
     elif user_type_str == 'company':
         user_type = UserType(2)
-        #userByEmail = db.getUserByEmail(email, UserType.Companies)
-        #print(userByEmail)
-        session['company_id'] = "6695650dd312588ddbf599fe"
-        print("I am company here")
     else:
         return jsonify(
             {
@@ -161,18 +134,11 @@ def login():
             EntityName.CONST_MESSAGE: "Invalid user type"
             }), 400
 
-    
-    print(user_type)
     user_data = db.getUserByEmail(email, user_type)
 
-
+    #if login succeded
     if user_data and user_data[EntityName.CONST_PASSWORD] == password:
-        # session[EntityName.CONST_RANDOM_SESSION_TOKEN] = randSessionToken
-        # session[EntityName.CONST_EMAIL] = user_data[EntityName.CONST_EMAIL]
-        
         user_id_str = str(user_data['_id'])
-        print("in login the value of user_id_str is", user_id_str)
-
         return jsonify(
             {
             EntityName.CONST_RESULT: True,
@@ -189,14 +155,13 @@ def login():
 
 @app.route("/api/logout")
 def logout():
-
     return jsonify(
         {
             EntityName.CONST_RESULT: True,
             EntityName.CONST_MESSAGE: ""
         }), 200
 
-# TODO - 
+
 @app.route('/api/influencer/<influencerId>/home/completion', methods=['POST'])
 def influencer_one_objective_completion(influencerId):
     influencer_id = influencerId
@@ -216,12 +181,6 @@ def influencer_one_objective_completion(influencerId):
         }), 400
 
 
-    # TODO - later make it use the enum and add posts and stories
-    # if content_type_str == str(ContentType.Reels):
-    #     content_type = ContentType.Reels
-
-    #print("company campaign is: ", campaign_document)
-    #print("company doc is: ", company_document)
     sender_email = "team.ad.venture.company@gmail.com"
     receiver_email = company_document[EntityName.CONST_EMAIL]
     password = "qpic idhh vlbs xwip"
@@ -276,9 +235,6 @@ def influencer_one_objective_completion(influencerId):
         }), 401
 
 
-# def id_generator(chars=string.ascii_uppercase + string.digits, size=9):
-#     return ''.join(random.choice(chars) for _ in range(size))
-
 
 # MAYAS APIs
 
@@ -321,7 +277,6 @@ def notify_top_5(campaign):
     # get all documents from the collection
     influencers = influencers_collection.find()
     top_5_scores = []
-    print("maybe here???")
     for influencer in influencers:
         current_score = calculate_score_best_fit(influencer, campaign)
         top_5_scores = sorted(top_5_scores, key=lambda x: int(x[0]))
@@ -334,7 +289,6 @@ def notify_top_5(campaign):
         else:
             top_5_scores.append((current_score, influencer))
     # notify the top 5 influencers
-    print("haaaaaaaaaaaaa???")
     for score, influencer in top_5_scores:
         notify_influencer(influencer, campaign)
 
@@ -352,8 +306,6 @@ def upload_campaign(companyId):
         is_active = data['is_active']
         about = data['about']
 
-        print("its budget?")
-
         company_id = companyId
         target_audience = data['target_audience']
         # Extract nested dictionaries from target_audience
@@ -364,7 +316,6 @@ def upload_campaign(companyId):
         campaign_goal = data['campaign_goal']
         campaign_objective = data['campaign_objective']
         # Extract nested dictionaries from campaign_objective
-        print("awwwwwwwwwww")
         reels = campaign_objective['reels']
         if int(reels) < 0:
             raise Exception("Negative reels")
@@ -374,7 +325,6 @@ def upload_campaign(companyId):
         stories = campaign_objective['stories']
         if int(stories) < 0:
             raise Exception("Negative stories")
-        print("its not objective?")
         create_time = datetime.now()
         influencers = []
 
@@ -399,7 +349,7 @@ def upload_campaign(companyId):
             "create_time": create_time,
             "influencers": influencers
         }
-        print("its the data???")
+
         # Save campaign data to MongoDB
         campaigns_collection = database['Campaigns']
         try:
@@ -411,11 +361,6 @@ def upload_campaign(companyId):
             raise Exception
 
         return jsonify("Campaign was successfully created"), 201
-
-    # except Exception as e:
-    #     print('HELLO')
-    #     print(e)
-    #     return jsonify({"status": "error", "message": str(e)}), 400
 
 
 @app.route('/api/influencer/<influencerId>/home/explore/<campaign_id>/apply', methods=['POST'])
@@ -458,9 +403,8 @@ def explore_campaigns(influencer_id):
     applied_campaign_ids = [app[EntityName.CONST_CAMPAIGN_ID] for app in applied_campaigns]
     available_campaigns = [campaign for campaign in active_campaigns if campaign['_id'] not in applied_campaign_ids]
     for campaign in available_campaigns:
-        print(campaign['_id'])
         campaign[EntityName.CONST_CAMPAIGN_ID] = str(campaign.pop('_id', None))
-    print(available_campaigns)
+
     return jsonify({'available_campaigns': available_campaigns}), 200
 
 
@@ -483,7 +427,7 @@ def end_campaign(campaignId):
     campaigns_collection.update_one({"_id": ObjectId(campaignId)}, {"$set": {"is_active": False}})
     # calculate the results of the campaign
     influencers_data, budget = algorithm_prep(campaignId)
-    print(influencers_data, budget)
+
     # calculate the knapsack for each score
     knapsack_results = knapsack(influencers_data, budget)
     objectives = ["AD-Venture's Recommendation", "Best Fit By Location", "Best Fit By Category"]
@@ -530,8 +474,6 @@ def company_home_results(campaignId):
 
     campaign['results']
 
-    
-
     for array_cell in campaign['results']:
         for influencer in array_cell['influencers']:
             influencer.pop('influencer_id')
@@ -552,14 +494,11 @@ def company_home_results_choose(campaignId):
     # get the result number chosen
     result_number = request.json.get('result_number')
     # check if the result number is valid
-    print(result_number)
     if result_number is None or result_number < 0 or result_number >= len(campaign['results']):
         return jsonify({'error': 'Invalid result number'}), 400
     # get the result chosen
     result = campaign['results'][result_number]
     # set the result to be chosen (change boolean to true)
-    print("result numebr:", result_number)
-    print("campaign id:", campaignId)
 
     collection.update_one({EntityName.CONST_CAMPAIGN_ID: ObjectId(campaignId)},
                           {"$set": {"results." + str(result_number) + ".chosen": True}})
@@ -587,7 +526,6 @@ def company_home_results_choose(campaignId):
 @app.route("/api/company/<companyId>/home", methods=['GET'])
 def company_home(companyId):
     # get the last 5 campaigns of the company
-    print("in company home: " + str(session.get('company_id')))
     collection = database["Campaigns"]
     # TODO: add session logic instead of const company id (session['company_id']) or (session['user_id'])
     campaigns = collection.find({"company_id": companyId}).sort([("is_active", -1), ("create_time", -1)]).limit(5)

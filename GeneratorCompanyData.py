@@ -2,6 +2,8 @@ import EntityName
 import random
 import string
 
+#code for generate company fake data
+
 def random_string(length: int) -> str:
     """Generate a random string of the given length."""
     return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
