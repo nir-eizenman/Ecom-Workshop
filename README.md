@@ -12,6 +12,7 @@ The website provides efficient matching and effective campaigns. The platform is
 
 ## Running instructions:
 Frontend: cd ./frontend/ad-venture-front; npm install; npm start;
+
 Backend: python Final_APIs.py
 
 Note: the dependencies for the backend is located in requirements.txt
