@@ -30,10 +30,10 @@ Because we wanted to give the company several ways to choose their goal for the 
 
 ## Our special features:
 
-# Performance tracking -
+### Performance tracking -
 Each time an influencer complete one objective of his campaign (reel, story, post) he insert the objective he completed with the URL to our website, the website sent to the backend the URL, content type, influencer_id, campaign_id, then we query the database to recieve the data about the influencer, campaign, and company (that the campaign belong to it). then we send an email to the company mail that the influencer completed one objective, the mail contain the objective type and the URL.
 
-# Notifying potentially relevant influencers -
+### Notifying potentially relevant influencers -
 This feature is responsible for identifying and notifying the top 5 most relevant influencers for a newly created campaign. When a company creates a campaign, the `upload_campaign` function is executed. After the campaign data is saved to the database, we find the top 5 influencers who are best suited for the campaign.
 
 To begin, `notify_top_5` retrieves all influencers from the `Influencers` collection in the MongoDB database. For each influencer, it calculates a relevance score. This score measures how well the influencer’s profile matches the campaign’s requirements.
