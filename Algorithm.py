@@ -15,6 +15,19 @@ db = DatabaseLogic(
 database = db.client['Database']
 
 
+def normalize_influencers(influencers):
+    # Step 1: Extract Maximum Values
+    max_followers_count = max(influencer['instagram']['followers_count'] for influencer in influencers)
+    max_accounts_reached_30 = max(influencer['instagram']['accounts_reached_30'] for influencer in influencers)
+
+    # Step 2: Normalize Values
+    for influencer in influencers:
+        influencer['instagram']['followers_count'] /= max_followers_count
+        influencer['instagram']['accounts_reached_30'] /= max_accounts_reached_30
+
+    return influencers
+
+
 def algorithm_prep(campaign_id1):
     '''
     Get the data from the db (can reuse the relevant code from APIs)
@@ -38,6 +51,8 @@ def algorithm_prep(campaign_id1):
         influencer['cost'] = application['asking_price']
         influencers.append(influencer)
 
+    influencers = normalize_influencers(influencers)
+
     # reorder the information in the correct structure to fit the calculation stage
     influencers_data = []
     for influencer in influencers:
@@ -45,8 +60,8 @@ def algorithm_prep(campaign_id1):
             'id': influencer['_id'],
             'full_name': influencer['full_name'],
             'cost': influencer['cost'],
-            'score': [calculate_score_balanced(influencer, campaign), calculate_score_exposure(influencer, campaign),
-                      calculate_score_relevant_categories(influencer, campaign)]
+            'score': [calculate_score_best_fit(influencer, campaign), calculate_score_location_fit(influencer, campaign),
+                      calculate_score_categories_fit(influencer, campaign)]
 
         }
         influencers_data.append(influencer_data)
@@ -86,7 +101,8 @@ def calculate_score_base(influencer, campaign):
             categories_score += 1
 
     # divide by the number of categories to get a percentage
-    categories_score /= len(campaign['categories']) * 100
+    categories_score /= len(campaign['categories'])
+    categories_score *= 100
 
     # we'll set the score for the followers count and exposure to content to be:
     accounts_reached_30 = influencer['instagram']['accounts_reached_30']
@@ -94,27 +110,28 @@ def calculate_score_base(influencer, campaign):
     return followers_count, accounts_reached_30, gender_score, age_score, location_score, categories_score
 
 
-def calculate_score_balanced(influencer, campaign):
+def calculate_score_best_fit(influencer, campaign):
     followers_count, accounts_reached_30, gender_score, age_score, location_score, categories_score = calculate_score_base(
         influencer, campaign)
 
-    return 0.3*(followers_count / 1000) + 0.3*(accounts_reached_30 / 1000) + 0.3*(
-            gender_score + age_score + location_score + categories_score)
+    return (0.5 * followers_count + 0.5 * accounts_reached_30) * (
+            0.15 * gender_score + 0.20 * age_score + 0.35 * location_score + 0.30 * categories_score)
 
 
-def calculate_score_exposure(influencer, campaign):
+def calculate_score_location_fit(influencer, campaign):
     followers_count, accounts_reached_30, gender_score, age_score, location_score, categories_score = calculate_score_base(
         influencer, campaign)
 
-    return (followers_count / 1000) + (accounts_reached_30 / 1000)
+    return (0.5 * followers_count + 0.5 * accounts_reached_30) * (
+            0.07 * gender_score + 0.08 * age_score + 0.70 * location_score + 0.15 * categories_score)
 
 
-def calculate_score_relevant_categories(influencer, campaign):
+def calculate_score_categories_fit(influencer, campaign):
     followers_count, accounts_reached_30, gender_score, age_score, location_score, categories_score = calculate_score_base(
         influencer, campaign)
 
-    return 0.1* (followers_count / 1000) + 0.1*(accounts_reached_30 / 1000) + 0.8*(
-            0.11 * gender_score + 0.12 * age_score + 0.11 * location_score + 0.66 * categories_score)
+    return (0.5 * followers_count + 0.5 * accounts_reached_30) * (
+            0.07 * gender_score + 0.08 * age_score + 0.15 * location_score + 0.70 * categories_score)
 
 
 def knapsack(influencers, budget):
@@ -145,7 +162,7 @@ def knapsack(influencers, budget):
                 selected_influencers_salaries.append(influencers[i - 1]['cost'])
                 w -= influencers[i - 1]['cost']
 
-        return selected_influencers_names, selected_influencers_salaries, selected_influencers, dp[n][budget]
+        return selected_influencers_names, selected_influencers_salaries, selected_influencers, round(dp[n][budget], 1)
 
     # Get results for each of the three scores
     results = []
