@@ -13,11 +13,23 @@ import {
   Chip,
   OutlinedInput,
   Radio,
-  RadioGroup,
+  RadioGroup
 } from '@mui/material';
+// import {makeStyles} from '@mui/styles'
+import {styled, alpha} from '@mui/system'
 import _ from 'lodash';
 
-const GeneralForm = ({ schema, formData, setFormData }) => {
+
+const style = {
+  "& .MuiStandardInput-root": {
+    "&.Mui-focused fieldset": {
+      color: "green",
+      backgroundColor: 'blue'
+    }
+  }
+}
+
+const GeneralForm = ({ schema, formData, setFormData, style }) => {
   const renderForm = (schema, parentKey = '') => {
     return Object.entries(schema).map(([key, value]) => {
       const fieldKey = parentKey ? `${parentKey}.${key}` : key;
@@ -200,16 +212,24 @@ const GeneralForm = ({ schema, formData, setFormData }) => {
             fullWidth
             value={_.get(formData, fieldKey, '')}
             onChange={handleChange}
+            variant='standard'
+            sx={{  "& .MuiStandardInput-root": {
+              "&.Mui-focused fieldset": {
+                color: "green",
+                backgroundColor: 'blue'
+              }
+            }}}
           />
         );
       case 'radio':
         return (
           <FormControl component="fieldset">
-            <Typography variant="h6">{value.label}</Typography>
+            {/* <Typography variant="h6">{value.label}</Typography> */}
             <RadioGroup
               name={fieldKey}
               value={_.get(formData, fieldKey, '')}
               onChange={handleChange}
+              sx={{color: 'green'}}
             >
               {value.options.map((option) => (
                 <FormControlLabel
@@ -217,6 +237,7 @@ const GeneralForm = ({ schema, formData, setFormData }) => {
                   value={option}
                   control={<Radio />}
                   label={option}
+                  sx={{color: 'rgba(255, 0, 255, 1)'}}
                 />
               ))}
             </RadioGroup>
@@ -225,12 +246,26 @@ const GeneralForm = ({ schema, formData, setFormData }) => {
       default:
         return (
           <TextField
+            variant='standard'
             name={fieldKey}
             label={value.label}
             type="text"
             fullWidth
             value={_.get(formData, fieldKey, '')}
             onChange={handleChange}
+            // className={classes.root}
+            // sx={{
+            //   '& .MuiOutlinedInput-root': {
+            //     backgroundColor: 'rgba(255, 255, 255, 0.1)', // Adjust opacity as needed
+            //   },
+            //   '& .MuiOutlinedInput-notchedOutline': {
+            //     borderColor: 'transparent', // Remove outline
+            //   },
+            //   '& .MuiTextField-root': {
+            //     borderColor: 'transparent', // Remove outline
+            //   },
+            // }}
+      
           />
         );
     }

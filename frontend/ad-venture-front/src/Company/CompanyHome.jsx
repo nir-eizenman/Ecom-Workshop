@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Box, Typography, Button } from '@mui/material';
+import { Container, Box, Typography, Button, Tabs, Tab } from '@mui/material';
 import CampaignList from './CampaignList';
 import CampaignFormDialog from './CampaignFormDialog';
 import ResultDialog from './ResultDialog';
-import { USER_ID } from '../constants';
+import { USER_ID, countries } from '../constants';
 
 const scheme = {
   "campaign_name": { type: 'string', label: 'Campaign Name' },
@@ -13,7 +13,7 @@ const scheme = {
   "target_audience": {
     location: {
       type: 'multiselectpercent',
-      options: ['Israel', 'Egypt', 'Jordan', 'Italy', 'France', 'Narnia', 'Wakanda'],
+      options: countries,
       label: 'Countries Followers Percentage'
     },
     gender: {
@@ -61,6 +61,7 @@ const CompanyHome = () => {
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [results, setResults] = useState([]);
   const [resultsCampaignId, setResultsCampaignId] = useState('');
+  const [tabValue, setTabValue] = useState(0);
 
   useEffect(() => {
     const fetchCampaigns = async () => {
@@ -177,6 +178,10 @@ const CompanyHome = () => {
     }
   };
 
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
   return (
     <Container sx={{ p: 2 }}>
       <Box sx={{ textAlign: 'center', mb: 4 }}>
@@ -198,11 +203,28 @@ const CompanyHome = () => {
       <Typography variant="h5" sx={{ mb: 2 }}>
         Your Campaigns
       </Typography>
-      <CampaignList
-        campaigns={campaigns}
-        onCampaignClick={handleCampaignClick}
-        onEndCampaign={handleEndCampaign}
-      />
+
+      <Tabs value={tabValue} onChange={handleTabChange} centered>
+        <Tab label="Active Campaigns" />
+        <Tab label="Inactive Campaigns" />
+      </Tabs>
+
+      {tabValue === 0 && (
+        <CampaignList
+          campaigns={campaigns.filter(c => c.is_active)}
+          onCampaignClick={handleCampaignClick}
+          onEndCampaign={handleEndCampaign}
+          active
+        />
+      )}
+      {tabValue === 1 && (
+        <CampaignList
+          campaigns={campaigns.filter(c => !c.is_active)}
+          onCampaignClick={handleCampaignClick}
+          onEndCampaign={handleEndCampaign}
+        />
+      )}
+
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
         <Button variant="contained" color="primary" onClick={handleClickOpen}>
           Add Campaign

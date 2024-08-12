@@ -7,7 +7,7 @@ from DatabaseLogic import DatabaseLogic
 import string
 import EntityName
 import random
-from Algorithm import algorithm_prep, knapsack, calculate_score_balanced
+from Algorithm import algorithm_prep, knapsack, calculate_score_best_fit
 from datetime import datetime
 from bson import ObjectId
 import smtplib
@@ -323,7 +323,7 @@ def notify_top_5(campaign):
     top_5_scores = []
     print("maybe here???")
     for influencer in influencers:
-        current_score = calculate_score_balanced(influencer, campaign)
+        current_score = calculate_score_best_fit(influencer, campaign)
         top_5_scores = sorted(top_5_scores, key=lambda x: int(x[0]))
         if len(top_5_scores) == 5:
             for i in range(len(top_5_scores)):
@@ -486,7 +486,7 @@ def end_campaign(campaignId):
     print(influencers_data, budget)
     # calculate the knapsack for each score
     knapsack_results = knapsack(influencers_data, budget)
-    objectives = ["Most balanced", "Best Exposure", "Influencer in relevant category"]
+    objectives = ["AD-Venture's Recommendation", "Best Fit By Location", "Best Fit By Category"]
 
     results = []
     for score_index, (
@@ -623,4 +623,3 @@ def influencer_home(influencerId):
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)  # Changed port to 5001
-

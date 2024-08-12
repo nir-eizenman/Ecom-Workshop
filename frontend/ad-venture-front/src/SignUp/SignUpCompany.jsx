@@ -76,7 +76,7 @@ const SignUpCompanyForm = () => {
             '& .MuiTextField-root': { m: 1, width: '25ch' }
           }}
         >
-          <Paper elevation={6} sx={{ p: 3, textAlign: 'center' }} square={false}>
+          {/* <Paper elevation={6} sx={{ p: 3, textAlign: 'center' }} square={false}> */}
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
               <Typography
                 variant="h2"
@@ -103,7 +103,7 @@ const SignUpCompanyForm = () => {
                 </Typography>
               </Grid>
             </Grid>
-          </Paper>
+          {/* </Paper> */}
         </Box>
       </form>
     </Container>

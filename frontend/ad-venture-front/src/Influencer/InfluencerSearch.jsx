@@ -110,8 +110,13 @@ const InfluencerSearch = () => {
               border: '2px solid #000',
               boxShadow: 24,
               p: 4,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center', // Centers the items horizontally
+              justifyContent: 'center', // Centers the items vertically
+              m: 'auto'
             }}>
-              <Typography id="apply-modal-title" variant="h6" component="h2">
+              <Typography id="apply-modal-title" variant="h6" component="h2" sx={{ mb: 2 }}>
                 Apply to {selectedCampaign.campaign_name}
               </Typography>
               <TextField
@@ -121,11 +126,13 @@ const InfluencerSearch = () => {
                 name={ASKING_PRICE}
                 value={formData[ASKING_PRICE]}
                 onChange={handleInputChange}
+                sx={{ display: 'block', mb: 2 }} // Adds some margin-bottom
               />
               <Button variant="contained" onClick={submitBid} sx={{ mt: 2 }}>
                 Submit Bid!
               </Button>
             </Box>
+
           </Modal>
         )}
       </Container>
@@ -134,7 +141,7 @@ const InfluencerSearch = () => {
           color="secondary"
           onClick={handleGoBack}
           sx={{
-            position: 'absolute',
+            position: 'fixed',
             bottom: 16,
             right: 16,
           }}
