@@ -73,7 +73,7 @@ def random_age_stats() -> dict:
 def random_instagram_data() -> dict:
     """Generate random Instagram data."""
     return {
-        EntityName.CONST_URL: f"https://instagram.com/{random_string(10)}",
+        EntityName.CONST_URL: f"http://instagram.com/{random_string(10)}",
         "username": random_string(8),
         "followers_interests": random_followers_interests(),
         "followers_location": random_followers_location(),

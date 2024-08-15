@@ -4,6 +4,7 @@ import { Container, Box, Typography, Grid, CardMedia, CardActions, Button, Modal
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ASKING_PRICE, USER_ID } from '../constants';
 import CampaignCard from './CampaignCard'; // Import the CampaignCard component
+import GradientTypography from '../GradientTypography';
 
 const InfluencerSearch = () => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const InfluencerSearch = () => {
     const fetchCampaigns = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`https://api-ad-venture.onrender.com:443/api/influencer/${sessionStorage.getItem(USER_ID)}/home/explore`);
+        const response = await fetch(`http://127.0.0.1:5001/api/influencer/${sessionStorage.getItem(USER_ID)}/home/explore`);
         const data = await response.json();
         setCampaigns(data.available_campaigns); // Set the campaigns directly from the fetched data
       } catch (error) {
@@ -39,7 +40,7 @@ const InfluencerSearch = () => {
   };
 
   const submitBid = async () => {
-    const response = await fetch(`https://api-ad-venture.onrender.com:443/api/influencer/${sessionStorage.getItem(USER_ID)}/home/explore/${selectedCampaign.campaign_id}/apply`, {
+    const response = await fetch(`http://127.0.0.1:5001/api/influencer/${sessionStorage.getItem(USER_ID)}/home/explore/${selectedCampaign.campaign_id}/apply`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -64,9 +65,9 @@ const InfluencerSearch = () => {
     <>
       <Container sx={{ p: 2 }}>
         <Box sx={{ textAlign: 'center', mb: 4 }}>
-          <Typography variant="h4" sx={{ mb: 2 }}>
+          <GradientTypography variant="h2" sx={{ mb: 2 }} color1="purple" color2="lightblue">
             Search for New Campaigns
-          </Typography>
+          </GradientTypography>
           <Typography variant="subtitle1" color="textSecondary">
             Browse and apply to new campaigns.
           </Typography>
@@ -80,12 +81,12 @@ const InfluencerSearch = () => {
           <Grid container spacing={3}>
             {campaigns.map((campaign, i) => (
               <Grid item key={i} xs={12} sm={6} md={4}>
-                <CardMedia
+                {/* <CardMedia
                   component="img"
                   height="140"
-                  image="https://via.placeholder.com/150"
+                  image="http://via.placeholder.com/150"
                   alt={campaign.campaign_name}
-                />
+                /> */}
                 <CampaignCard campaign={campaign} handleApply={() => setSelectedCampaign(campaign)} />
 
               </Grid>

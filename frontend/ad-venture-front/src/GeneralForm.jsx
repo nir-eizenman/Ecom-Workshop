@@ -37,7 +37,9 @@ const GeneralForm = ({ schema, formData, setFormData, style }) => {
       if (value.type === undefined && typeof value === 'object') {
         return (
           <Box key={fieldKey} sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
-            <Typography variant="h6" gutterBottom>{key}</Typography>
+            <Typography variant="h6" sx={{textTransform: 'capitalize'}} gutterBottom>
+              {key.replaceAll('_', ' ')}
+            </Typography>
             <Grid container spacing={2} p={1}>
               {renderForm(value, fieldKey)}
             </Grid>
@@ -96,10 +98,16 @@ const GeneralForm = ({ schema, formData, setFormData, style }) => {
       case 'int':
         return (
           <TextField
+            variant='standard'
             name={fieldKey}
             label={value.label}
             type="number"
             fullWidth
+            InputProps={{
+              inputProps: {
+                min: 0
+              }
+            }}
             value={_.get(formData, fieldKey, '')}
             onChange={handleChange}
           />
@@ -107,6 +115,7 @@ const GeneralForm = ({ schema, formData, setFormData, style }) => {
       case 'percent':
         return value.options.map(option => (
           <TextField
+            variant='standard'
             key={`${fieldKey}.${option}`}
             name={`${fieldKey}.${option}`}
             label={`${value.label} - ${option}`}
@@ -114,6 +123,11 @@ const GeneralForm = ({ schema, formData, setFormData, style }) => {
             fullWidth
             value={_.get(formData, `${fieldKey}.${option}`, '')}
             onChange={handleChange}
+            InputProps={{
+              inputProps: {
+                min: 0
+              }
+            }}
           />
         ));
       case 'multiselect':
@@ -192,6 +206,7 @@ const GeneralForm = ({ schema, formData, setFormData, style }) => {
             </FormControl>
             {selectedCountries.map(option => (
               <TextField
+                variant='standard'
                 key={`${fieldKey}.${option}`}
                 name={`${fieldKey}.${option}`}
                 label={`${value.label} - ${option}`}
@@ -199,6 +214,11 @@ const GeneralForm = ({ schema, formData, setFormData, style }) => {
                 fullWidth
                 value={_.get(formData, `${fieldKey}.${option}`, '')}
                 onChange={handleMultiselectPercentChange}
+                InputProps={{
+                  inputProps: {
+                    min: 0
+                  }
+                }}
               />
             ))}
           </>
@@ -206,13 +226,13 @@ const GeneralForm = ({ schema, formData, setFormData, style }) => {
       case 'password':
         return (
           <TextField
+            variant="standard"
             name={fieldKey}
             label={value.label}
             type="password"
             fullWidth
             value={_.get(formData, fieldKey, '')}
             onChange={handleChange}
-            variant='standard'
             sx={{  "& .MuiStandardInput-root": {
               "&.Mui-focused fieldset": {
                 color: "green",

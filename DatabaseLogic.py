@@ -67,7 +67,10 @@ class DatabaseLogic:
         db = self.client[CONST_DATA_BASE]
         try:
             collection = db[userType.name]
+            print("collection:", collection)
+            print(email)
             result = collection.find_one({EntityName.CONST_EMAIL: email})
+            print("result:", result)
             return result
         except Exception as e:
             print(e)
@@ -158,7 +161,7 @@ class DatabaseLogic:
         
     #     print(f"Collection '{collectionName}' created successfully in the '{databaseName}' database.")
     #     #'Campaign'
-    #     #https://www.w3schools.com/python/python_mongodb_create_collection.asp
+    #     #http://www.w3schools.com/python/python_mongodb_create_collection.asp
     #     """
     #     Important: In MongoDB, a collection is not created until it gets content!
     #     MongoDB waits until you have inserted a document before it actually creates the collection.

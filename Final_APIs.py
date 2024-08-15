@@ -137,7 +137,7 @@ def login():
     email = request.json[EntityName.CONST_EMAIL]
     password = request.json[EntityName.CONST_PASSWORD]
     user_type_str = request.json[EntityName.CONST_USER_TYPE]
-    
+    print(email)
     # Ensure the user_type is valid
 
     #need to fix here?
@@ -165,7 +165,7 @@ def login():
     print(user_type)
     user_data = db.getUserByEmail(email, user_type)
 
-
+    print(user_data , password)
     if user_data and user_data[EntityName.CONST_PASSWORD] == password:
         # session[EntityName.CONST_RANDOM_SESSION_TOKEN] = randSessionToken
         # session[EntityName.CONST_EMAIL] = user_data[EntityName.CONST_EMAIL]

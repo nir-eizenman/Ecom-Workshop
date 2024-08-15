@@ -18,6 +18,7 @@ import {
 import { alpha, styled } from '@mui/material/styles';
 import { countries, genders, interestTypes } from '../constants';
 import GeneralForm from '../GeneralForm';
+import Logo from '../Logo';
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiTextField-root': {
@@ -30,7 +31,7 @@ const schema = {
   "email": {type: 'string', label: 'EMail'},
   "full_name": {type: 'string', label: "Full Name"},
   "password": {type: 'password', label: 'Password'},
-  "gender": {type: 'select', label: 'Gender', options: ['Female', 'Male', 'Other']},
+  "gender": {type: 'radio', label: 'Gender', options: ['Female', 'Male', 'Other']},
   
   "age": {type: 'int', label: 'Age'},
   "instagram": {
@@ -99,14 +100,6 @@ const SignUpInfluencerForm = () => {
   const navigate = useNavigate();
 
 
-  // const handleChange = (e) => {
-  //   const { name, value } = e.target;
-  //   setFormData({
-  //     ...formData,
-  //     [name]: value,
-  //   });
-  // };
-
   const handleInterestChange = (event) => {
     setFormData({
       ...formData,
@@ -120,7 +113,7 @@ const SignUpInfluencerForm = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('https://api-ad-venture.onrender.com:443/api/signup/influencer', {
+      const response = await fetch('http://127.0.0.1:5001/api/signup/influencer', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -143,22 +136,24 @@ const SignUpInfluencerForm = () => {
   };
 
   return (
-    <Container sx={{ p: 2 }}>
-
+    <Container sx={{ p: 2}}>
+      <Logo sx={{position: 'fixed'}} />
       {/* <form onSubmit={handleSubmit}> */}
         <Box
           sx={{
             maxWidth: 600,
-            mx: 'auto'
+            mx: 'auto',
+
           }}
         >
-          <Paper elevation={6} sx={{ p: 3 }} square={false}>
+          <Paper elevation={6} sx={{ p: 3, zIndex: 100, position: 'relative' }} square={false}>
             <Box
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                mb: 3
+                mb: 3,
+                zIndex: 100
               }}
             >
               <Typography
@@ -166,7 +161,8 @@ const SignUpInfluencerForm = () => {
                 sx={{
                   background: 'linear-gradient(to right, #f00, #9500ff);',
                   WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
+                  WebkitTextFillColor: 'transparent',
+                  zIndex: 100
                 }}
               >
                 Sign Up Influencer
@@ -175,12 +171,20 @@ const SignUpInfluencerForm = () => {
               <GeneralForm schema={schema} setFormData={setFormData} formData={formData} />
 
               {/* <Grid item xs={12} container justifyContent="center"> */}
-                <Button type="submit" variant="contained" color="primary" disabled={loading} onClick={handleSubmit}>
+                <Button 
+                  type="submit" 
+                  size='large' 
+                  variant="contained" 
+                  color="primary" 
+                  disabled={loading} 
+                  onClick={handleSubmit}
+                  sx={{margin: 'auto', display: 'block'}}
+                >
                   {loading ? <CircularProgress size={24} /> : 'Sign Up'}
                 </Button>
               {/* </Grid> */}
               {/* <Grid item xs={12} container justifyContent="center" sx={{ mt: 2 }}> */}
-                <Typography variant="body2">
+                <Typography variant="body2" sx={{mb: 3}}>
                   Already signed up?{' '}
                   <Link href="/login" sx={{ ml: 1 }}>Login here</Link>
                 </Typography>

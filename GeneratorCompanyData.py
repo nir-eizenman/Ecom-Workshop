@@ -25,7 +25,7 @@ def generate_companies_data(num_companies: int) -> list:
 
         # Optionally add company_site
         if random.choice([True, False]):
-            data[EntityName.CONST_COMPANY_SITE_LINK] = f"https://{random_string(8)}.com"
+            data[EntityName.CONST_COMPANY_SITE_LINK] = f"http://{random_string(8)}.com"
 
         # Optionally add about_us
         if random.choice([True, False]):

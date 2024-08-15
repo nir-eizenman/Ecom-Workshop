@@ -38,7 +38,7 @@ const SignUpCompanyForm = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('https://api-ad-venture.onrender.com:443/api/signup/company', {
+      const response = await fetch('http://127.0.0.1:5001/api/signup/company', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

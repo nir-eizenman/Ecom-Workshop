@@ -25,6 +25,7 @@ const theme = createTheme({
           '& .MuiInput-root:before': {
             borderBottom: '1px solid rgba(255, 0, 0, 0.5)'
           },
+          margin: '1rem 0'
         },
 
         
@@ -59,6 +60,13 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           color: 'orange'
+        }
+      }
+    },
+    MuiFormControl: {
+      styleOverrides: {
+        root: {
+          color: 'blue'
         }
       }
     }

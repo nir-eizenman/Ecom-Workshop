@@ -70,19 +70,19 @@ const CampaignCard = ({ campaign, onEndCampaign, active=false }) => {
           <Typography variant="h5" component="div">
             {campaign.campaign_name}
           </Typography>
-          <Typography variant="body2" color="textSecondary">
-            {campaign.about}
+          <Typography variant="body1" color="textSecondary">
+            About: {campaign.about}
           </Typography>
-          <Typography variant="body2" color="textSecondary">
+          <Typography variant="body1" color="textSecondary">
             Budget: {campaign.budget}
           </Typography>
-          <Typography variant="body2" color="textSecondary">
+          <Typography variant="body1" color="textSecondary">
             Categories: {campaign.categories.join(', ')}
           </Typography>
-          <Typography variant="body2" color="textSecondary">
-            Objective: Posts - {campaign.campaign_objective.posts}, Reels - {campaign.campaign_objective.reels}, Stories - {campaign.campaign_objective.stories}
+          <Typography variant="body1" color="textSecondary">
+            Objective: Posts: {campaign.campaign_objective.posts}, Reels: {campaign.campaign_objective.reels}, Stories: {campaign.campaign_objective.stories}
           </Typography>
-          {!active && <Typography variant="body2" color="textSecondary">
+          {!active && <Typography variant="body1" color="textSecondary">
             Campaign Result:
           </Typography> }
 

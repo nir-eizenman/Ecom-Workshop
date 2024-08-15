@@ -59,7 +59,7 @@ const Login = () => {
     setError('');
 
     try {
-      const response = await fetch('https://api-ad-venture.onrender.com:443/api/login', {
+      const response = await fetch('http://127.0.0.1:5001/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -76,6 +76,7 @@ const Login = () => {
 
       if (data[RESULT]) {
         sessionStorage.setItem(USER_TYPE, data[USER_TYPE]);
+        sessionStorage.setItem(EMAIL, formData[EMAIL]);
         sessionStorage.setItem(RANDOM_SESSION_TOKEN, data[RANDOM_SESSION_TOKEN]);
         sessionStorage.setItem(USER_ID, data[USER_ID]);
         console.log(data[USER_ID]);
@@ -93,11 +94,14 @@ const Login = () => {
   return (
     <ThemeProvider theme={AdVentureTheme}>
 
-    <InstagramBox>
+    {/* <InstagramBox> */}
       <Container sx={{ p: 2, minHeight: '100vh', display: 'grid', gridTemplateColumns: '1fr 1fr',  }} maxWidth={false}>
         {/* Left Side - Logo */}
         <Box sx={{ gridColumn: '1', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <Logo />
+          <Logo 
+            sx={{ maxWidth: '600px', width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }} 
+            imgStyle={{maxWidth: '100%'}}
+          />
         </Box>
 
         {/* Right Side - Login */}
@@ -136,7 +140,7 @@ const Login = () => {
           </Box>
         </Box>
       </Container>
-    </InstagramBox>
+    {/* </InstagramBox> */}
     </ThemeProvider>
 
   );

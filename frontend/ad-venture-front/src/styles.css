@@ -1,0 +1,28 @@
+@property --gradientColorStart {
+  syntax: '<color>';
+  initial-value: rgb(0, 255, 0);
+  inherits: false;
+}
+
+@property --gradientColorEnd {
+  syntax: '<color>';
+  initial-value: red;
+  inherits: false;
+}
+
+#gradient-background {
+  background: linear-gradient(var(--gradientColorStart), var(--gradientColorEnd));
+  transition: var(--gradientColorStart) 3s, var(--gradientColorEnd) 3s;
+}
+
+.login {
+  /* --gradientColorStart: red;
+  --gradientColorEnd: aliceblue; */
+}
+
+.company-home {
+  --gradientColorStart: olive;
+  --gradientColorEnd: magenta;
+}
+
+

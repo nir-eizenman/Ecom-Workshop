@@ -8,7 +8,7 @@ import { USER_ID, countries } from '../constants';
 const scheme = {
   "campaign_name": { type: 'string', label: 'Campaign Name' },
   "budget": { type: 'int', label: 'Budget' },
-  "is_active": { type: 'boolean', label: 'Active' },
+  // "is_active": { type: 'boolean', label: 'Active' },
   "about": { type: 'string', label: 'About' },
   "target_audience": {
     location: {
@@ -65,7 +65,7 @@ const CompanyHome = () => {
 
   useEffect(() => {
     const fetchCampaigns = async () => {
-      const response = await fetch(`https://api-ad-venture.onrender.com:443/api/company/${sessionStorage.getItem(USER_ID)}/home`);
+      const response = await fetch(`http://127.0.0.1:5001/api/company/${sessionStorage.getItem(USER_ID)}/home`);
       const data = await response.json();
       setCampaigns(data);
     };
@@ -83,7 +83,7 @@ const CompanyHome = () => {
 
   const handleAddCampaign = async () => {
     try {
-      const response = await fetch(`https://api-ad-venture.onrender.com:443/api/company/${sessionStorage.getItem(USER_ID)}/home/create`, {
+      const response = await fetch(`http://127.0.0.1:5001/api/company/${sessionStorage.getItem(USER_ID)}/home/create`, {
         method: 'POST',
         body: JSON.stringify({
           ...newCampaign,
@@ -97,7 +97,7 @@ const CompanyHome = () => {
       });
 
       if (response.ok) {
-        const campaignsResponse = await fetch(`https://api-ad-venture.onrender.com:443/api/company/${sessionStorage.getItem(USER_ID)}/home`);
+        const campaignsResponse = await fetch(`http://127.0.0.1:5001/api/company/${sessionStorage.getItem(USER_ID)}/home`);
         const campaignsData = await campaignsResponse.json();
         setCampaigns(campaignsData);
 
@@ -129,7 +129,7 @@ const CompanyHome = () => {
   };
 
   const handleEndCampaign = async (campaignId) => {
-    const response = await fetch(`https://api-ad-venture.onrender.com:443/api/company/home/${campaignId}/end`, {
+    const response = await fetch(`http://127.0.0.1:5001/api/company/home/${campaignId}/end`, {
       method: 'POST',
     });
 
@@ -137,7 +137,7 @@ const CompanyHome = () => {
       setCampaigns(campaigns.filter(campaign => campaign.id !== campaignId));
       console.log(`Successfully ended campaign with ID ${campaignId}`);
 
-      const resultResponse = await fetch(`https://api-ad-venture.onrender.com:443/api/company/home/${campaignId}/results`);
+      const resultResponse = await fetch(`http://127.0.0.1:5001/api/company/home/${campaignId}/results`);
       const resultData = await resultResponse.json();
 
       setResults(resultData.results);
@@ -158,7 +158,7 @@ const CompanyHome = () => {
     const { result_number } = result;
     console.log('results campaign id ' + resultsCampaignId);
     try {
-      const response = await fetch(`https://api-ad-venture.onrender.com:443/api/company/home/${resultsCampaignId}/results/choose`, {
+      const response = await fetch(`http://127.0.0.1:5001/api/company/home/${resultsCampaignId}/results/choose`, {
         method: 'POST',
         body: JSON.stringify({ result_number }),
         headers: {
@@ -200,9 +200,7 @@ const CompanyHome = () => {
         </Typography>
       </Box>
 
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        Your Campaigns
-      </Typography>
+
 
       <Tabs value={tabValue} onChange={handleTabChange} centered>
         <Tab label="Active Campaigns" />
