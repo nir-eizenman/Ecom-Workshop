@@ -1,14 +1,10 @@
-import json
-
 from bson import ObjectId
 from flask import Flask, jsonify, render_template, request, redirect, url_for, session
 from flask_session import Session
 from UserTypeEnum import UserType
 from flask_cors import CORS
 from DatabaseLogic import DatabaseLogic
-import string
-import EntityName
-import random
+
 
 db = DatabaseLogic(
     "mongodb+srv://ProjectMainAdmin:SzReRV0ZxjeWm7vN@datastorage1.dlfth1l.mongodb.net/?retryWrites=true&w=majority&appName=DataStorage1")
@@ -171,55 +167,3 @@ def knapsack(influencers, budget):
 
     return results
 
-# Example usage:
-# influencers = [
-#     {'id': 1, 'full_name': 'Influencer A', 'cost': 50, 'score': [60, 70, 80]},
-#     {'id': 2, 'full_name': 'Influencer B', 'cost': 30, 'score': [40, 50, 60]},
-#     # more influencers
-# ]
-# budget = 100
-# results = knapsack(influencers, budget)
-# for i, result in enumerate(results):
-#     print(f"Results for score {i+1}:")
-#     print("Selected Influencers:", result[0])
-#     print("Selected Salaries:", result[1])
-#     print("Total Score:", result[3])
-
-
-# test from database -----------------------------------------
-
-# campaign_id = "668ae97d09727d27521e292d"
-# influencers, budget = algorithm_prep(campaign_id)
-# selected_influencers_names, selected_influencers_salaries, selected_influencers, max_score = knapsack(influencers,
-#                                                                                                       budget)
-# print(selected_influencers_names, selected_influencers, max_score)
-#
-# # test1 -----------------------------------------
-# influencers1 = [
-#     {'id': ObjectId(), 'full_name': "Influencer A", 'cost': 300, 'score': 90},
-#     {'id': ObjectId(), 'full_name': "Influencer B", 'cost': 500, 'score': 120},
-#     {'id': ObjectId(), 'full_name': "Influencer C", 'cost': 400, 'score': 100}
-# ]
-# budget1 = 800
-# selected_influencers_names, selected_influencers, max_score = knapsack(influencers1, budget1)
-# print(selected_influencers_names, selected_influencers, max_score)
-#
-# # test2 -----------------------------------------
-# influencers2 = [
-#     {'id': ObjectId(), 'full_name': "Influencer A", 'cost': 300, 'score': 90},
-#     {'id': ObjectId(), 'full_name': "Influencer B", 'cost': 500, 'score': 120},
-#     {'id': ObjectId(), 'full_name': "Influencer C", 'cost': 400, 'score': 100}
-# ]
-# budget2 = 1000
-# selected_influencers_names, selected_influencers, max_score = knapsack(influencers2, budget2)
-# print(selected_influencers_names, selected_influencers, max_score)
-#
-# # test3 -----------------------------------------
-# influencers3 = [
-#     {'id': ObjectId(), 'full_name': "Influencer A", 'cost': 300, 'score': 90},
-#     {'id': ObjectId(), 'full_name': "Influencer B", 'cost': 500, 'score': 120},
-#     {'id': ObjectId(), 'full_name': "Influencer C", 'cost': 400, 'score': 100}
-# ]
-# budget3 = 600
-# selected_influencers_names, selected_influencers, max_score = knapsack(influencers3, budget3)
-# print(selected_influencers_names, selected_influencers, max_score)
