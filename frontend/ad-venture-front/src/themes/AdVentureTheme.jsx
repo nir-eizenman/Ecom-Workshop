@@ -16,10 +16,10 @@ const theme = createTheme({
         root: {
           color: 'orange',
           "& .MuiInputBase-root, & .MuiInputLabel-root": {
-            color: '#8afffe'
+            // color: '#8afffe'
           },
           '& .MuiInput-root:hover:before': {
-            color: "#f00",
+            // color: "#f00",
             borderBottom: '2px solid rgba(255, 0, 0, 0.5)'
           },
           '& .MuiInput-root:before': {
@@ -52,21 +52,21 @@ const theme = createTheme({
     MuiFormControlLabel: {
       styleOverrides: {
         label: {
-          color: '#fe6cac', // Color of the label text
+          // color: '#fe6cac', // Color of the label text
         },
       },
     },
     MuiInputBase: {
       styleOverrides: {
         root: {
-          color: 'orange'
+          // color: 'orange'
         }
       }
     },
     MuiFormControl: {
       styleOverrides: {
         root: {
-          color: 'blue'
+          // color: 'blue'
         }
       }
     }

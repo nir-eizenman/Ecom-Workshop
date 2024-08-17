@@ -40,11 +40,7 @@ const schema = {
     "followers_interests": {
       type: 'multiselect', 
       label: 'Followers\' Interests', 
-      options: [
-      "technology",
-      "lifestyle",
-      "travel"
-      ]
+      options: interestTypes
     },
     "followers_location": {
       type: 'multiselectpercent',

@@ -5,8 +5,18 @@ export const interestTypes = [
   'Coffee',
   'Traveling',
   'Books',
-  'Self Improvement'
-]
+  'Self Improvement',
+  'Technology',
+  'Music',
+  'Fitness',
+  'Gaming',
+  'Fashion',
+  'Art',
+  'Photography',
+  'Health & Wellness',
+  'Finance',
+  'Cooking'
+];
 
 // Company user
 export const COMPANY_NAME = 'company_name';

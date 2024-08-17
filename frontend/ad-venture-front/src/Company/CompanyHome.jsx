@@ -170,6 +170,10 @@ const CompanyHome = () => {
       if (response.ok) {
         console.log('Result selection successful');
         setResultOpen(false);
+        // Fetch the updated campaigns after selecting the result
+        const campaignsResponse = await fetch(`http://127.0.0.1:5001/api/company/${sessionStorage.getItem(USER_ID)}/home`);
+        const campaignsData = await campaignsResponse.json();
+        setCampaigns(campaignsData);
       } else {
         console.error('Failed to select result:', response.statusText);
       }
@@ -199,8 +203,6 @@ const CompanyHome = () => {
           Welcome to your company dashboard. Manage your campaigns below.
         </Typography>
       </Box>
-
-
 
       <Tabs value={tabValue} onChange={handleTabChange} centered>
         <Tab label="Active Campaigns" />

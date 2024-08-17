@@ -27,38 +27,42 @@ const Result = ({campaign_id}) => {
   }, [])
   if (loading) return <CircularProgress/>
   else if (result === undefined) return (
-    <Typography variant='h5'>
+    <Typography variant='body1'>
       Inactive Campaign, No Results
     </Typography>
   )
   return (
-    <Card>
-      <CardContent>
-        <Typography variant='h5' >
+      <>
+        <Typography variant='body1' color="textSecondary">
           Campaign Objective: {result.campaign_objective}
         </Typography>
         {
           result.influencers.map(influencer => (
             <>
-              <Typography variant='body1' component="div">
+              <Typography variant='body1' component="div" color="textSecondary">
                 Full Name: {influencer.full_name}
               </Typography>
-              <Typography variant='body1' component="div">
+              <Typography variant='body1' component="div" color="textSecondary">
                 Salary: {influencer.salary}
               </Typography>
             </>
           ))
         }
-        <Typography variant="h5" component="div">
+        <Typography variant="body1" component="div" color="textSecondary">
           Cost: {result.cost}
         </Typography>
-      </CardContent>
-    </Card>
+      </>
   )
 }
 
 const CampaignCard = ({ campaign, onEndCampaign, active=false }) => {
+  const [loading, setLoading] = useState(false)
 
+  const onClick = async (campaignId) => {
+    setLoading(true);
+    await onEndCampaign(campaignId);
+    setLoading(false);
+  }
 
   return (
     <Card elevation={6} sx={{ m: 3 }}>
@@ -102,11 +106,11 @@ const CampaignCard = ({ campaign, onEndCampaign, active=false }) => {
       {/* </ButtonBase> */}
       {active && <Button
         variant="contained"
-        color="secondary"
-        onClick={() => onEndCampaign(campaign.id)}
+        color="primary"
+        onClick={() => onClick(campaign.id)}
         sx={{ m: 2 }}
       >
-        End Campaign
+        { loading ? <CircularProgress size={24} /> : 'End Campaign' }
       </Button>}
     </Card>
   );

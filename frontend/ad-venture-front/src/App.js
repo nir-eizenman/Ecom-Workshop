@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, AppBar, Toolbar, IconButton, ButtonBase, Typography } from '@mui/material';
-import { ArrowBack, Gradient, Logout } from '@mui/icons-material';
+import { ArrowBack, Logout } from '@mui/icons-material';
 
 import { styled, keyframes } from '@mui/material/styles';
 import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
@@ -13,7 +13,6 @@ import SignUpCompany from './SignUp/SignUpCompany';
 import CompanyHome from './Company/CompanyHome';
 import InfluencerSearch from './Influencer/InfluencerSearch';
 import Logo from './Logo';
-import { MaximizeSharp } from '@mui/icons-material';
 import { EMAIL, USER_ID } from './constants';
 import GradientTypography from './GradientTypography';
 
@@ -57,7 +56,7 @@ const ConditionalAppBar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const noAppBarRoutes = ['/login', '/signup/influencer', '/signup/company'];
+  const noAppBarRoutes = ['/', '/login', '/signup/influencer', '/signup/company'];
 
   // Function to handle "Go Back" button click
   const handleGoBack = () => {
