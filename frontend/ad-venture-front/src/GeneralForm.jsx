@@ -13,11 +13,23 @@ import {
   Chip,
   OutlinedInput,
   Radio,
-  RadioGroup,
+  RadioGroup
 } from '@mui/material';
+// import {makeStyles} from '@mui/styles'
+import {styled, alpha} from '@mui/system'
 import _ from 'lodash';
 
-const GeneralForm = ({ schema, formData, setFormData }) => {
+
+const style = {
+  "& .MuiStandardInput-root": {
+    "&.Mui-focused fieldset": {
+      color: "green",
+      backgroundColor: 'blue'
+    }
+  }
+}
+
+const GeneralForm = ({ schema, formData, setFormData, style }) => {
   const renderForm = (schema, parentKey = '') => {
     return Object.entries(schema).map(([key, value]) => {
       const fieldKey = parentKey ? `${parentKey}.${key}` : key;
@@ -25,7 +37,9 @@ const GeneralForm = ({ schema, formData, setFormData }) => {
       if (value.type === undefined && typeof value === 'object') {
         return (
           <Box key={fieldKey} sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
-            <Typography variant="h6" gutterBottom>{key}</Typography>
+            <Typography variant="h6" sx={{textTransform: 'capitalize'}} gutterBottom>
+              {key.replaceAll('_', ' ')}
+            </Typography>
             <Grid container spacing={2} p={1}>
               {renderForm(value, fieldKey)}
             </Grid>
@@ -84,10 +98,16 @@ const GeneralForm = ({ schema, formData, setFormData }) => {
       case 'int':
         return (
           <TextField
+            variant='standard'
             name={fieldKey}
             label={value.label}
             type="number"
             fullWidth
+            InputProps={{
+              inputProps: {
+                min: 0
+              }
+            }}
             value={_.get(formData, fieldKey, '')}
             onChange={handleChange}
           />
@@ -95,6 +115,7 @@ const GeneralForm = ({ schema, formData, setFormData }) => {
       case 'percent':
         return value.options.map(option => (
           <TextField
+            variant='standard'
             key={`${fieldKey}.${option}`}
             name={`${fieldKey}.${option}`}
             label={`${value.label} - ${option}`}
@@ -102,6 +123,11 @@ const GeneralForm = ({ schema, formData, setFormData }) => {
             fullWidth
             value={_.get(formData, `${fieldKey}.${option}`, '')}
             onChange={handleChange}
+            InputProps={{
+              inputProps: {
+                min: 0
+              }
+            }}
           />
         ));
       case 'multiselect':
@@ -180,6 +206,7 @@ const GeneralForm = ({ schema, formData, setFormData }) => {
             </FormControl>
             {selectedCountries.map(option => (
               <TextField
+                variant='standard'
                 key={`${fieldKey}.${option}`}
                 name={`${fieldKey}.${option}`}
                 label={`${value.label} - ${option}`}
@@ -187,6 +214,11 @@ const GeneralForm = ({ schema, formData, setFormData }) => {
                 fullWidth
                 value={_.get(formData, `${fieldKey}.${option}`, '')}
                 onChange={handleMultiselectPercentChange}
+                InputProps={{
+                  inputProps: {
+                    min: 0
+                  }
+                }}
               />
             ))}
           </>
@@ -194,22 +226,30 @@ const GeneralForm = ({ schema, formData, setFormData }) => {
       case 'password':
         return (
           <TextField
+            variant="standard"
             name={fieldKey}
             label={value.label}
             type="password"
             fullWidth
             value={_.get(formData, fieldKey, '')}
             onChange={handleChange}
+            sx={{  "& .MuiStandardInput-root": {
+              "&.Mui-focused fieldset": {
+                color: "green",
+                backgroundColor: 'blue'
+              }
+            }}}
           />
         );
       case 'radio':
         return (
           <FormControl component="fieldset">
-            <Typography variant="h6">{value.label}</Typography>
+            {/* <Typography variant="h6">{value.label}</Typography> */}
             <RadioGroup
               name={fieldKey}
               value={_.get(formData, fieldKey, '')}
               onChange={handleChange}
+              sx={{color: 'green'}}
             >
               {value.options.map((option) => (
                 <FormControlLabel
@@ -217,6 +257,7 @@ const GeneralForm = ({ schema, formData, setFormData }) => {
                   value={option}
                   control={<Radio />}
                   label={option}
+                  sx={{color: 'rgba(255, 0, 255, 1)'}}
                 />
               ))}
             </RadioGroup>
@@ -225,12 +266,26 @@ const GeneralForm = ({ schema, formData, setFormData }) => {
       default:
         return (
           <TextField
+            variant='standard'
             name={fieldKey}
             label={value.label}
             type="text"
             fullWidth
             value={_.get(formData, fieldKey, '')}
             onChange={handleChange}
+            // className={classes.root}
+            // sx={{
+            //   '& .MuiOutlinedInput-root': {
+            //     backgroundColor: 'rgba(255, 255, 255, 0.1)', // Adjust opacity as needed
+            //   },
+            //   '& .MuiOutlinedInput-notchedOutline': {
+            //     borderColor: 'transparent', // Remove outline
+            //   },
+            //   '& .MuiTextField-root': {
+            //     borderColor: 'transparent', // Remove outline
+            //   },
+            // }}
+      
           />
         );
     }

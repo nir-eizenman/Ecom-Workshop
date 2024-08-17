@@ -3,6 +3,7 @@ import { Container, Box, Typography, Paper, Button, List, CircularProgress } fro
 import { useNavigate } from 'react-router-dom';
 import CampaignCard from './CampaignCard';
 import { USER_ID } from '../constants';
+import GradientTypography from '../GradientTypography';
 
 const InfluencerHome = () => {
   const [campaigns, setCampaigns] = useState([]);
@@ -13,7 +14,7 @@ const InfluencerHome = () => {
     const fetchCampaigns = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`https://api-ad-venture.onrender.com:443/api/influencer/${sessionStorage.getItem(USER_ID)}/home`);
+        const response = await fetch(`http://127.0.0.1:5001/api/influencer/${sessionStorage.getItem(USER_ID)}/home`);
         const data = await response.json();
         setCampaigns(data);
       } catch (error) {
@@ -33,18 +34,18 @@ const InfluencerHome = () => {
   return (
     <Container sx={{ p: 2 }}>
       <Box sx={{ textAlign: 'center', mb: 4 }}>
-        <Typography variant="h4" sx={{ mb: 2 }}>
+        <GradientTypography variant="h2" sx={{ mb: 2 }} color1="#ff12ed" color2="#ff8d5e">
           Influencer Home
-        </Typography>
+        </GradientTypography>
         <Typography variant="subtitle1" color="textSecondary">
           Manage your current and previous works, and search for new opportunities.
         </Typography>
       </Box>
 
       <Paper elevation={6} sx={{ p: 3, mb: 4 }}>
-        <Typography variant="h5" sx={{ mb: 2 }}>
+        <GradientTypography variant="h4" sx={{ mb: 2 }} color1="#ff12ed" color2="#ff8d5e">
           Current Campaigns
-        </Typography>
+        </GradientTypography>
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
             <CircularProgress />
@@ -58,16 +59,20 @@ const InfluencerHome = () => {
         )}
       </Paper>
 
-      <Paper elevation={6} sx={{ p: 3, mb: 4 }}>
-        <Typography variant="h5" sx={{ mb: 2 }}>
-          Search for New Opportunities
-        </Typography>
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 2 }}>
-          <Button variant="contained" color="primary" onClick={handleSearch}>
-            Search
+      {/* <Paper elevation={6} sx={{ p: 3, mb: 4 }}> */}
+
+        {/* <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 2 }}> */}
+          <Button 
+            variant="contained" 
+            sx={{background: 'white', display: 'block', margin: 'auto', }} 
+            onClick={handleSearch}
+          >
+            <GradientTypography variant="h4" sx={{  }} color1="#12d4ff" color2="#ff00ff">
+              Search for New Opportunities
+            </GradientTypography>
           </Button>
-        </Box>
-      </Paper>
+        {/* </Box> */}
+      {/* </Paper> */}
     </Container>
   );
 };

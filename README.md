@@ -19,6 +19,9 @@ Note: the dependencies for the backend is located in requirements.txt
 
 
 ## Project structure:
+As the database we use MongoDB.
+For the backend code there is the files: Final_API which contain all of ours API's, Algorithm which contain our main algorithm (knapsack, more details later), we have some Enum's to help us in the code, DatabaseLogic responsible for contacting with the database, EntityName contain constant strings, and there are some classes to generated fake data and write/delete data to the database.
+All the frontend code is located in frontend/ad-venture-front directory, there we have all the pages and react code for our web side, for example in src directory we have Login.jsx which responsible for the login logic of the frontend and contacting with the relevant API.
 
 
 ## Our main algorithm:
@@ -43,7 +46,4 @@ This feature is responsible for identifying and notifying the top 5 most relevan
 To begin, `notify_top_5` retrieves all influencers from the `Influencers` collection in the MongoDB database. For each influencer, it calculates a relevance score. This score measures how well the influencer’s profile matches the campaign’s requirements.
 
 The function maintains a list of the top 5 influencers based on their relevance scores. If an influencer’s score is higher than one in the current top 5, the list is updated to include the new influencer, ensuring only the most relevant candidates are selected. Once the top 5 influencers are determined, the function sends an email notification to each, informing them of their potential match with the campaign.
-
-
--מבנה הפרויקט: פירוט על הקוד, חלקי הפרוייקט שבקבצים והתפקיד של כל חלק. 
 

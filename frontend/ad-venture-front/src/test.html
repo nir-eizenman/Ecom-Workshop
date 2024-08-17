@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <style>
+      body {
+        background-color: red;
+      }
+      @property --clr1{
+        syntax: '<color>';
+        initial-value: rgb(0, 255, 0);
+        inherits: false;
+      }
+
+      @property --clr2 {
+        syntax: '<color>';
+        initial-value: rgb(106, 255, 0);
+        inherits: false;
+      }
+      #test {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(var(--clr1), var(--clr2));
+        transition: --clr1 3s, --clr2 3s;
+      }
+      .cls1 {
+        --clr1: blue;
+        --clr2: lightblue;
+      }
+      .cls2 {
+        --clr1: rgb(149, 255, 0);
+        --clr2: rgb(196, 3, 64);
+      }
+    </style>
+
+  </head>
+  <body>
+    <script>
+      function func() {
+        document.querySelector('#test').classList.remove('cls1')
+        document.querySelector('#test').classList.add('cls2')
+      }
+    </script>
+    <div id="test" width="100" class="cls1" height="100%" onclick="func()" ></div>
+  </body>
+
+</html>

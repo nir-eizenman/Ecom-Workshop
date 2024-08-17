@@ -1,29 +1,76 @@
-// themes/theme.js
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-import { createTheme } from '@mui/material/styles';
-
-// Create a theme instance.
 const theme = createTheme({
   palette: {
+    // mode: 'light',
     primary: {
-      main: '#ff4400', // Change primary color
-      mainGradient: "linear-gradient(to right, tomato, cyan)",
-
+      main: '#fe6cac',
     },
     secondary: {
-      main: '#ff5722', // Change secondary color
-    },
-    background: {
-      // default: 'linear-gradient(45deg, #774bff, #ff6000)', // Change default background color
-    },
-    text: {
-      primary: '#333', // Change primary text color
-      secondary: '#666', // Change secondary text color
+      main: '#b0a427',
     },
   },
-  typography: {
-    fontFamily: 'Poppins, sans-serif', // Change default font family
-  },
+  components: {
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          color: 'orange',
+          "& .MuiInputBase-root, & .MuiInputLabel-root": {
+            // color: '#8afffe'
+          },
+          '& .MuiInput-root:hover:before': {
+            // color: "#f00",
+            borderBottom: '2px solid rgba(255, 0, 0, 0.5)'
+          },
+          '& .MuiInput-root:before': {
+            borderBottom: '1px solid rgba(255, 0, 0, 0.5)'
+          },
+          margin: '1rem 0'
+        },
+
+        
+        
+      },
+      
+    },
+      
+    MuiRadio: {
+      styleOverrides: {
+        root: {
+          color: '#fe6cac', // Default color of the Radio button
+          '&.Mui-checked': {
+            color: '#fe6cac', // Color when the Radio button is checked
+          },
+        },
+        colorPrimary: {
+          '&.Mui-checked': {
+            color: '#fe6cac', // Override the primary color when checked
+          },
+        },
+      },
+    },
+    MuiFormControlLabel: {
+      styleOverrides: {
+        label: {
+          // color: '#fe6cac', // Color of the label text
+        },
+      },
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          // color: 'orange'
+        }
+      }
+    },
+    MuiFormControl: {
+      styleOverrides: {
+        root: {
+          // color: 'blue'
+        }
+      }
+    }
+  }
 });
 
 export default theme;

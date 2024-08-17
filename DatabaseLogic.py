@@ -53,6 +53,7 @@ class DatabaseLogic:
             collection = db[userType.name]
             # Find a user document by email
             result = collection.find_one({EntityName.CONST_EMAIL: email})
+            print("result:", result)
             return result
         except Exception as e:
             print(e)

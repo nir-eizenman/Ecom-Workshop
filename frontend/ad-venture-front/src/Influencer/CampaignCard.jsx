@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, Typography, Grid, CardActions, Button } from '@mui/material';
 
-const CampaignCard = ({ campaign, handleApply }) => {
+const CampaignCard = ({ campaign, handleApply, disabled=false }) => {
+
   return (
     <Card elevation={6} sx={{ mb: 2 }}>
       <CardContent>
@@ -76,7 +77,7 @@ const CampaignCard = ({ campaign, handleApply }) => {
         </Grid>
       </CardContent>
       {handleApply && <CardActions>
-        <Button size="large" color="primary" variant="contained" onClick={handleApply}>
+        <Button size="large" color="primary" variant="contained" onClick={handleApply} disabled={disabled}>
           Apply
         </Button>
       </CardActions>}
