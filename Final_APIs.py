@@ -417,6 +417,13 @@ def end_campaign(campaignId):
     results_collection = database["Results"]
     campaign = campaigns_collection.find_one({"_id": ObjectId(campaignId)})
 
+    data = database["Applications"]
+    check_application_not_empty = data.find({"campaign_id": ObjectId(campaignId)})
+
+    if not list(check_application_not_empty):
+        return jsonify({'error': 'there aren\'t applications for this campaign'}), 404
+
+
     # check if the campaign exists
     if not campaign:
         return jsonify({'error': 'Campaign not found'}), 404
