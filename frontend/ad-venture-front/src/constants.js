@@ -24,6 +24,7 @@ export const INFLUENCER_FOLLOWER_GENDER = 'influencer_followers_gender';
 export const INFLUENCER_EXPOSURE_CONTENT = 'influencer_exposure_content';
 export const INFLUENCER_AGE = 'influencer_age';
 export const INFLUENCER_GENDER = 'influencer_gender';
+export const INFLUENCER_ID = 'influencer_id'
 
 // General user
 export const EMAIL = 'email';
@@ -37,7 +38,10 @@ export const USER_ID = 'user_id';
 export const RANDOM_SESSION_TOKEN = 'random_session_token';
 
 // Social networks
+export const CONTENT_TYPE = 'content_type';
 export const INSTAGRAM = 'instagram';
+export const URL = 'url';
+export const CAMPAIGN_ID = 'campaign_id';
 
 // For Upload Campaign 
 export const CAMPAIGN_NAME = 'campaign_name';
