@@ -391,14 +391,14 @@ def apply_for_campaign(influencerId, campaign_id):
 
 
 # Influencer explore page for active campaigns
-@app.route('/api/influencer/<influencer_id>/home/explore', methods=['GET'])
-def explore_campaigns(influencer_id):
-    influencer_id = influencer_id,  # change to session.get
+@app.route('/api/influencer/<influencerid>/home/explore', methods=['GET'])
+def explore_campaigns(influencerid):
+    influencer_id = influencerid,  # change to session.get
     if not influencer_id:
         return jsonify({'error': 'Influencer not authenticated'}), 401
 
     active_campaigns = list(db.client['Database']['Campaigns'].find({EntityName.CONST_IS_ACTIVE: True}))
-    applied_campaigns = list(db.client['Database']['Applications'].find({"influencer_id": influencer_id}))
+    applied_campaigns = list(db.client['Database']['Applications'].find({"influencer_id": ObjectId(influencer_id[0])}))
 
     applied_campaign_ids = [app[EntityName.CONST_CAMPAIGN_ID] for app in applied_campaigns]
     available_campaigns = [campaign for campaign in active_campaigns if campaign['_id'] not in applied_campaign_ids]
