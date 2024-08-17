@@ -8,7 +8,7 @@ from UserTypeEnum import UserType
 db = DatabaseLogic(
     "mongodb+srv://ProjectMainAdmin:SzReRV0ZxjeWm7vN@datastorage1.dlfth1l.mongodb.net/?retryWrites=true&w=majority&appName=DataStorage1")
 
-
+#write generated data to database
 if __name__ == "__main__":
     companies_data_list = GeneratorCompanyData.generate_companies_data(1)
     influencers_data_list = GeneratorInfluencerData.generate_influencers_data(1)

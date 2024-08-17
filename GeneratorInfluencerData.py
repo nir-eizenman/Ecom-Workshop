@@ -2,8 +2,7 @@ import EntityName
 import random
 import string
 
-import random
-import string
+#code for generate influencer fake data
 
 def random_string(length: int) -> str:
     """Generate a random string of the given length."""
