@@ -3,7 +3,7 @@ import { Container, Box, Typography, Button, Tabs, Tab } from '@mui/material';
 import CampaignList from './CampaignList';
 import CampaignFormDialog from './CampaignFormDialog';
 import ResultDialog from './ResultDialog';
-import { USER_ID, countries } from '../constants';
+import { USER_ID, countries, interestTypes } from '../constants';
 
 const scheme = {
   "campaign_name": { type: 'string', label: 'Campaign Name' },
@@ -30,7 +30,7 @@ const scheme = {
   categories: {
     type: 'multiselect',
     label: 'Categories',
-    options: ['Sports', 'Fashion', 'Food', 'Travels', 'Books', 'Other']
+    options: interestTypes
   },
   campaign_goal: { type: 'string', label: 'Campaign Goal' },
   campaign_objective: {

@@ -79,9 +79,6 @@ const ConditionalAppBar = () => {
           <GradientTypography variant='h4' sx={{flexGrow: 1, ml: 3}} color1="white" color2="lightgrey">
             {sessionStorage.getItem(EMAIL)}
           </GradientTypography>
-          <ButtonBase size='large' edge="start" color="inherit" onClick={handleGoBack} aria-label="go back" sx={{color: 'aliceblue', ml: 3, mr: 3, transform: 'scale(1.5)'}}>
-            <ArrowBack />
-          </ButtonBase>
           <ButtonBase size='large' edge="end" color="inherit" onClick={handleLogout} aria-label="log out"  sx={{color: 'aliceblue', ml: 3, mr: 3, transform: 'scale(1.5)'}}>
             <Logout />
           </ButtonBase>
